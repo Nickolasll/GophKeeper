@@ -1,0 +1,31 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 400
+LAYOUT_WITH_LEGEND()
+
+title
+    <b>[Container Diagram] Менеджер паролей «GophKeeper»</b>
+end title
+
+Person(user, "Пользователь", "Пользователь менеджера паролей «GophKeeper»")
+
+Boundary(pc, "Компьютер пользователя") {
+    System_Boundary(client, "Клиент менеджера паролей «GophKeeper»", "Клиентская часть системы безопасного хранения паролей") {
+        Container(client_cli, "CLI менеджера паролей «GophKeeper»", "Go 1.21.0", "CLI интерфейс и логика по хранению и обновлению локальных данных")
+    }
+    ContainerDb(client_db, "Файл", "file", "Хранит локальные данные пользователя")
+
+    Rel_Right(client_cli, client_db, "Чтение и запись данных", "io/stdout")
+}
+
+System_Boundary(server, "Менеджер паролей «GophKeeper»", "Серверная часть системы безопасного хранения паролей") {
+    Container(server_api, "API менеджера паролей «GophKeeper»", "Go 1.21.0", "API системы хранения паролей и логика по регистрации, авторизации, сохранению локальных данных")
+    ContainerDb(server_db, "База данных", "postgres", "Хранит пользовательские данные")
+
+    Rel_Right(server_api, server_db, "Чтение и запись данных", "SQL/TCP")
+}
+
+Rel(user, client_cli, "Использует клиент для взаимодействия с системой хранения паролей «GophKeeper»")
+Rel_Down(client_cli, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
+@enduml

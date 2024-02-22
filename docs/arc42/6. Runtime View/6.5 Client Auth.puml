@@ -1,0 +1,71 @@
+@startuml
+!theme vibrant
+title: 6.5. Авторизация пользователя на стороне клиента
+skinparam maxMessageSize 300
+autonumber
+
+participant "Пользователь" as user
+box "Компьютер пользователя" #DEDEDE
+    participant "CLI Клиент" as client
+    database "Файловая система" as file
+end box
+box "GophKeeper" #d3f3fa
+    participant "GophKeeperAPI" as api
+end box
+
+user -> client ++ : Вводит команду, доступную только аутентифицированным пользователям
+note over user, client
+    GophKeeper command
+end note
+
+client -> client: Валидирует JWT
+
+opt JWT не установлен
+    client --> user: Выводит сообщение об ошибке
+end
+
+client -> client: Проверяет наличие публичного ключа
+
+opt Публичный ключ не установлен
+    client -> file ++ : Читает публичный ключ из файла
+    return публичный ключ
+    
+    opt Публичный ключ не найден в файле
+        ref over client, api
+            6.1 Получение публичного ключа для верификации JWT
+        end
+    end
+end
+
+client -> client: Верифицирует JWT
+
+alt Не удалось верифицировать JWT
+    client -> api ++ : Отправляет запрос на получение публичного ключа
+    note over client, api
+        GET /api/certs HTTP/1.1
+        Content-Type: application/json
+    end note
+
+    return HTTP 200 Ok
+    note over client, api
+        200 OK HTTP/1.1
+        Content-Type: application/json
+
+        {"kty":"RSA","use":"sig","alg":"RS256","kid":"4Ecg...DE","n":"r3Yf...TQ","e":"AQAB"} 
+    end note
+    client -> client: Сравнивает полученный публичный ключ
+    alt Ключи совпали
+        client -> user: Выводит сообщение об ошибке
+    else Ключи не совпали
+        client -> client: Кэширует новый публичный ключ
+        client -> file: Сохраняет публичный ключ в файл и шифрует его
+        activate file
+        deactivate file
+        client -> client: Верифицирует JWT
+        opt Не удалось верифицировать JWT
+            client -> user: Выводит сообщение об ошибке
+        end
+    end
+end
+client -> api ++ : Исполняет команду
+@enduml

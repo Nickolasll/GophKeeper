@@ -1,0 +1,57 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 400
+LAYOUT_WITH_LEGEND()
+
+title
+    <b>[Component Diagram] Сервер менеджера паролей «GophKeeper»</b>
+end title
+
+Person(user, "Пользователь", "Пользователь менеджера паролей «GophKeeper»")
+
+Boundary(pc, "Компьютер пользователя") {
+    System_Boundary(client, "Клиент менеджера паролей «GophKeeper»", "Клиентская часть системы безопасного хранения паролей") {
+        Container(client_cli, "CLI менеджера паролей «GophKeeper»", "Go 1.21.0", "CLI интерфейс и логика по хранению и обновлению локальных данных")
+    }
+    ContainerDb(client_db, "Файл", "file", "Хранит локальные данные пользователя")
+
+    Rel_Right(client_cli, client_db, "Чтение и запись данных", "io/stdout")
+}
+
+System_Boundary(server, "Менеджер паролей «GophKeeper»", "Серверная часть системы безопасного хранения паролей") {
+    Boundary(server_api, "API менеджера паролей «GophKeeper»", "Go 1.21.0", "API системы хранения паролей и логика по регистрации, авторизации, сохранению локальных данных") {
+        Container(router, "Роутер", "Component: Go 1.21.0", "Обработка запросов")
+        Container(register, "Регистрация пользователя", "Component: Go 1.21.0", "Регистрация и авторизация нового пользователя")
+        Container(login, "Авторизация пользователя", "Component: Go 1.21.0", "Авторизация по логину и паролю")
+        Container(certs, "Получение публичного ключа для JWT", "Component: Go 1.21.0", "Получение публичного ключа для JWT, чтобы верифицировать его на стороне клиента")
+        Container(sync, "Синхронизация данных", "Component: Go 1.21.0", "Получение списка всех пользовательских данных от сервера")
+        Container(create, "Добавить новые данные для хранения", "Component: Go 1.21.0", "Создать новые данные для хранения")
+        Container(change, "Изменить сохраненные данные", "Component: Go 1.21.0", "Изменить пользовательские данные")
+        Container(jose, "Служба JavaScript Object Signing and Encryption", "Component: Go 1.21.0", "Выпуск JWT, валидация JWT, верификация паролей")
+        Container(crypto, "Служба шифрования и дешифрования", "Component: Go 1.21.0", "Шифрование и дешифрование пользовательских данных")
+    }
+    ContainerDb(server_db, "База данных", "postgres", "Хранит пользовательские данные")
+
+    Rel_Down(router, register, "Использует")
+    Rel_Up(register, jose, "Использует")
+    Rel(register, server_db, "Чтение и запись данных", "SQL/TCP")
+    Rel_Down(router, login, "Использует")
+    Rel_Up(login, jose, "Использует")
+    Rel(login, server_db, "Чтение и запись данных", "SQL/TCP")
+    Rel_Right(router, certs, "Использует")
+    Rel_Left(certs, jose, "Использует")
+    Rel_Down(router, sync, "Использует")
+    Rel_Down(sync, crypto, "Использует")
+    Rel(sync, server_db, "Чтение и запись данных", "SQL/TCP")
+    Rel_Down(router, create, "Использует")
+    Rel_Down(create, crypto, "Использует")
+    Rel(create, server_db, "Чтение и запись данных", "SQL/TCP")
+    Rel_Down(router, change, "Использует")
+    Rel_Down(change, crypto, "Использует")
+    Rel(change, server_db, "Чтение и запись данных", "SQL/TCP")
+}
+
+Rel(user, client_cli, "Использует клиент для взаимодействия с системой хранения паролей «GophKeeper»")
+Rel_Down(client_cli, router, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
+@enduml

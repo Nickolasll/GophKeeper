@@ -1,0 +1,35 @@
+@startuml
+!theme vibrant
+title: 6.1. Получение публичного ключа для верификации JWT
+skinparam maxMessageSize 300
+autonumber
+
+box "Компьютер пользователя" #DEDEDE
+    participant "CLI Клиент" as client
+    database "Файловая система" as file
+end box
+
+box "GophKeeper" #d3f3fa
+    participant "Обработчик запроса" as handler
+    participant "Юзкейз получение публичного ключа" as auth
+end box
+
+client -> handler ++ : Отправляет запрос на получение публичного ключа
+note over client, handler
+    GET /api/certs HTTP/1.1
+    Content-Type: application/json
+end note
+
+handler -> auth ++ : Вызывает поведение получения публичного ключа
+return Публичный ключ
+return HTTP 200 Ok
+note over client, handler
+    200 OK HTTP/1.1
+    Content-Type: application/json
+
+    {"kty":"RSA","use":"sig","alg":"RS256","kid":"4Ecg...DE","n":"r3Yf...TQ","e":"AQAB"} 
+end note
+client -> file: Сохраняет публичный ключ в файл и шифрует его
+activate file
+deactivate file 
+@enduml

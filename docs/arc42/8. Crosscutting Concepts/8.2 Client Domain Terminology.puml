@@ -1,0 +1,111 @@
+@startuml
+!theme vibrant
+title: 8.2 Диаграмма классов клиента
+
+namespace client {
+    namespace application {
+        namespace services {}
+    }
+
+    namespace domain {
+        namespace entities {}
+        namespace repositories {}
+        namespace api {}
+    }
+}
+
+class client.domain.entities.Session {
+    + UserID: String,
+    + JWT: String,
+}
+
+class client.domain.entities.Credentials {
+    + ID : UUID
+    + UserID : UUID
+    + Name : String
+    + Login : String
+    + Password : String
+}
+
+class client.domain.entities.Text {
+    + ID : UUID
+    + UserID: UUID
+    + Name : String
+    + Text : String
+}
+
+class client.domain.entities.Binary {
+    + ID : UUID
+    + UserID: UUID
+    + Name : String
+    + Data : String
+}
+
+class client.domain.entities.BankCard {
+    + ID : UUID
+    + UserID: UUID
+    + Name : String
+    + Number : String
+    + ExpirationDate: DateTime
+    + CardHolder: String
+    + CVV: String
+}
+
+class client.domain.repositories.SessionRepositoryInterface {
+    + void Save(object : Session) : null
+    + void Get(UserID: UUID) : Session | null
+}
+
+class client.domain.repositories.CredentialsRepositoryInterface {
+    + void Save(object : Credentials) : null
+    + void Get(ID: UUID) : Credentials | null
+    + void FindByUserID(UserID: UUID) : List[Credentials]
+}
+
+class client.domain.repositories.TextRepositoryInterface {
+    + void Save(object : Text) : null
+    + void Get(ID: UUID) : Text | null
+    + void FindByUserID(UserID: UUID) : List[Text]
+}
+
+class client.domain.repositories.BinaryRepositoryInterface {
+    + void Save(object : Binary) : null
+    + void Get(ID: UUID) : Binary | null
+    + void FindByUserID(UserID: UUID) : List[Binary]
+}
+
+class client.domain.repositories.BankCardRepositoryInterface {
+    + void Save(object : BankCard) : null
+    + void Get(ID: UUID) : BankCard | null
+    + void FindByUserID(UserID: UUID) : List[BankCard]
+}
+
+class client.domain.api.GophKeeperInterface {
+    + URL
+    + Session
+    - void Fetch(Method: String, Endpoint: String, Payload: object) : Response, error
+    + SetSession(session Session)
+    + void Login(Login : String, Password : String) : String, error
+    + void Register(Login : String, Password : String) : String, error
+    + void Certs() : String, error
+    + void Sync(UserID : String) : object
+    + void Create(Resource: String, Payload: object) : Response, error
+    + void Update(Resource: String, ObjectID: String, Payload: object) : Response, error
+}
+
+
+class client.application.services.JOSEService {
+    + JWK : String
+    + void SetJWK(JWK : String)
+    + void ParseUserID(token: String) : String
+    + void VerifyJWT(token: String) : Bool
+}
+
+class client.application.services.CryptoService {
+    + PrivateKey : String
+    + void Encode(Data : String) : String
+    + void Dencode(Data : String) : String
+}
+
+
+@enduml
