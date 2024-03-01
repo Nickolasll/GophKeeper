@@ -23,33 +23,32 @@ class server.domain.entities.User {
 class server.domain.entities.Credentials {
     + ID : UUID
     + UserID : UUID
-    + Name : String
-    + Login : String
-    + Password : String
+    + Name : []byte
+    + Login : []byte
+    + Password : []byte
 }
 
 class server.domain.entities.Text {
     + ID : UUID
     + UserID: UUID
-    + Name : String
-    + Text : String
+    + Content : []byte
 }
 
 class server.domain.entities.Binary {
     + ID : UUID
     + UserID: UUID
-    + Name : String
-    + Data : String
+    + Name : []byte
+    + Data : []byte
 }
 
 class server.domain.entities.BankCard {
     + ID : UUID
     + UserID: UUID
-    + Name : String
-    + Number : String
-    + ExpirationDate: DateTime
-    + CardHolder: String
-    + CVV: String
+    + Name : []byte
+    + Number : []byte
+    + ExpirationDate: []byte
+    + CardHolder: []byte
+    + CVV: []byte
 }
 
 class server.domain.repositories.UserRepositoryInterface {
@@ -64,36 +63,40 @@ class server.domain.repositories.CredentialsRepositoryInterface {
 }
 
 class server.domain.repositories.TextRepositoryInterface {
+    + void Create(object : Text) : null
     + void Save(object : Text) : null
-    + void Get(ID: UUID) : Text | null
+    + void Get(userID UUID, textID: UUID) : Text | null
     + void FindByUserID(UserID: UUID) : List[Text]
 }
 
 class server.domain.repositories.BinaryRepositoryInterface {
+    + void Create(object : Binary) : null
     + void Save(object : Binary) : null
-    + void Get(ID: UUID) : Binary | null
+    + void Get(userID UUID, binaryID: UUID) : Binary | null
     + void FindByUserID(UserID: UUID) : List[Binary]
 }
 
 class server.domain.repositories.BankCardRepositoryInterface {
+    + void Create(object : BankCard) : null
     + void Save(object : BankCard) : null
-    + void Get(ID: UUID) : BankCard | null
+    + void Get(userID UUID, bankCardID: UUID) : BankCard | null
     + void FindByUserID(UserID: UUID) : List[BankCard]
 }
 
 
 class server.application.services.JOSEService {
-    + JWK
-    + void IssueToken(userId : UUID) : String
-    + void ParseUserID(token: String) : String
+    + TokenExp : time.Duration
+    + JWKs : jwk.Key
+    + void IssueToken(userId : UUID) : []byte
+    + void ParseUserID(token: String) : UUID
     + void Hash(password: String) : String
     + void VerifyPassword(hashedPassword: String, currPassword: String) : Bool
 }
 
 class server.application.services.CryptoService {
-    + PrivateKey : String
-    + void Encode(Data : String) : String
-    + void Dencode(Data : String) : String
+    + SecretKey : []byte
+    + void Encode(Data : String) : []byte
+    + void Dencode(Data : []byte) : String
 }
 
 

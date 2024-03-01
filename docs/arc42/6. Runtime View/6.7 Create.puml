@@ -19,12 +19,8 @@ end box
 
 user -> client ++ : Вводит команду на создание новых данных
 note over user, client
-    GophKeeper create credentials site.com mylogin mypassword
+    GophKeeper create-credentials site.com mylogin mypassword
 end note
-
-ref over user, handler
-    6.5. Авторизация пользователя на стороне клиента
-end
 
 client -> client: Валидация введенных данных
 

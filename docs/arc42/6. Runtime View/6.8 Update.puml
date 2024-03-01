@@ -19,12 +19,8 @@ end box
 
 user -> client ++ : Вводит команду на обновление данных
 note over user, client
-    GophKeeper change credentials site.com newsite.com newmylogin newmypassword
+    GophKeeper change-credentials site.com newsite.com newmylogin newmypassword
 end note
-
-ref over user, handler
-    6.5. Авторизация пользователя на стороне клиента
-end
 
 client -> client: Валидация введенных данных
 

@@ -5,56 +5,33 @@ skinparam wrapWidth 400
 LAYOUT_WITH_LEGEND()
 
 title
-    <b>[Component Diagram] Клиент менеджера паролей «GophKeeper»</b>
+    <b>[Component Diagram] Сценарии использования клиента менеджера паролей «GophKeeper»</b>
 end title
-
-Person(user, "Пользователь", "Пользователь менеджера паролей «GophKeeper»")
 
 Boundary(pc, "Компьютер пользователя") {
     System_Boundary(client, "Клиент менеджера паролей «GophKeeper»", "Клиентская часть системы безопасного хранения паролей") {
-        Container(cobra, "CLI", "Component: Go 1.21.0", "CLI интерфейс")
-        Container(register, "Регистрация пользователя", "Component: Go 1.21.0", "Регистрация и авторизация нового пользователя")
-        Container(login, "Авторизация пользователя", "Component: Go 1.21.0", "Авторизация по логину и паролю")
-        Container(sync, "Синхронизация данных", "Component: Go 1.21.0", "Получение списка всех пользовательских данных от сервера")
-        Container(create, "Добавить новые данные для хранения", "Component: Go 1.21.0", "Создать новые данные для хранения")
-        Container(change, "Изменить сохраненные данные", "Component: Go 1.21.0", "Изменить пользовательские данные")
-        Container(crypto, "Служба шифрования и дешифрования", "Component: Go 1.21.0", "Шифрование и дешифрование пользовательских данных")
-        Container(certs, "Получение публичного ключа для JWT", "Component: Go 1.21.0", "Получение публичного ключа для JWT, чтобы верифицировать его на стороне клиента")
-        Container(show, "Вывод всех пользовательских данны", "Component: Go 1.21.0", "Вывод сохраненных локальных пользовательских данных")
+        Container(client_cli, "CLI менеджера паролей «GophKeeper»", "Go 1.21.0, CLI", "CLI интерфейс, валидация введенных команд")
+        Boundary(client_use_cases, "Сценарии использования", "Component: Go 1.21.0", "Бизнес логика") {
+            Container(register, "Регистрация пользователя", "Component: Go 1.21.0", "Регистрация и авторизация нового пользователя")
+            Container(login, "Авторизация пользователя", "Component: Go 1.21.0", "Авторизация по логину и паролю")
+            Container(sync, "Синхронизация данных", "Component: Go 1.21.0", "Получение списка всех пользовательских данных от сервера")
+            Container(create, "Добавить новые данные для хранения", "Component: Go 1.21.0", "Создать новые данные для хранения")
+            Container(change, "Изменить сохраненные данные", "Component: Go 1.21.0", "Изменить пользовательские данные")
+            Container(certs, "Получение публичного ключа для JWT", "Component: Go 1.21.0", "Получение публичного ключа для JWT, чтобы верифицировать его на стороне клиента")
+            Container(show, "Вывод всех пользовательских данных", "Component: Go 1.21.0", "Вывод сохраненных локальных пользовательских данных")
+        }
+        Container(client_crypto, "Служба шифрования и дешифрования", "Component: Go 1.21.0, crypto", "Шифрование и дешифрование пользовательских данных")
+        Container(http_client, "REST HTTP Client", "Component: Go 1.21.0", "Клиент для выполнения HTTP запросов к серверу")
+        Container(client_repository, "Репозиторий", "Component: Go 1.21.0, bbolt", "Инкапсуляция логики работы с хранилищем")
+        Container(client_auth, "Сервис авторизации", "Component: Go 1.21.0, jwx", "Аутентификация и Авторизация")
     }
     ContainerDb(client_db, "Файл", "file", "Хранит локальные данные пользователя")
-
-    Rel_Down(cobra, register, "Использует")
-    Rel_Up(register, client_db, "Чтение и запись данных", "io/stdout")
-    Rel_Down(cobra, login, "Использует")
-    Rel_Up(login, client_db, "Чтение и запись данных", "io/stdout")
-    Rel_Down(cobra, sync, "Использует")
-    Rel_Up(sync, crypto, "Использует")
-    Rel_Up(sync, client_db, "Чтение и запись данных", "io/stdout")
-    Rel_Down(cobra, create, "Использует")
-    Rel_Up(create, crypto, "Использует")
-    Rel_Up(create, client_db, "Чтение и запись данных", "io/stdout")
-    Rel_Down(cobra, change, "Использует")
-    Rel_Up(change, crypto, "Использует")
-    Rel_Up(change, client_db, "Чтение и запись данных", "io/stdout")
-    Rel_Down(cobra, certs, "Использует")
-    Rel_Right(cobra, show, "Использует")
-    Rel_Down(show, client_db, "Чтение и запись данных", "io/stdout")
-    Rel_Down(show, sync, "Использует")
+    
+    Rel(client_cli, client_use_cases, "Вызов исполнения бизнес логики")
+    Rel_Down(client_repository, client_db, "Чтение и запись данных", "io/stdout")
+    Rel_Right(client_use_cases, client_repository, "Вызов чтения и записи данных")
+    Rel_Left(client_use_cases, client_crypto, "Вызов шифрования и дешифрования данных")
+    Rel_Down(client_use_cases, http_client, "Вызов запросов к API")
+    Rel(client_use_cases, client_auth, "Проверка авторизации и аутентификации")
 }
-
-System_Boundary(server, "Менеджер паролей «GophKeeper»", "Серверная часть системы безопасного хранения паролей") {
-    Container(server_api, "API менеджера паролей «GophKeeper»", "Go 1.21.0", "API системы хранения паролей и логика по регистрации, авторизации, сохранению локальных данных")
-    ContainerDb(server_db, "База данных", "postgres", "Хранит пользовательские данные")
-
-    Rel_Right(server_api, server_db, "Чтение и запись данных", "SQL/TCP")
-}
-
-Rel(user, cobra, "Использует клиент для взаимодействия с системой хранения паролей «GophKeeper»")
-Rel_Down(register, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
-Rel_Down(login, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
-Rel_Down(certs, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
-Rel_Down(sync, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
-Rel_Down(create, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
-Rel_Down(change, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
 @enduml
