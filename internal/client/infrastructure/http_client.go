@@ -25,7 +25,7 @@ func (HTTPClient) New(cert []byte, timeout time.Duration, baseURL string) HTTPCl
 	tlsConfig := &tls.Config{
 		Renegotiation: tls.RenegotiateOnceAsClient,
 		RootCAs:       caCertPool,
-		MinVersion:    tls.VersionTLS12,
+		MinVersion:    tls.VersionTLS13,
 	}
 
 	client := resty.New().SetTLSClientConfig(tlsConfig).SetTimeout(timeout).SetBaseURL(baseURL)

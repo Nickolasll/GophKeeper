@@ -78,7 +78,7 @@ func main() {
 
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{cert},
-		MinVersion:   tls.VersionTLS12,
+		MinVersion:   tls.VersionTLS13,
 	}
 	server := &http.Server{
 		Addr:              cfg.Addr,

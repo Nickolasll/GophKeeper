@@ -45,8 +45,7 @@ func main() {
 	}
 
 	timeout := time.Duration(cfg.ClientTimeoutSec) * time.Second
-	client := infrastructure.HTTPClient{}
-	client = client.New(cert, timeout, cfg.ServerURL)
+	client := infrastructure.HTTPClient{}.New(cert, timeout, cfg.ServerURL)
 
 	crypto := application.CryptoService{
 		SecretKey: cfg.CryptoSecretKey,

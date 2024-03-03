@@ -18,5 +18,5 @@ System_Boundary(server, "Менеджер паролей «GophKeeper»", "Се�
 
     Rel_Right(server_api, server_db, "Чтение и запись данных", "SQL/TCP")
 }
-Rel_Down(client, server_api, "Передача данных по TLS 1.2", "HTTPS/TCP")
+Rel_Down(client, server_api, "Передача данных по TLS 1.3", "HTTPS/TCP")
 @enduml
