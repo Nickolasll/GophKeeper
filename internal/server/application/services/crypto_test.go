@@ -62,3 +62,13 @@ func TestCrypto(t *testing.T) {
 		})
 	}
 }
+
+func TestCryptoInvalidSecretKey(t *testing.T) {
+	cryptoService := CryptoService{
+		SecretKey: []byte("w"),
+	}
+	_, err := cryptoService.Encrypt("test")
+	require.Error(t, err)
+	_, err = cryptoService.Decrypt([]byte("test"))
+	require.Error(t, err)
+}

@@ -1,11 +1,16 @@
 REPORTS=.reports
+CLIENT_BIN=bin
+CLIENT_DIR=cmd/client
 DB_URL=postgresql://admin:admin@localhost:5432/gophkeeper?sslmode=disable
 
 $(REPORTS):
 	mkdir $(REPORTS)
 
+$(CLIENT_BIN):
+	mkdir $(CLIENT_BIN)
+
 setup: 
-	$(REPORTS) .tidy .install-tools
+	$(REPORTS) $(CLIENT_BIN) .tidy .install-tools
 
 clean:
 	rm -rf $(REPORTS)
@@ -38,5 +43,13 @@ migration-down:
 
 migration-fix: 
 	migrate -path ./migrations -database $(DB_URL) force 1
+
+build-client:
+	rm -rf $(CLIENT_BIN)
+	GOOS=linux GOARCH=amd64 go build -o $(CLIENT_BIN)/cli_linux_amd64 $(CLIENT_DIR)/main.go
+	GOOS=windows GOARCH=amd64 go build -o $(CLIENT_BIN)/cli_windows_amd64.exe $(CLIENT_DIR)/main.go
+	GOOS=darwin GOARCH=amd64 go build -o $(CLIENT_BIN)/cli_darwin_amd64 $(CLIENT_DIR)/main.go
+	GOOS=darwin GOARCH=arm64 go build -o $(CLIENT_BIN)/cli_darwin_arm64 $(CLIENT_DIR)/main.go
+	cp $(CLIENT_DIR)/ca.crt $(CLIENT_BIN)/ca.crt
 
 .DEFAULT_GOAL := all

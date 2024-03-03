@@ -13,34 +13,46 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
-func TestRegistrationBadRequest(t *testing.T) {
+func TestRegistrationBadRequest(t *testing.T) { //nolint: dupl
 	tests := []struct {
-		name string
-		body []byte
+		name        string
+		body        []byte
+		contentType string
 	}{
 		{
-			name: "no password",
-			body: []byte(`{"login": "no_password"}`),
+			name:        "no password",
+			body:        []byte(`{"login": "no_password"}`),
+			contentType: "application/json",
 		},
 		{
-			name: "no login",
-			body: []byte(`{"password": "no_login"}`),
+			name:        "no login",
+			body:        []byte(`{"password": "no_login"}`),
+			contentType: "application/json",
 		},
 		{
-			name: "wrong fields",
-			body: []byte(`{"field": "value"}`),
+			name:        "wrong fields",
+			body:        []byte(`{"field": "value"}`),
+			contentType: "application/json",
 		},
 		{
-			name: "invalid value type",
-			body: []byte(`{"login": "login", "password": 11}`),
+			name:        "invalid value type",
+			body:        []byte(`{"login": "login", "password": 11}`),
+			contentType: "application/json",
 		},
 		{
-			name: "empty string",
-			body: []byte(`{"login": "", "password": ""}`),
+			name:        "empty string",
+			body:        []byte(`{"login": "", "password": ""}`),
+			contentType: "application/json",
 		},
 		{
-			name: "not a json",
-			body: []byte(`not a json`),
+			name:        "not a json",
+			body:        []byte(`not a json`),
+			contentType: "application/json",
+		},
+		{
+			name:        "wrong content type",
+			body:        []byte{},
+			contentType: "plain/text",
 		},
 	}
 	for _, tt := range tests {
@@ -51,7 +63,7 @@ func TestRegistrationBadRequest(t *testing.T) {
 
 			bodyReader := bytes.NewReader(tt.body)
 			req := httptest.NewRequest("POST", "/api/v1/auth/register", bodyReader)
-			req.Header.Add("Content-Type", "application/json")
+			req.Header.Add("Content-Type", tt.contentType)
 			responseRecorder := httptest.NewRecorder()
 			router.ServeHTTP(responseRecorder, req)
 			assert.Equal(t, http.StatusBadRequest, responseRecorder.Code)

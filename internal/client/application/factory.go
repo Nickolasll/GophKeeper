@@ -16,6 +16,8 @@ type Application struct {
 	CreateText usecases.CreateText
 	// UpdateText - Сценарий обновления существующих текстовых данных
 	UpdateText usecases.UpdateText
+	// ShowText - Сценарий получения расшифрованных текстовых данных
+	ShowText usecases.ShowText
 }
 
 // CreateApplication - Фабрика приложения
@@ -59,10 +61,16 @@ func CreateApplication(
 		TextRepository: textRepository,
 	}
 
+	showText := usecases.ShowText{
+		CheckToken:     &checkToken,
+		TextRepository: textRepository,
+	}
+
 	return Application{
 		Registration: registration,
 		Login:        login,
 		CreateText:   createText,
 		UpdateText:   updateText,
+		ShowText:     showText,
 	}
 }

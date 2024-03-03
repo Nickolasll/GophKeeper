@@ -52,7 +52,11 @@ func (c HTTPClient) Login(login, password string) (string, error) {
 		return "", domain.ErrUnauthorized
 	}
 
-	return resp.Header().Get("Authorization"), nil
+	if resp.StatusCode() == http.StatusOK {
+		return resp.Header().Get("Authorization"), nil
+	}
+
+	return "", domain.ErrClientConnectionError
 }
 
 // Register - Регистрация по логину и паролю, возвращает токен авторизации
@@ -72,7 +76,11 @@ func (c HTTPClient) Register(login, password string) (string, error) {
 		return "", domain.ErrLoginConflict
 	}
 
-	return resp.Header().Get("Authorization"), nil
+	if resp.StatusCode() == http.StatusOK {
+		return resp.Header().Get("Authorization"), nil
+	}
+
+	return "", domain.ErrClientConnectionError
 }
 
 // CreateText - Создает текст, возвращает идентификатор ресурса от сервера
@@ -87,7 +95,11 @@ func (c HTTPClient) CreateText(session domain.Session, content string) (string, 
 		return "", err
 	}
 
-	return resp.Header().Get("Location"), nil
+	if resp.StatusCode() == http.StatusCreated {
+		return resp.Header().Get("Location"), nil
+	}
+
+	return "", domain.ErrClientConnectionError
 }
 
 // UpdateText - Обновляет существующий текст
@@ -107,8 +119,11 @@ func (c HTTPClient) UpdateText(session domain.Session, text domain.Text) error {
 	if resp.StatusCode() == http.StatusBadRequest {
 		return domain.ErrBadRequest
 	}
+	if resp.StatusCode() == http.StatusOK {
+		return nil
+	}
 
-	return nil
+	return domain.ErrClientConnectionError
 }
 
 // GetCerts - Возвращает публичный ключ для валидации и парсинга JWT
@@ -118,6 +133,9 @@ func (c HTTPClient) GetCerts() ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
+	if resp.StatusCode() == http.StatusOK {
+		return resp.Body(), nil
+	}
 
-	return resp.Body(), err
+	return []byte{}, domain.ErrClientConnectionError
 }

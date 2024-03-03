@@ -60,7 +60,7 @@ func (r SessionRepository) Save(session domain.Session) error {
 }
 
 // Get - Возвращает последнюю сессию, если она существует
-func (r SessionRepository) Get() (domain.Session, error) {
+func (r SessionRepository) Get() (*domain.Session, error) {
 	var session domain.Session
 	var raw []byte
 
@@ -74,18 +74,36 @@ func (r SessionRepository) Get() (domain.Session, error) {
 		return nil
 	})
 	if err != nil {
-		return session, err
+		return &session, err
+	}
+
+	if raw == nil {
+		return &session, domain.ErrEntityNotFound
 	}
 
 	decrypted, err := r.Crypto.Decrypt(raw)
 	if err != nil {
-		return session, err
+		return &session, err
 	}
 
 	err = json.Unmarshal(decrypted, &session)
 	if err != nil {
-		return session, err
+		return &session, err
 	}
 
-	return session, nil
+	return &session, nil
+}
+
+func (r SessionRepository) Delete() error {
+	return r.DB.Update(func(tx *bolt.Tx) error {
+		root := tx.Bucket([]byte("ActiveSession"))
+		if root != nil {
+			err := root.Delete([]byte("Session"))
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }

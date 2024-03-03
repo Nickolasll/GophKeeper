@@ -13,6 +13,57 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
+const updateTextURL = "/api/v1/text/"
+
+func TestUpdateTextBadRequest(t *testing.T) {
+	tests := []struct {
+		name        string
+		body        []byte
+		contentType string
+		resuorceID  string
+	}{
+		{
+			name:        "no content",
+			body:        []byte{},
+			contentType: "plain/text",
+			resuorceID:  uuid.NewString(),
+		},
+		{
+			name:        "wrong content type",
+			body:        []byte{},
+			contentType: "application/json",
+			resuorceID:  uuid.NewString(),
+		},
+		{
+			name:        "wrong resource type",
+			body:        []byte{},
+			contentType: "application/json",
+			resuorceID:  "not_a_UUID",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router, err := setup()
+			require.NoError(t, err)
+			defer teardown()
+
+			userID := uuid.New()
+			err = createUser(userID)
+			require.NoError(t, err)
+			token, err := jose.IssueToken(userID)
+			require.NoError(t, err)
+
+			bodyReader := bytes.NewReader(tt.body)
+			req := httptest.NewRequest("POST", updateTextURL+tt.resuorceID, bodyReader)
+			req.Header.Add("Content-Type", tt.contentType)
+			req.Header.Add("Authorization", string(token))
+			responseRecorder := httptest.NewRecorder()
+			router.ServeHTTP(responseRecorder, req)
+			assert.Equal(t, http.StatusBadRequest, responseRecorder.Code)
+		})
+	}
+}
+
 func TestUpdateTextSuccess(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
@@ -36,7 +87,7 @@ func TestUpdateTextSuccess(t *testing.T) {
 	message := "my message to update"
 
 	bodyReader := bytes.NewReader([]byte(message))
-	req := httptest.NewRequest("POST", "/api/v1/text/"+textID.String(), bodyReader)
+	req := httptest.NewRequest("POST", updateTextURL+textID.String(), bodyReader)
 	req.Header.Add("Content-Type", "plain/text")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()
@@ -66,7 +117,7 @@ func TestUpdateNotFound(t *testing.T) {
 	message := "my message to update"
 
 	bodyReader := bytes.NewReader([]byte(message))
-	req := httptest.NewRequest("POST", "/api/v1/text/"+uuid.NewString(), bodyReader)
+	req := httptest.NewRequest("POST", updateTextURL+uuid.NewString(), bodyReader)
 	req.Header.Add("Content-Type", "plain/text")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()
@@ -86,7 +137,7 @@ func TestUpdateInvalidID(t *testing.T) {
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader([]byte("message"))
-	req := httptest.NewRequest("POST", "/api/v1/text/invalid", bodyReader)
+	req := httptest.NewRequest("POST", updateTextURL+"invalid", bodyReader)
 	req.Header.Add("Content-Type", "plain/text")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()

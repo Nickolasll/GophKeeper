@@ -120,6 +120,10 @@ func (r TextRepository) Get(userID, textID string) (domain.Text, error) {
 		return text, err
 	}
 
+	if raw == nil {
+		return text, domain.ErrEntityNotFound
+	}
+
 	decrypted, err := r.Crypto.Decrypt(raw)
 	if err != nil {
 		return text, err
@@ -131,4 +135,47 @@ func (r TextRepository) Get(userID, textID string) (domain.Text, error) {
 	}
 
 	return text, nil
+}
+
+// GetAll - возвращает все текстовые данные для пользователя
+func (r TextRepository) GetAll(userID string) ([]domain.Text, error) {
+	result := []domain.Text{}
+
+	err := r.DB.View(func(tx *bolt.Tx) error {
+		root := tx.Bucket([]byte(userID))
+		if root == nil {
+			return nil
+		}
+
+		bkt := root.Bucket([]byte("Text"))
+		if bkt == nil {
+			return nil
+		}
+
+		err := bkt.ForEach(func(_, v []byte) error {
+			var text domain.Text
+			decrypted, err := r.Crypto.Decrypt(v)
+			if err != nil {
+				return err
+			}
+			err = json.Unmarshal(decrypted, &text)
+			if err != nil {
+				return err
+			}
+			result = append(result, text)
+
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
 }

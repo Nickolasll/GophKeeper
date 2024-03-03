@@ -10,6 +10,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestAuthorizationNoTokenValue(t *testing.T) {
+	router, err := setup()
+	require.NoError(t, err)
+	defer teardown()
+
+	req := httptest.NewRequest("POST", "/api/v1/text/create", http.NoBody)
+	req.Header.Add("Authorization", "")
+	responseRecorder := httptest.NewRecorder()
+	router.ServeHTTP(responseRecorder, req)
+	assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
+}
+
 func TestAuthorizationInvalidTokenValue(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)

@@ -32,17 +32,17 @@ func (u CheckToken) getUserID(token string) (string, error) {
 	return str, nil
 }
 
-func (u CheckToken) setupKey() error {
+func (u *CheckToken) setupKey() error {
 	certs, err := u.Client.GetCerts()
 	if err != nil {
 		return err
 	}
-	key, err := jwk.ParseKey(certs)
+	u.Key, err = jwk.ParseKey(certs)
 	if err != nil {
 		return err
 	}
 
-	if err := u.JWKRepository.Save(key); err != nil {
+	if err := u.JWKRepository.Save(u.Key); err != nil {
 		return err
 	}
 

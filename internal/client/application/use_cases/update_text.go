@@ -16,16 +16,17 @@ type UpdateText struct {
 // Execute - Вызов логики сценария использования
 func (u UpdateText) Execute(session domain.Session, textID, content string) error {
 	text, err := u.TextRepository.Get(session.UserID, textID)
-	text.Content = content
 	if err != nil {
 		return err
 	}
+
+	text.Content = content
 
 	if err := u.Client.UpdateText(session, text); err != nil {
 		return err
 	}
 
-	if err := u.TextRepository.Create(session.UserID, text); err != nil {
+	if err := u.TextRepository.Update(session.UserID, text); err != nil {
 		return err
 	}
 

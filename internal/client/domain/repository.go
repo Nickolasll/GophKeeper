@@ -10,7 +10,9 @@ type SessionRepositoryInterface interface {
 	// Save - Сохраняет новую сессию
 	Save(session Session) error
 	// Get - Возвращает последнюю сессию, если она существует
-	Get() (Session, error)
+	Get() (*Session, error)
+	// Delete - Удаляет существуюущую сессию
+	Delete() error
 }
 
 // TextRepositoryInterface - Интерфейс репозитория для произвольных текстовых данных
@@ -21,6 +23,8 @@ type TextRepositoryInterface interface {
 	Update(userID string, text Text) error
 	// Get - Возвращает текстовые данные по идентификатору данных и пользователя, если они существуют
 	Get(userID string, textID string) (Text, error)
+	// GetAll - возвращает все текстовые данные для пользователя
+	GetAll(userID string) ([]Text, error)
 }
 
 // JWKRepositoryInterface - Интерфейс хранилища публичного ключа
@@ -29,4 +33,6 @@ type JWKRepositoryInterface interface {
 	Save(key jwk.Key) error
 	// Get - Возвращает публичный ключ, если он существует
 	Get() (jwk.Key, error)
+	// Delete - Удаляет существующий ключ
+	Delete() error
 }

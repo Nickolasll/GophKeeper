@@ -75,6 +75,10 @@ func (r JWKRepository) Get() (jwk.Key, error) {
 		return key, err
 	}
 
+	if len(raw) == 0 {
+		return key, domain.ErrEntityNotFound
+	}
+
 	decrypted, err := r.Crypto.Decrypt(raw)
 	if err != nil {
 		return key, err
@@ -86,4 +90,18 @@ func (r JWKRepository) Get() (jwk.Key, error) {
 	}
 
 	return key, nil
+}
+
+func (r JWKRepository) Delete() error {
+	return r.DB.Update(func(tx *bolt.Tx) error {
+		root := tx.Bucket([]byte("JWK"))
+		if root != nil {
+			err := root.Delete([]byte("Keys"))
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }

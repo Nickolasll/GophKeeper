@@ -1,4 +1,4 @@
-// Package presentation ...
+// Package presentation содержит фабрику роутера, обработчики и схемы валидации
 package presentation
 
 import (
@@ -25,7 +25,7 @@ func (registrationPayload) LoadFromJSON(data []byte) (registrationPayload, error
 
 type textPayload struct {
 	ID      uuid.UUID `json:"id"`
-	Content string    `json:"content" validate:"required"`
+	Content string    `json:"content" validate:"required,min=1"`
 }
 
 func (textPayload) Load(id *uuid.UUID, content []byte) (textPayload, error) {

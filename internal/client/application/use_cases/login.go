@@ -1,5 +1,5 @@
 // Package usecases содержит имплементацию бизнес логики приложения
-package usecases
+package usecases //nolint: dupl
 
 import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
@@ -16,20 +16,21 @@ type Login struct {
 }
 
 // Execute - Вызов логики сценария использования
-func (u Login) Execute(login, password string) error {
+func (u Login) Execute(login, password string) (domain.Session, error) {
+	var session domain.Session
 	token, err := u.Client.Login(login, password)
 	if err != nil {
-		return err
+		return session, err
 	}
 
-	session, err := u.CheckToken.getSessionFromToken(token)
+	session, err = u.CheckToken.getSessionFromToken(token)
 	if err != nil {
-		return err
+		return session, err
 	}
 
 	if err := u.SessionRepository.Save(session); err != nil {
-		return err
+		return session, err
 	}
 
-	return nil
+	return session, nil
 }

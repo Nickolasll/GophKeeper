@@ -5,7 +5,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -74,4 +76,34 @@ func TestJOSEHash(t *testing.T) {
 			assert.Equal(t, ok, false)
 		})
 	}
+}
+
+func TestJOSEInvalidJWK(t *testing.T) {
+	var key jwk.Key
+	joseService := JOSEService{
+		TokenExp: time.Duration(60) * time.Second,
+		JWKS:     key,
+	}
+	_, err := joseService.IssueToken(uuid.New())
+	require.Error(t, err)
+}
+
+func TestJOSEInvalidUserID(t *testing.T) {
+	raw := []byte("My secret keys")
+	key, err := jwk.FromRaw(raw)
+	require.NoError(t, err)
+
+	issuedAt := time.Now()
+	expiration := issuedAt.Add(time.Hour)
+	token, err := jwt.NewBuilder().IssuedAt(time.Now()).Expiration(expiration).Claim("UserID", "Not UUID").Build()
+	require.NoError(t, err)
+	signed, err := jwt.Sign(token, jwt.WithKey(jwa.HS256, key))
+	require.NoError(t, err)
+
+	joseService := JOSEService{
+		TokenExp: time.Duration(60) * time.Second,
+		JWKS:     key,
+	}
+	_, err = joseService.ParseUserID(signed)
+	require.Error(t, err)
 }

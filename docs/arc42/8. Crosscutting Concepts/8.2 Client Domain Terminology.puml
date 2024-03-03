@@ -47,12 +47,14 @@ class client.domain.repositories.SessionRepositoryInterface {
     + crypto : CryptoServiceInterface
     + void Save(object : Session) : null
     + void Get() : Session | null
+    + void Delete(): null
 }
 
 class client.domain.repositories.JWKRepositoryInterface {
     + crypto : CryptoServiceInterface
     + void Save(key : jwk.Key) : null
     + void Get() : jwk.Key | null
+    + void Delete(): null
 }
 
 class client.domain.repositories.CredentialsRepositoryInterface {
@@ -60,7 +62,8 @@ class client.domain.repositories.CredentialsRepositoryInterface {
     + void Create(userID String, object : Credentials) : Null
     + void Update(userID String, object : Credentials) : null
     + void Get(userID String, credentialsID: UUID) : Credentials | null
-    + void FindByUserID(userID: UUID) : List[Credentials]
+    + void FindAll(userID: UUID) : List[Credentials]
+    + void ReplaceAll(userID: UUID, List[Credentials]): null
 }
 
 class client.domain.repositories.TextRepositoryInterface {
@@ -68,7 +71,8 @@ class client.domain.repositories.TextRepositoryInterface {
     + void Create(userID String, object : Text) : Null
     + void Update(userID String, object : Text) : null
     + void Get(userID String, textID: UUID) : Text | null
-    + void FindByUserID(UserID: UUID) : List[Text]
+    + void FindAll(UserID: UUID) : List[Text]
+    + void ReplaceAll(userID: UUID, List[Text]): null
 }
 
 class client.domain.repositories.BinaryRepositoryInterface {
@@ -76,7 +80,8 @@ class client.domain.repositories.BinaryRepositoryInterface {
     + void Create(userID String, object : Binary) : Null
     + void Update(userID String, object : Binary) : null
     + void Get(userID String binaryID: UUID) : Binary | null
-    + void FindByUserID(UserID: UUID) : List[Binary]
+    + void FindAll(UserID: UUID) : List[Binary]
+    + void ReplaceAll(userID: UUID, List[Binary]): null
 }
 
 class client.domain.repositories.BankCardRepositoryInterface {
@@ -84,7 +89,8 @@ class client.domain.repositories.BankCardRepositoryInterface {
     + void Create(userID String, object : BankCard) : Null
     + void Update(userID String, object : BankCard) : null
     + void Get(userID String, bankCardID: UUID) : BankCard | null
-    + void FindByUserID(userID: UUID) : List[BankCard]
+    + void FindAll(userID: UUID) : List[BankCard]
+    + void ReplaceAll(userID: UUID, List[BankCard]): null
 }
 
 class client.domain.client.GophKeeperInterface {

@@ -1,3 +1,4 @@
+// Package presentation содержит фабрику роутера, обработчики и схемы валидации
 package presentation
 
 import (
