@@ -94,6 +94,7 @@ func (r SessionRepository) Get() (*domain.Session, error) {
 	return &session, nil
 }
 
+// Delete - Удаляет существуюущую сессию
 func (r SessionRepository) Delete() error {
 	return r.DB.Update(func(tx *bolt.Tx) error {
 		root := tx.Bucket([]byte("ActiveSession"))

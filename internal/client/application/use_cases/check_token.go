@@ -12,9 +12,11 @@ import (
 // CheckToken - Сценарий проверки JWT, возвращает UserID в формате строки
 type CheckToken struct {
 	// Client - Реализация интерфейса GophKeeperClient
-	Client        domain.GophKeeperClientInterface
+	Client domain.GophKeeperClientInterface
+	// JWKRepository - Реализация интерфейса JWKRepositoryInterface
 	JWKRepository domain.JWKRepositoryInterface
-	Key           jwk.Key
+	// Key - Ключ для проверки JWT
+	Key jwk.Key
 }
 
 func (u CheckToken) getUserID(token string) (string, error) {

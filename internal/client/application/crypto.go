@@ -22,7 +22,7 @@ func (c CryptoService) generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
-// Encrypt - Шифрует текстовые данные, возвращает результат в формате строки
+// Encrypt - Зашифровывает данные
 func (c CryptoService) Encrypt(value []byte) ([]byte, error) {
 	aesblock, err := aes.NewCipher(c.SecretKey)
 	if err != nil {
@@ -44,7 +44,7 @@ func (c CryptoService) Encrypt(value []byte) ([]byte, error) {
 	return result, nil
 }
 
-// Decrypt - Расшифровывает текстовые данные, возвращает результат в формате строки
+// Decrypt - Расшифровывает данные
 func (c CryptoService) Decrypt(value []byte) ([]byte, error) {
 	aesblock, err := aes.NewCipher(c.SecretKey)
 	if err != nil {

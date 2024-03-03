@@ -92,6 +92,7 @@ func (r JWKRepository) Get() (jwk.Key, error) {
 	return key, nil
 }
 
+// Delete - Удаляет существующий ключ
 func (r JWKRepository) Delete() error {
 	return r.DB.Update(func(tx *bolt.Tx) error {
 		root := tx.Bucket([]byte("JWK"))

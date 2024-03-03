@@ -1,4 +1,4 @@
-// Package tests ...
+// Package tests содержит интеграционные тесты клиента
 package tests
 
 import (

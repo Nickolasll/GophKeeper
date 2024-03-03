@@ -16,9 +16,9 @@ import (
 const jsonType = "application/json"
 const textType = "plain/text"
 
-type authenticatedHandler func(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
-
 var errInvalidContentType = errors.New("invalid content type")
+
+type authenticatedHandler func(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 
 func getRouteID(r *http.Request, name string) (uuid.UUID, error) {
 	strID := chi.URLParam(r, name)
