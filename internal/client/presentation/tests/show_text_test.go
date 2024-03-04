@@ -99,7 +99,7 @@ func TestShowTextExpiredToken(t *testing.T) {
 		require.NoError(t, err)
 	}()
 
-	_, err = createExpiredSession()
+	err = createExpiredSession()
 	require.NoError(t, err)
 
 	args := []string{

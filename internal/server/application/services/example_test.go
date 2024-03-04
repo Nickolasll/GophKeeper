@@ -14,7 +14,7 @@ func ExampleCryptoService() {
 
 	data := "Example string for encryption"
 
-	encrypted, err := cryptoService.Encrypt(data)
+	encrypted, err := cryptoService.Encrypt([]byte(data))
 	if err != nil {
 		// Возникла проблема в процессе шифрования данных
 	}
@@ -25,7 +25,7 @@ func ExampleCryptoService() {
 		// Возникла проблема в процессе дешифрования данных
 	}
 
-	if decrypted == data {
+	if string(decrypted) == data {
 		// Данные расшифрованы успешно
 	}
 }

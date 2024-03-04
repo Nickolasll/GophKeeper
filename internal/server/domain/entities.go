@@ -24,3 +24,13 @@ type Text struct {
 	// Content - Зашифрованный текст
 	Content []byte
 }
+
+// Binary - Сущность типа хранимой информации "Произвольные бинарные данные"
+type Binary struct {
+	// ID - Уникальный идентификатор "Текстовых данных"
+	ID uuid.UUID
+	// UserID - Ссылка на пользователя
+	UserID uuid.UUID
+	// Content - Зашифрованные бинарные данные
+	Content []byte
+}

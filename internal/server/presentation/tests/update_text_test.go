@@ -13,9 +13,9 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
-const updateTextURL = "/api/v1/text/"
+const textURL = "/api/v1/text/"
 
-func TestUpdateTextBadRequest(t *testing.T) {
+func TestUpdateTextBadRequest(t *testing.T) { //nolint: dupl
 	tests := []struct {
 		name        string
 		body        []byte
@@ -54,7 +54,7 @@ func TestUpdateTextBadRequest(t *testing.T) {
 			require.NoError(t, err)
 
 			bodyReader := bytes.NewReader(tt.body)
-			req := httptest.NewRequest("POST", updateTextURL+tt.resuorceID, bodyReader)
+			req := httptest.NewRequest("POST", textURL+tt.resuorceID, bodyReader)
 			req.Header.Add("Content-Type", tt.contentType)
 			req.Header.Add("Authorization", string(token))
 			responseRecorder := httptest.NewRecorder()
@@ -87,23 +87,23 @@ func TestUpdateTextSuccess(t *testing.T) {
 	message := "my message to update"
 
 	bodyReader := bytes.NewReader([]byte(message))
-	req := httptest.NewRequest("POST", updateTextURL+textID.String(), bodyReader)
+	req := httptest.NewRequest("POST", textURL+textID.String(), bodyReader)
 	req.Header.Add("Content-Type", "plain/text")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()
 	router.ServeHTTP(responseRecorder, req)
 	assert.Equal(t, http.StatusOK, responseRecorder.Code)
 
-	textObj, err := textRepository.Get(textID, userID)
+	textObj, err := textRepository.Get(userID, textID)
 	require.NoError(t, err)
 
 	decrypted, err := crypto.Decrypt(textObj.Content)
 	require.NoError(t, err)
 
-	assert.Equal(t, message, decrypted)
+	assert.Equal(t, message, string(decrypted))
 }
 
-func TestUpdateNotFound(t *testing.T) {
+func TestUpdateTextNotFound(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()
@@ -117,7 +117,7 @@ func TestUpdateNotFound(t *testing.T) {
 	message := "my message to update"
 
 	bodyReader := bytes.NewReader([]byte(message))
-	req := httptest.NewRequest("POST", updateTextURL+uuid.NewString(), bodyReader)
+	req := httptest.NewRequest("POST", textURL+uuid.NewString(), bodyReader)
 	req.Header.Add("Content-Type", "plain/text")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()
@@ -125,7 +125,7 @@ func TestUpdateNotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, responseRecorder.Code)
 }
 
-func TestUpdateInvalidID(t *testing.T) {
+func TestUpdateTextInvalidID(t *testing.T) { //nolint: dupl
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()
@@ -137,7 +137,7 @@ func TestUpdateInvalidID(t *testing.T) {
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader([]byte("message"))
-	req := httptest.NewRequest("POST", updateTextURL+"invalid", bodyReader)
+	req := httptest.NewRequest("POST", textURL+"invalid", bodyReader)
 	req.Header.Add("Content-Type", "plain/text")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()

@@ -22,8 +22,8 @@ func (c CryptoService) generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
-// Encrypt - Шифрует текстовые данные, возвращает результат в формате строки
-func (c CryptoService) Encrypt(value string) ([]byte, error) {
+// Encrypt - Защифровывает бинарные данные
+func (c CryptoService) Encrypt(value []byte) ([]byte, error) {
 	aesblock, err := aes.NewCipher(c.SecretKey)
 	if err != nil {
 		return []byte{}, err
@@ -39,29 +39,29 @@ func (c CryptoService) Encrypt(value string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	result := aesgcm.Seal(nonce, nonce, []byte(value), nil)
+	result := aesgcm.Seal(nonce, nonce, value, nil)
 
 	return result, nil
 }
 
-// Decrypt - Расшифровывает текстовые данные, возвращает результат в формате строки
-func (c CryptoService) Decrypt(value []byte) (string, error) {
+// Decrypt - Расшифровывает бинарные
+func (c CryptoService) Decrypt(value []byte) ([]byte, error) {
 	aesblock, err := aes.NewCipher(c.SecretKey)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 
 	aesgcm, err := cipher.NewGCM(aesblock)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	nonceSize := aesgcm.NonceSize()
 	nonce, ciphertext := value[:nonceSize], value[nonceSize:]
 
 	result, err := aesgcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 
-	return string(result), nil
+	return result, nil
 }

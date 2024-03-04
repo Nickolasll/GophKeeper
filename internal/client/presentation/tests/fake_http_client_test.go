@@ -51,3 +51,17 @@ func (c FakeHTTPClient) UpdateText(_ domain.Session, _ domain.Text) error {
 func (c FakeHTTPClient) GetCerts() ([]byte, error) {
 	return c.Certs, nil
 }
+
+// CreateText - Создает текст, возвращает идентификатор ресурса от сервера
+func (c FakeHTTPClient) CreateBinary(_ domain.Session, _ []byte) (string, error) {
+	if c.Err != nil {
+		return uuid.NewString(), c.Err
+	}
+
+	return c.Response.(string), nil
+}
+
+// UpdateText - Обновляет существующий текст
+func (c FakeHTTPClient) UpdateBinary(_ domain.Session, _ domain.Binary) error {
+	return c.Err
+}

@@ -36,3 +36,15 @@ type JWKRepositoryInterface interface {
 	// Delete - Удаляет существующий ключ
 	Delete() error
 }
+
+// BinaryRepositoryInterface - Интерфейс репозитория для произвольных бинарных данных
+type BinaryRepositoryInterface interface {
+	// Create - Сохраняет новые бинарные данные
+	Create(userID string, bin Binary) error
+	// Update - Сохраняет существующие бинарные данные
+	Update(userID string, bin Binary) error
+	// Get - Возвращает бинарные данные по идентификатору данных и пользователя, если они существуют
+	Get(userID string, binID string) (Binary, error)
+	// GetAll - возвращает все бинарные данные для пользователя
+	GetAll(userID string) ([]Binary, error)
+}

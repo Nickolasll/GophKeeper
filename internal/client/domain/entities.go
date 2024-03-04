@@ -16,3 +16,11 @@ type Text struct {
 	// Content - Текст
 	Content string
 }
+
+// Binary - Сущность типа хранимой информации "Произвольные бинарные данные"
+type Binary struct {
+	// ID - Уникальный идентификатор "Бинарных данных данных"
+	ID string
+	// Content - Бинарные данные
+	Content []byte
+}

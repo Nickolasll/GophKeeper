@@ -48,17 +48,17 @@ func TestCrypto(t *testing.T) {
 			SecretKey: []byte("1234567812345678"),
 		}
 		t.Run(tt.name, func(t *testing.T) {
-			encr1, err := cryptoService.Encrypt(tt.want)
+			encr1, err := cryptoService.Encrypt([]byte(tt.want))
 			require.NoError(t, err)
-			encr2, err := cryptoService.Encrypt(tt.want)
+			encr2, err := cryptoService.Encrypt([]byte(tt.want))
 			require.NoError(t, err)
 			assert.NotEqual(t, encr1, encr2)
 			decr1, err := cryptoService.Decrypt(encr1)
 			require.NoError(t, err)
-			assert.Equal(t, decr1, tt.want)
+			assert.Equal(t, string(decr1), tt.want)
 			decr2, err := cryptoService.Decrypt(encr2)
 			require.NoError(t, err)
-			assert.Equal(t, decr2, tt.want)
+			assert.Equal(t, string(decr2), tt.want)
 		})
 	}
 }
@@ -67,8 +67,9 @@ func TestCryptoInvalidSecretKey(t *testing.T) {
 	cryptoService := CryptoService{
 		SecretKey: []byte("w"),
 	}
-	_, err := cryptoService.Encrypt("test")
+	data := []byte("test")
+	_, err := cryptoService.Encrypt(data)
 	require.Error(t, err)
-	_, err = cryptoService.Decrypt([]byte("test"))
+	_, err = cryptoService.Decrypt(data)
 	require.Error(t, err)
 }

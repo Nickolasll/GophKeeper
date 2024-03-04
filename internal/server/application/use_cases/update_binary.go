@@ -1,0 +1,37 @@
+// Package usecases содержит имплементацию бизнес логики приложения
+package usecases
+
+import (
+	"github.com/google/uuid"
+
+	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
+	"github.com/Nickolasll/goph-keeper/internal/server/domain"
+)
+
+// UpdateBinary - Сценарий использования для обновления существующих зашифрованных бинарных данных
+type UpdateBinary struct {
+	// TextRepository - Интерфейс репозитория для сохранения бинарных данных
+	BinaryRepository domain.BinaryRepositoryInterface
+	// Crypto - Сервис для шифрования данных
+	Crypto services.CryptoService
+}
+
+// Execute - Вызов исполнения сценария использования
+func (u UpdateBinary) Execute(userID, id uuid.UUID, content []byte) error {
+	bin, err := u.BinaryRepository.Get(userID, id)
+	if err != nil {
+		return err
+	}
+	if bin == nil {
+		return domain.ErrEntityNotFound
+	}
+
+	encryptedContent, err := u.Crypto.Encrypt(content)
+	if err != nil {
+		return err
+	}
+	bin.Content = encryptedContent
+	err = u.BinaryRepository.Update(*bin)
+
+	return err
+}

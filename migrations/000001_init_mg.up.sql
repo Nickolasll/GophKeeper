@@ -6,11 +6,20 @@ CREATE TABLE users (
 
 CREATE INDEX login_idx on users(login);
 
-CREATE TABLE text (
+CREATE TABLE text_data (
 	id         uuid          NOT NULL PRIMARY KEY
 	, user_id  uuid          NOT NULL
 	, content  bytea         NOT NULL
 );
 
-ALTER TABLE text
+ALTER TABLE text_data
+	ADD FOREIGN KEY (user_id) REFERENCES users(id);
+
+CREATE TABLE binary_data (
+	id         uuid          NOT NULL PRIMARY KEY
+	, user_id  uuid          NOT NULL
+	, content  bytea         NOT NULL
+);
+
+ALTER TABLE binary_data
 	ADD FOREIGN KEY (user_id) REFERENCES users(id);

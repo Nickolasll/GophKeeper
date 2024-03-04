@@ -31,9 +31,14 @@ func CLIFactory(
 
 	cmdRegistration := registration()
 	cmdLogin := login()
+
 	cmdCreateText := createText()
 	cmdUpdateText := updateText()
 	cmdShowText := showText()
+
+	cmdCreateBinary := createBinary()
+	cmdUpdateBinary := updateBinary()
+	cmdShowBinary := showBinary()
 
 	cmd := cli.Command{
 		Name:                  "gophkeeper",
@@ -51,6 +56,16 @@ func CLIFactory(
 					&cmdCreateText,
 					&cmdUpdateText,
 					&cmdShowText,
+				},
+			},
+			{
+				Name:    "binary",
+				Aliases: []string{"b"},
+				Usage:   "options for binary",
+				Commands: []*cli.Command{
+					&cmdCreateBinary,
+					&cmdUpdateBinary,
+					&cmdShowBinary,
 				},
 			},
 		},

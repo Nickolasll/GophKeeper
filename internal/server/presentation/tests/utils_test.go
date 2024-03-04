@@ -20,9 +20,10 @@ import (
 
 var jose services.JOSEService
 var pool *pgxpool.Pool
+var crypto services.CryptoService
 var userRepository infrastructure.UserRepository
 var textRepository infrastructure.TextRepository
-var crypto services.CryptoService
+var binaryRepository infrastructure.BinaryRepository
 
 type config struct {
 	TimeoutDuration time.Duration
@@ -43,11 +44,18 @@ func setup() (*chi.Mux, error) {
 	if err != nil {
 		return nil, err
 	}
-	jose = services.JOSEService{TokenExp: cfg.TimeoutDuration, JWKS: key}
+	jose = services.JOSEService{
+		TokenExp: cfg.TimeoutDuration,
+		JWKS:     key,
+	}
 
 	pool, err = pgxpool.New(context.Background(), cfg.PostgresURL)
 	if err != nil {
 		return nil, err
+	}
+
+	crypto = services.CryptoService{
+		SecretKey: cfg.CryptoSecretKey,
 	}
 
 	userRepository = infrastructure.UserRepository{
@@ -58,16 +66,17 @@ func setup() (*chi.Mux, error) {
 		DBPool:  pool,
 		Timeout: cfg.TimeoutDuration,
 	}
-
-	crypto = services.CryptoService{
-		SecretKey: cfg.CryptoSecretKey,
+	binaryRepository = infrastructure.BinaryRepository{
+		DBPool:  pool,
+		Timeout: cfg.TimeoutDuration,
 	}
 
 	app := application.CreateApplication(
-		userRepository,
-		textRepository,
 		jose,
 		crypto,
+		userRepository,
+		textRepository,
+		binaryRepository,
 	)
 	log := logrus.New()
 	router := presentation.ChiFactory(&app, &jose, log)

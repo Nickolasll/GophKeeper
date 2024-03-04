@@ -3,7 +3,6 @@ package infrastructure
 
 import (
 	"crypto/tls"
-	"crypto/x509"
 	"net/http"
 	"time"
 
@@ -18,15 +17,7 @@ type HTTPClient struct {
 }
 
 // New - Конструктор нового инстанса клиента
-func (HTTPClient) New(cert []byte, timeout time.Duration, baseURL string) HTTPClient {
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(cert)
-
-	tlsConfig := &tls.Config{
-		Renegotiation: tls.RenegotiateOnceAsClient,
-		RootCAs:       caCertPool,
-		MinVersion:    tls.VersionTLS13,
-	}
+func (HTTPClient) New(tlsConfig *tls.Config, timeout time.Duration, baseURL string) HTTPClient {
 
 	client := resty.New().SetTLSClientConfig(tlsConfig).SetTimeout(timeout).SetBaseURL(baseURL)
 
@@ -83,13 +74,12 @@ func (c HTTPClient) Register(login, password string) (string, error) {
 	return "", domain.ErrClientConnectionError
 }
 
-// CreateText - Создает текст, возвращает идентификатор ресурса от сервера
-func (c HTTPClient) CreateText(session domain.Session, content string) (string, error) {
+func (c HTTPClient) create(authToken, uri, contentType string, body any) (string, error) {
 	resp, err := c.client.R().
-		SetHeader("Content-Type", "plain/text").
-		SetHeader("Authorization", session.Token).
-		SetBody(content).
-		Post("text/create")
+		SetHeader("Content-Type", contentType).
+		SetHeader("Authorization", authToken).
+		SetBody(body).
+		Post(uri)
 
 	if err != nil {
 		return "", err
@@ -102,13 +92,12 @@ func (c HTTPClient) CreateText(session domain.Session, content string) (string, 
 	return "", domain.ErrClientConnectionError
 }
 
-// UpdateText - Обновляет существующий текст
-func (c HTTPClient) UpdateText(session domain.Session, text domain.Text) error {
+func (c HTTPClient) update(authToken, uri, contentType string, body any) error {
 	resp, err := c.client.R().
-		SetHeader("Content-Type", "plain/text").
-		SetHeader("Authorization", session.Token).
-		SetBody(text.Content).
-		Post("text/" + text.ID)
+		SetHeader("Content-Type", contentType).
+		SetHeader("Authorization", authToken).
+		SetBody(body).
+		Post(uri)
 
 	if err != nil {
 		return err
@@ -126,6 +115,28 @@ func (c HTTPClient) UpdateText(session domain.Session, text domain.Text) error {
 	return domain.ErrClientConnectionError
 }
 
+// CreateText - Создает текст, возвращает идентификатор ресурса от сервера
+func (c HTTPClient) CreateText(session domain.Session, content string) (string, error) {
+	id, err := c.create(session.Token, "text/create", "plain/text", content)
+
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
+}
+
+// UpdateText - Обновляет существующий текст
+func (c HTTPClient) UpdateText(session domain.Session, text domain.Text) error {
+	err := c.update(session.Token, "text/"+text.ID, "plain/text", text.Content)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetCerts - Возвращает публичный ключ для валидации и парсинга JWT
 func (c HTTPClient) GetCerts() ([]byte, error) {
 	resp, err := c.client.R().Get("/auth/certs")
@@ -138,4 +149,26 @@ func (c HTTPClient) GetCerts() ([]byte, error) {
 	}
 
 	return []byte{}, domain.ErrClientConnectionError
+}
+
+// CreateBinary - Создает бинарные данные, возвращает идентификатор ресурса от сервера
+func (c HTTPClient) CreateBinary(session domain.Session, content []byte) (string, error) {
+	id, err := c.create(session.Token, "binary/create", "multipart/form-data", content)
+
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
+}
+
+// UpdateBinary - Обновляет существующие бинарные данные
+func (c HTTPClient) UpdateBinary(session domain.Session, bin domain.Binary) error {
+	err := c.update(session.Token, "binary/"+bin.ID, "multipart/form-data", bin.Content)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

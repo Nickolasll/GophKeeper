@@ -10,7 +10,7 @@ import (
 
 // CreateText - Сценарий использования для создания зашифрованных текстовых данных
 type CreateText struct {
-	// TextRepository - Интерфейс репозитория для сохранения текстовых данны
+	// TextRepository - Интерфейс репозитория для сохранения текстовых данных
 	TextRepository domain.TextRepositoryInterface
 	// Crypto - Сервис для шифрования данных
 	Crypto services.CryptoService
@@ -19,7 +19,7 @@ type CreateText struct {
 // Execute - Вызов исполнения сценария использования, возвращает идентификатор ресурса
 func (u CreateText) Execute(userID uuid.UUID, content string) (uuid.UUID, error) {
 	textID := uuid.New()
-	encryptedContent, err := u.Crypto.Encrypt(content)
+	encryptedContent, err := u.Crypto.Encrypt([]byte(content))
 	if err != nil {
 		return textID, err
 	}

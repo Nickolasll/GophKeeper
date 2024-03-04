@@ -17,14 +17,19 @@ type Application struct {
 	CreateText usecases.CreateText
 	// UpdateText - Сценарий использования для обновления существующих зашифрованных текстовых данных
 	UpdateText usecases.UpdateText
+	// CreateText - Сценарий использования для создания зашифрованных бинарных данных
+	CreateBinary usecases.CreateBinary
+	// UpdateText - Сценарий использования для обновления существующих зашифрованных бинарных данных
+	UpdateBinary usecases.UpdateBinary
 }
 
 // CreateApplication - Фабрика приложения
 func CreateApplication(
-	userRepository domain.UserRepositoryInterface,
-	textRepository domain.TextRepositoryInterface,
 	jose services.JOSEService,
 	crypto services.CryptoService,
+	userRepository domain.UserRepositoryInterface,
+	textRepository domain.TextRepositoryInterface,
+	binaryRepository domain.BinaryRepositoryInterface,
 ) Application {
 	registration := usecases.Registration{
 		UserRepository: userRepository,
@@ -46,10 +51,22 @@ func CreateApplication(
 		Crypto:         crypto,
 	}
 
+	createBinary := usecases.CreateBinary{
+		BinaryRepository: binaryRepository,
+		Crypto:           crypto,
+	}
+
+	updateBinary := usecases.UpdateBinary{
+		BinaryRepository: binaryRepository,
+		Crypto:           crypto,
+	}
+
 	return Application{
 		Registration: registration,
 		Login:        login,
 		CreateText:   createText,
 		UpdateText:   updateText,
+		CreateBinary: createBinary,
+		UpdateBinary: updateBinary,
 	}
 }

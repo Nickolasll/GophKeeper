@@ -10,7 +10,7 @@ import (
 
 // UpdateText - Сценарий использования для обновления существующих зашифрованных текстовых данных
 type UpdateText struct {
-	// TextRepository - Интерфейс репозитория для сохранения текстовых данны
+	// TextRepository - Интерфейс репозитория для сохранения текстовых данных
 	TextRepository domain.TextRepositoryInterface
 	// Crypto - Сервис для шифрования данных
 	Crypto services.CryptoService
@@ -18,7 +18,7 @@ type UpdateText struct {
 
 // Execute - Вызов исполнения сценария использования
 func (u UpdateText) Execute(userID, id uuid.UUID, content string) error {
-	text, err := u.TextRepository.Get(id, userID)
+	text, err := u.TextRepository.Get(userID, id)
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func (u UpdateText) Execute(userID, id uuid.UUID, content string) error {
 		return domain.ErrEntityNotFound
 	}
 
-	encryptedContent, err := u.Crypto.Encrypt(content)
+	encryptedContent, err := u.Crypto.Encrypt([]byte(content))
 	if err != nil {
 		return err
 	}

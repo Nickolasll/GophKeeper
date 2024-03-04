@@ -25,6 +25,7 @@ lint:
 test:
 	go test -race -coverpkg=./... -coverprofile=$(REPORTS)/coverage.out -v 2>&1 ./... | go-junit-report -out $(REPORTS)/junit.xml -iocopy -set-exit-code
 	go tool cover -html=$(REPORTS)/coverage.out -o $(REPORTS)/coverage.html
+	go tool cover -func $(REPORTS)/coverage.out
 
 .tidy:
 	go mod tidy

@@ -19,8 +19,20 @@ type TextRepositoryInterface interface {
 	Create(text Text) error
 	// Update - Сохраняет существующие текстовые данные
 	Update(text Text) error
-	// Get - Возвращает текстовые данные по идентификатору данных и пользователя, если они существуют
-	Get(textID uuid.UUID, userID uuid.UUID) (*Text, error)
-	// FindByUserID - Возвращает список текстовых данных, принадлежащих пользователю
-	FindByUserID(userID uuid.UUID) ([]Text, error)
+	// Get - Возвращает текстовые данные по идентификатору пользователя и данных, если они существуют
+	Get(userID uuid.UUID, textID uuid.UUID) (*Text, error)
+	// GetAll - Возвращает список текстовых данных, принадлежащих пользователю
+	GetAll(userID uuid.UUID) ([]Text, error)
+}
+
+// BinaryRepositoryInterface - Интерфейс репозитория для произвольных бинарных данных
+type BinaryRepositoryInterface interface {
+	// Create - Сохраняет новые бинарные данные
+	Create(bin Binary) error
+	// Update - Сохраняет существующие бинарные данные
+	Update(bin Binary) error
+	// Get - Возвращает бинарные данные по идентификатору пользователя и данных, если они существуют
+	Get(userID uuid.UUID, binID uuid.UUID) (*Binary, error)
+	// GetAll - Возвращает список бинарных данных, принадлежащих пользователю
+	GetAll(userID uuid.UUID) ([]Binary, error)
 }

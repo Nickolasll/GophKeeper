@@ -66,12 +66,17 @@ func main() {
 		DBPool:  pool,
 		Timeout: cfg.DBTimeOut,
 	}
+	binaryRepository := infrastructure.BinaryRepository{
+		DBPool:  pool,
+		Timeout: cfg.DBTimeOut,
+	}
 
 	app := application.CreateApplication(
-		userRepository,
-		textRepository,
 		jose,
 		crypto,
+		userRepository,
+		textRepository,
+		binaryRepository,
 	)
 
 	router := presentation.ChiFactory(&app, &jose, log)

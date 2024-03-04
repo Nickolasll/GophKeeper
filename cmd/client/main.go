@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"os"
 	"time"
 
@@ -43,9 +45,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(cert)
+
+	tlsConfig := &tls.Config{
+		Renegotiation: tls.RenegotiateOnceAsClient,
+		RootCAs:       caCertPool,
+		MinVersion:    tls.VersionTLS13,
+	}
 
 	timeout := time.Duration(cfg.ClientTimeoutSec) * time.Second
-	client := infrastructure.HTTPClient{}.New(cert, timeout, cfg.ServerURL)
+	client := infrastructure.HTTPClient{}.New(tlsConfig, timeout, cfg.ServerURL)
 
 	crypto := application.CryptoService{
 		SecretKey: cfg.CryptoSecretKey,
@@ -63,12 +73,17 @@ func main() {
 		DB:     db,
 		Crypto: crypto,
 	}
+	binaryRepository := infrastructure.BinaryRepository{
+		DB:     db,
+		Crypto: crypto,
+	}
 
 	app := application.CreateApplication(
 		client,
 		sessionRepository,
 		textRepository,
 		jwkRepository,
+		binaryRepository,
 	)
 
 	cmd = presentation.CLIFactory(&app, log, sessionRepository)

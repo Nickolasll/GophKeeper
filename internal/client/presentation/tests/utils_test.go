@@ -21,10 +21,11 @@ import (
 )
 
 var db *bolt.DB
+var crypto application.CryptoService
 var sessionRepository infrastructure.SessionRepository
 var textRepository infrastructure.TextRepository
 var jwkRepository infrastructure.JWKRepository
-var crypto application.CryptoService
+var binaryRepository infrastructure.BinaryRepository
 
 type config struct {
 	CryptoSecretKey []byte
@@ -90,12 +91,17 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		DB:     db,
 		Crypto: crypto,
 	}
+	binaryRepository = infrastructure.BinaryRepository{
+		DB:     db,
+		Crypto: crypto,
+	}
 
 	app := application.CreateApplication(
 		client,
 		sessionRepository,
 		textRepository,
 		jwkRepository,
+		binaryRepository,
 	)
 
 	cmd = presentation.CLIFactory(&app, log, sessionRepository)
@@ -161,11 +167,11 @@ func createSession() (string, error) {
 	return userID, nil
 }
 
-func createExpiredSession() (string, error) {
+func createExpiredSession() error {
 	userID := uuid.NewString()
 	token, err := issueToken(userID, time.Duration(0))
 	if err != nil {
-		return userID, err
+		return err
 	}
 
 	session := domain.Session{
@@ -174,9 +180,9 @@ func createExpiredSession() (string, error) {
 	}
 	err = sessionRepository.Save(session)
 	if err != nil {
-		return userID, err
+		return err
 	}
 	presentation.SetSession(&session)
 
-	return userID, nil
+	return nil
 }

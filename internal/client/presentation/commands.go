@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/urfave/cli/v3"
 
@@ -138,7 +139,7 @@ func updateText() cli.Command {
 	}
 }
 
-func showText() cli.Command {
+func showText() cli.Command { //nolint: dupl
 	return cli.Command{
 		Name:    "show",
 		Usage:   "shows current user text data",
@@ -151,6 +152,129 @@ func showText() cli.Command {
 			}
 
 			text, err := app.ShowText.Execute(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+
+			s, err := json.MarshalIndent(text, "", "\t")
+			if err != nil {
+				log.Error(err)
+
+				return cli.Exit(err, 1)
+			}
+			fmt.Print(string(s))
+
+			return nil
+		},
+	}
+}
+
+func createBinary() cli.Command {
+	return cli.Command{
+		Name:    "create",
+		Usage:   "create new binary content",
+		Aliases: []string{"c"},
+		Action: func(_ context.Context, cmd *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			contentPath := cmd.Args().First()
+			content, err := os.ReadFile(contentPath) //nolint: gosec
+			if err != nil {
+				fmt.Println(err)
+
+				return nil
+			}
+
+			err = app.CreateBinary.Execute(*currentSession, content)
+			if err != nil {
+				if errors.Is(err, domain.ErrBadRequest) {
+					fmt.Println(err)
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+
+			fmt.Println("Binary created successfully")
+
+			return nil
+		},
+	}
+}
+
+func updateBinary() cli.Command {
+	return cli.Command{
+		Name:    "update",
+		Usage:   "update existing binary via id and data",
+		Aliases: []string{"c"},
+		Action: func(_ context.Context, cmd *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			binID := cmd.Args().Get(0)
+			contentPath := cmd.Args().Get(1)
+			content, err := os.ReadFile(contentPath) //nolint: gosec
+			if err != nil {
+				fmt.Println(err)
+
+				return nil
+			}
+
+			err = app.UpdateBinary.Execute(*currentSession, binID, content)
+			if err != nil {
+				if errors.Is(err, domain.ErrEntityNotFound) {
+					fmt.Println("Binary not found, id: ", binID)
+
+					return nil
+				} else if errors.Is(err, domain.ErrBadRequest) {
+					fmt.Println(err)
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+			fmt.Println("Binary updated successfully")
+
+			return nil
+		},
+	}
+}
+
+func showBinary() cli.Command { //nolint: dupl
+	return cli.Command{
+		Name:    "show",
+		Usage:   "shows current user binary data",
+		Aliases: []string{"c"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			text, err := app.ShowBinary.Execute(*currentSession)
 
 			if err != nil {
 				if errors.Is(err, domain.ErrInvalidToken) {

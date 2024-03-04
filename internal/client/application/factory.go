@@ -18,6 +18,12 @@ type Application struct {
 	UpdateText usecases.UpdateText
 	// ShowText - Сценарий получения расшифрованных текстовых данных
 	ShowText usecases.ShowText
+	// CreateBinary - Сценарий создания новых бинарных данных
+	CreateBinary usecases.CreateBinary
+	// UpdateBinary - Сценарий обновления существующих бинарных данных
+	UpdateBinary usecases.UpdateBinary
+	// ShowBinary - Сценарий получения расшифрованных бинарных данных
+	ShowBinary usecases.ShowBinary
 }
 
 // CreateApplication - Фабрика приложения
@@ -26,6 +32,7 @@ func CreateApplication(
 	sessionRepository domain.SessionRepositoryInterface,
 	textRepository domain.TextRepositoryInterface,
 	jwkRepository domain.JWKRepositoryInterface,
+	binaryRepository domain.BinaryRepositoryInterface,
 ) Application {
 	jwk, err := jwkRepository.Get()
 
@@ -66,11 +73,29 @@ func CreateApplication(
 		TextRepository: textRepository,
 	}
 
+	createBinary := usecases.CreateBinary{
+		Client:           client,
+		BinaryRepository: binaryRepository,
+	}
+
+	updateBinary := usecases.UpdateBinary{
+		Client:           client,
+		BinaryRepository: binaryRepository,
+	}
+
+	showBinary := usecases.ShowBinary{
+		CheckToken:       &checkToken,
+		BinaryRepository: binaryRepository,
+	}
+
 	return Application{
 		Registration: registration,
 		Login:        login,
 		CreateText:   createText,
 		UpdateText:   updateText,
 		ShowText:     showText,
+		CreateBinary: createBinary,
+		UpdateBinary: updateBinary,
+		ShowBinary:   showBinary,
 	}
 }

@@ -34,8 +34,12 @@ func ChiFactory(
 	router.Post("/api/v1/auth/register", registrationHandler)
 	router.Post("/api/v1/auth/login", loginHandler)
 	router.Get("/api/v1/auth/certs", getCertsHandler)
+
 	router.Post("/api/v1/text/create", auth(createTextHandler))
 	router.Post("/api/v1/text/{textID}", auth(updateTextHandler))
+
+	router.Post("/api/v1/binary/create", auth(createBinaryHandler))
+	router.Post("/api/v1/binary/{binaryID}", auth(updateBinaryHandler))
 
 	return router
 }

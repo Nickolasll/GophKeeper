@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateTextBadRequest(t *testing.T) {
+func TestCreateTextBadRequest(t *testing.T) { //nolint: dupl
 	tests := []struct {
 		name        string
 		body        []byte
@@ -77,11 +77,11 @@ func TestCreateTextSuccess(t *testing.T) {
 	textID, err := uuid.Parse(id)
 	require.NoError(t, err)
 
-	textObj, err := textRepository.Get(textID, userID)
+	textObj, err := textRepository.Get(userID, textID)
 	require.NoError(t, err)
 
 	decrypted, err := crypto.Decrypt(textObj.Content)
 	require.NoError(t, err)
 
-	assert.Equal(t, message, decrypted)
+	assert.Equal(t, message, string(decrypted))
 }

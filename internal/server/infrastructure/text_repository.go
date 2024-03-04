@@ -1,5 +1,5 @@
 // Package infrastructure содержит имлементацию репозиториев
-package infrastructure
+package infrastructure //nolint: dupl
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func (r TextRepository) Create(text domain.Text) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.Timeout)
 	defer cancel()
 	sql := `
-		INSERT INTO text
+		INSERT INTO text_data
 		(
 			id
 			, user_id
@@ -55,12 +55,12 @@ func (r TextRepository) Update(text domain.Text) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.Timeout)
 	defer cancel()
 	sql := `
-		UPDATE text
+		UPDATE text_data
 		SET 
 			content = @content
 		WHERE
-			text.id = @id
-		    AND text.user_id = @userID
+		    text_data.id = @id
+		    AND text_data.user_id = @userID
 		;`
 
 	args := pgx.NamedArgs{
@@ -73,22 +73,22 @@ func (r TextRepository) Update(text domain.Text) error {
 	return err
 }
 
-// Get - Возвращает текстовые данные по идентификатору данных и пользователя, если они существуют
-func (r TextRepository) Get(textID, userID uuid.UUID) (*domain.Text, error) {
+// Get - Возвращает текстовые данные по идентификатору пользователя и данных, если они существуют
+func (r TextRepository) Get(userID, textID uuid.UUID) (*domain.Text, error) {
 	var text domain.Text
 
 	ctx, cancel := context.WithTimeout(context.Background(), r.Timeout)
 	defer cancel()
 	sql := `
 		SELECT
-			text.id
-			, text.user_id
-			, text.content
+		    text_data.id
+			, text_data.user_id
+			, text_data.content
 		FROM
-			text
+		    text_data
 		WHERE
-			text.id = @textID
-		    AND text.user_id = @userID
+		    text_data.id = @textID
+		    AND text_data.user_id = @userID
 		;`
 	args := pgx.NamedArgs{
 		"textID": textID,
@@ -107,20 +107,20 @@ func (r TextRepository) Get(textID, userID uuid.UUID) (*domain.Text, error) {
 	return &text, err
 }
 
-// FindByUserID - Возвращает список текстовых данных, принадлежащих пользователю
-func (r TextRepository) FindByUserID(userID uuid.UUID) ([]domain.Text, error) {
+// GetAll - Возвращает список текстовых данных, принадлежащих пользователю
+func (r TextRepository) GetAll(userID uuid.UUID) ([]domain.Text, error) {
 	result := []domain.Text{}
 	ctx, cancel := context.WithTimeout(context.Background(), r.Timeout)
 	defer cancel()
 	sql := `
 		SELECT
-			text.id
-			, text.user_id
-			, text.content
+		    text_data.id
+			, text_data.user_id
+			, text_data.content
 		FROM
-			text
+		    text_data
 		WHERE
-			text.user_id = @userID
+		    text_data.user_id = @userID
 		;`
 	args := pgx.NamedArgs{
 		"userID": userID,

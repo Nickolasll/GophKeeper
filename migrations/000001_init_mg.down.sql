@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS users, text CASCADE;
+DROP TABLE IF EXISTS users, text_data, binary_data CASCADE;

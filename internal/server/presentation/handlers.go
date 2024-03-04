@@ -15,6 +15,7 @@ import (
 
 const jsonType = "application/json"
 const textType = "plain/text"
+const binaryType = "multipart/form-data"
 
 var errInvalidContentType = errors.New("invalid content type")
 
@@ -185,4 +186,64 @@ func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Error(err)
 	}
+}
+
+func createBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	body, err := parseBody(binaryType, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	if len(body) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	binID, err := app.CreateBinary.Execute(userID, body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Error(err)
+
+		return
+	}
+	w.Header().Add("Location", binID.String())
+	w.WriteHeader(http.StatusCreated)
+}
+
+func updateBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	id, err := getRouteID(r, "binaryID")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	body, err := parseBody(binaryType, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	if len(body) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	err = app.UpdateBinary.Execute(userID, id, body)
+	if err != nil {
+		if errors.Is(err, domain.ErrEntityNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Error(err)
+		}
+
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
