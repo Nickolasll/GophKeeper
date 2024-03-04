@@ -16,8 +16,8 @@ var jose *services.JOSEService
 var validate *validator.Validate
 var router *chi.Mux
 
-// ChiFactory - Фабрика HTTP роутера
-func ChiFactory(
+// New - Фабрика HTTP роутера
+func New(
 	_app *application.Application,
 	_jose *services.JOSEService,
 	_log *logrus.Logger,

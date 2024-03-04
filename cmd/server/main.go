@@ -10,6 +10,7 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/sirupsen/logrus"
 
+	"github.com/Nickolasll/goph-keeper/internal/crypto"
 	"github.com/Nickolasll/goph-keeper/internal/server/application"
 	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
 	"github.com/Nickolasll/goph-keeper/internal/server/infrastructure"
@@ -54,9 +55,7 @@ func main() {
 	}
 
 	jose := services.JOSEService{TokenExp: cfg.JWTExpiration, JWKS: key}
-	crypto := services.CryptoService{
-		SecretKey: cfg.CryptoSecret,
-	}
+	cryptoService := crypto.New(cfg.CryptoSecret)
 
 	userRepository := infrastructure.UserRepository{
 		DBPool:  pool,
@@ -71,15 +70,15 @@ func main() {
 		Timeout: cfg.DBTimeOut,
 	}
 
-	app := application.CreateApplication(
+	app := application.New(
 		jose,
-		crypto,
+		cryptoService,
 		userRepository,
 		textRepository,
 		binaryRepository,
 	)
 
-	router := presentation.ChiFactory(&app, &jose, log)
+	router := presentation.New(&app, &jose, log)
 
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{cert},

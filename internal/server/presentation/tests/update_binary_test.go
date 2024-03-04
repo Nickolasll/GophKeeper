@@ -97,7 +97,7 @@ func TestUpdateBinarySuccess(t *testing.T) {
 	binObj, err := binaryRepository.Get(userID, binID)
 	require.NoError(t, err)
 
-	decrypted, err := crypto.Decrypt(binObj.Content)
+	decrypted, err := cryptoService.Decrypt(binObj.Content)
 	require.NoError(t, err)
 
 	assert.Equal(t, message, decrypted)

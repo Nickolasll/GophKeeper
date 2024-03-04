@@ -23,10 +23,10 @@ type Application struct {
 	UpdateBinary usecases.UpdateBinary
 }
 
-// CreateApplication - Фабрика приложения
-func CreateApplication(
+// New - Фабрика приложения
+func New(
 	jose services.JOSEService,
-	crypto services.CryptoService,
+	crypto domain.CryptoServiceInterface,
 	userRepository domain.UserRepositoryInterface,
 	textRepository domain.TextRepositoryInterface,
 	binaryRepository domain.BinaryRepositoryInterface,

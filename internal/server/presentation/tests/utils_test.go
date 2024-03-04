@@ -11,6 +11,7 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/sirupsen/logrus"
 
+	"github.com/Nickolasll/goph-keeper/internal/crypto"
 	"github.com/Nickolasll/goph-keeper/internal/server/application"
 	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
@@ -20,7 +21,7 @@ import (
 
 var jose services.JOSEService
 var pool *pgxpool.Pool
-var crypto services.CryptoService
+var cryptoService *crypto.CryptoService
 var userRepository infrastructure.UserRepository
 var textRepository infrastructure.TextRepository
 var binaryRepository infrastructure.BinaryRepository
@@ -54,9 +55,7 @@ func setup() (*chi.Mux, error) {
 		return nil, err
 	}
 
-	crypto = services.CryptoService{
-		SecretKey: cfg.CryptoSecretKey,
-	}
+	cryptoService = crypto.New(cfg.CryptoSecretKey)
 
 	userRepository = infrastructure.UserRepository{
 		DBPool:  pool,
@@ -71,15 +70,15 @@ func setup() (*chi.Mux, error) {
 		Timeout: cfg.TimeoutDuration,
 	}
 
-	app := application.CreateApplication(
+	app := application.New(
 		jose,
-		crypto,
+		cryptoService,
 		userRepository,
 		textRepository,
 		binaryRepository,
 	)
 	log := logrus.New()
-	router := presentation.ChiFactory(&app, &jose, log)
+	router := presentation.New(&app, &jose, log)
 
 	return router, nil
 }

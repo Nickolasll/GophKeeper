@@ -4,7 +4,6 @@ package usecases
 import (
 	"github.com/google/uuid"
 
-	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
@@ -13,7 +12,7 @@ type UpdateText struct {
 	// TextRepository - Интерфейс репозитория для сохранения текстовых данных
 	TextRepository domain.TextRepositoryInterface
 	// Crypto - Сервис для шифрования данных
-	Crypto services.CryptoService
+	Crypto domain.CryptoServiceInterface
 }
 
 // Execute - Вызов исполнения сценария использования

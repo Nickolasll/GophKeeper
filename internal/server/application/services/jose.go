@@ -1,4 +1,4 @@
-// Package services содержит имплементацию сервисов Crypto и JOSE
+// Package services содержит имплементацию сервиса JOSE
 package services
 
 import (

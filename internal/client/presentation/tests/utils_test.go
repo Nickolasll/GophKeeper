@@ -18,10 +18,11 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 	"github.com/Nickolasll/goph-keeper/internal/client/infrastructure"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
+	"github.com/Nickolasll/goph-keeper/internal/crypto"
 )
 
 var db *bolt.DB
-var crypto application.CryptoService
+var cryptoService crypto.CryptoService
 var sessionRepository infrastructure.SessionRepository
 var textRepository infrastructure.TextRepository
 var jwkRepository infrastructure.JWKRepository
@@ -73,7 +74,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		return cmd, err
 	}
 
-	crypto = application.CryptoService{
+	cryptoService = crypto.CryptoService{
 		SecretKey: cfg.CryptoSecretKey,
 	}
 
@@ -81,22 +82,22 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 
 	sessionRepository = infrastructure.SessionRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 	textRepository = infrastructure.TextRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 	jwkRepository = infrastructure.JWKRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 	binaryRepository = infrastructure.BinaryRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 
-	app := application.CreateApplication(
+	app := application.New(
 		client,
 		sessionRepository,
 		textRepository,
@@ -104,7 +105,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		binaryRepository,
 	)
 
-	cmd = presentation.CLIFactory(&app, log, sessionRepository)
+	cmd = presentation.New(&app, log, sessionRepository)
 
 	return cmd, nil
 }

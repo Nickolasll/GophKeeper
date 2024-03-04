@@ -26,8 +26,8 @@ type Application struct {
 	ShowBinary usecases.ShowBinary
 }
 
-// CreateApplication - Фабрика приложения
-func CreateApplication(
+// New - Фабрика приложения
+func New(
 	client domain.GophKeeperClientInterface,
 	sessionRepository domain.SessionRepositoryInterface,
 	textRepository domain.TextRepositoryInterface,

@@ -1,5 +1,5 @@
 // Package infrastructure содержит имплементацию репозиториев и клиентов
-package infrastructure // nolint: dupl
+package infrastructure //nolint: dupl
 
 import (
 	"encoding/json"

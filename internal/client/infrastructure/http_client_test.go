@@ -9,7 +9,6 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
-
 	tlsConfig := &tls.Config{
 		Renegotiation: tls.RenegotiateOnceAsClient,
 		MinVersion:    tls.VersionTLS13,

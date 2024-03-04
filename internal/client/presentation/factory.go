@@ -14,7 +14,7 @@ var currentSession *domain.Session
 var sessionRepository domain.SessionRepositoryInterface
 var log *logrus.Logger
 
-func CLIFactory(
+func New(
 	_app *application.Application,
 	_log *logrus.Logger,
 	_sessionRepository domain.SessionRepositoryInterface,

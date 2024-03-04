@@ -97,7 +97,7 @@ func TestUpdateTextSuccess(t *testing.T) {
 	textObj, err := textRepository.Get(userID, textID)
 	require.NoError(t, err)
 
-	decrypted, err := crypto.Decrypt(textObj.Content)
+	decrypted, err := cryptoService.Decrypt(textObj.Content)
 	require.NoError(t, err)
 
 	assert.Equal(t, message, string(decrypted))

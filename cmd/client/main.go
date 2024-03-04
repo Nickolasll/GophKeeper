@@ -14,6 +14,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/application"
 	"github.com/Nickolasll/goph-keeper/internal/client/infrastructure"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
+	"github.com/Nickolasll/goph-keeper/internal/crypto"
 )
 
 type config struct {
@@ -57,28 +58,26 @@ func main() {
 	timeout := time.Duration(cfg.ClientTimeoutSec) * time.Second
 	client := infrastructure.HTTPClient{}.New(tlsConfig, timeout, cfg.ServerURL)
 
-	crypto := application.CryptoService{
-		SecretKey: cfg.CryptoSecretKey,
-	}
+	cryptoService := crypto.New(cfg.CryptoSecretKey)
 
 	sessionRepository := infrastructure.SessionRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 	textRepository := infrastructure.TextRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 	jwkRepository := infrastructure.JWKRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 	binaryRepository := infrastructure.BinaryRepository{
 		DB:     db,
-		Crypto: crypto,
+		Crypto: cryptoService,
 	}
 
-	app := application.CreateApplication(
+	app := application.New(
 		client,
 		sessionRepository,
 		textRepository,
@@ -86,7 +85,7 @@ func main() {
 		binaryRepository,
 	)
 
-	cmd = presentation.CLIFactory(&app, log, sessionRepository)
+	cmd = presentation.New(&app, log, sessionRepository)
 
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
