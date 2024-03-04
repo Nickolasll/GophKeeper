@@ -15,8 +15,8 @@ type CreateText struct {
 	Crypto domain.CryptoServiceInterface
 }
 
-// Execute - Вызов исполнения сценария использования, возвращает идентификатор ресурса
-func (u CreateText) Execute(userID uuid.UUID, content string) (uuid.UUID, error) {
+// Do - Вызов исполнения сценария использования, возвращает идентификатор ресурса
+func (u CreateText) Do(userID uuid.UUID, content string) (uuid.UUID, error) {
 	textID := uuid.New()
 	encryptedContent, err := u.Crypto.Encrypt([]byte(content))
 	if err != nil {

@@ -51,8 +51,8 @@ func (u *CheckToken) setupKey() error {
 	return nil
 }
 
-// Execute - Вызов логики сценария использования
-func (u CheckToken) Execute(token string) (string, error) {
+// Do - Вызов логики сценария использования
+func (u CheckToken) Do(token string) (string, error) {
 	if u.Key == nil {
 		err := u.setupKey()
 		if err != nil {
@@ -80,7 +80,7 @@ func (u CheckToken) Execute(token string) (string, error) {
 
 func (u CheckToken) getSessionFromToken(token string) (domain.Session, error) {
 	var session domain.Session
-	userID, err := u.Execute(token)
+	userID, err := u.Do(token)
 	if err != nil {
 		return session, err
 	}

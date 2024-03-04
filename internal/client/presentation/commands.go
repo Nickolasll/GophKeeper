@@ -21,7 +21,7 @@ func registration() cli.Command {
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			login := cmd.Args().Get(0)
 			password := cmd.Args().Get(1)
-			session, err := app.Registration.Execute(login, password)
+			session, err := app.Registration.Do(login, password)
 			if err != nil {
 				if errors.Is(err, domain.ErrLoginConflict) {
 					fmt.Println("user with this login already exists: ", login)
@@ -49,7 +49,7 @@ func login() cli.Command {
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			login := cmd.Args().Get(0)
 			password := cmd.Args().Get(1)
-			session, err := app.Login.Execute(login, password)
+			session, err := app.Login.Do(login, password)
 			if err != nil {
 				if errors.Is(err, domain.ErrUnauthorized) {
 					fmt.Println(err)
@@ -82,7 +82,7 @@ func createText() cli.Command {
 			}
 
 			content := cmd.Args().First()
-			err := app.CreateText.Execute(*currentSession, content)
+			err := app.CreateText.Do(*currentSession, content)
 			if err != nil {
 				if errors.Is(err, domain.ErrBadRequest) {
 					fmt.Println(err)
@@ -116,7 +116,7 @@ func updateText() cli.Command {
 
 			textID := cmd.Args().Get(0)
 			content := cmd.Args().Get(1)
-			err := app.UpdateText.Execute(*currentSession, textID, content)
+			err := app.UpdateText.Do(*currentSession, textID, content)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
 					fmt.Println("Text not found, id: ", textID)
@@ -151,7 +151,7 @@ func showText() cli.Command { //nolint: dupl
 				return nil
 			}
 
-			text, err := app.ShowText.Execute(*currentSession)
+			text, err := app.ShowText.Do(*currentSession)
 
 			if err != nil {
 				if errors.Is(err, domain.ErrInvalidToken) {
@@ -198,7 +198,7 @@ func createBinary() cli.Command {
 				return nil
 			}
 
-			err = app.CreateBinary.Execute(*currentSession, content)
+			err = app.CreateBinary.Do(*currentSession, content)
 			if err != nil {
 				if errors.Is(err, domain.ErrBadRequest) {
 					fmt.Println(err)
@@ -239,7 +239,7 @@ func updateBinary() cli.Command {
 				return nil
 			}
 
-			err = app.UpdateBinary.Execute(*currentSession, binID, content)
+			err = app.UpdateBinary.Do(*currentSession, binID, content)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
 					fmt.Println("Binary not found, id: ", binID)
@@ -274,7 +274,7 @@ func showBinary() cli.Command { //nolint: dupl
 				return nil
 			}
 
-			text, err := app.ShowBinary.Execute(*currentSession)
+			text, err := app.ShowBinary.Do(*currentSession)
 
 			if err != nil {
 				if errors.Is(err, domain.ErrInvalidToken) {

@@ -13,8 +13,8 @@ type UpdateText struct {
 	TextRepository domain.TextRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u UpdateText) Execute(session domain.Session, textID, content string) error {
+// Do - Вызов логики сценария использования
+func (u UpdateText) Do(session domain.Session, textID, content string) error {
 	text, err := u.TextRepository.Get(session.UserID, textID)
 	if err != nil {
 		return err

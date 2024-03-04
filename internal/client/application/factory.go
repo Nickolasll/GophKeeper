@@ -37,6 +37,7 @@ func New(
 	jwk, err := jwkRepository.Get()
 
 	if err != nil {
+		// Если не нашли ключа в репозитории, клиент запросит его с сервера
 		jwk = nil
 	}
 

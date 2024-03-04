@@ -52,7 +52,7 @@ func registrationHandler(w http.ResponseWriter, r *http.Request) { //nolint: dup
 
 		return
 	}
-	token, err := app.Registration.Execute(payload.Login, payload.Password)
+	token, err := app.Registration.Do(payload.Login, payload.Password)
 	if err != nil {
 		if errors.Is(err, domain.ErrLoginAlreadyInUse) {
 			w.WriteHeader(http.StatusConflict)
@@ -84,7 +84,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) { //nolint: dupl
 
 		return
 	}
-	token, err := app.Login.Execute(payload.Login, payload.Password)
+	token, err := app.Login.Do(payload.Login, payload.Password)
 	if err != nil {
 		if errors.Is(err, domain.ErrLoginOrPasswordIsInvalid) {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -116,7 +116,7 @@ func createTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 
 		return
 	}
-	textID, err := app.CreateText.Execute(userID, payload.Content)
+	textID, err := app.CreateText.Do(userID, payload.Content)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Error(err)
@@ -151,7 +151,7 @@ func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 
 		return
 	}
-	err = app.UpdateText.Execute(userID, payload.ID, payload.Content)
+	err = app.UpdateText.Do(userID, payload.ID, payload.Content)
 	if err != nil {
 		if errors.Is(err, domain.ErrEntityNotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -202,7 +202,7 @@ func createBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUI
 
 		return
 	}
-	binID, err := app.CreateBinary.Execute(userID, body)
+	binID, err := app.CreateBinary.Do(userID, body)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Error(err)
@@ -234,7 +234,7 @@ func updateBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUI
 
 		return
 	}
-	err = app.UpdateBinary.Execute(userID, id, body)
+	err = app.UpdateBinary.Do(userID, id, body)
 	if err != nil {
 		if errors.Is(err, domain.ErrEntityNotFound) {
 			w.WriteHeader(http.StatusNotFound)

@@ -15,8 +15,8 @@ type CreateBinary struct {
 	Crypto domain.CryptoServiceInterface
 }
 
-// Execute - Вызов исполнения сценария использования, возвращает идентификатор ресурса
-func (u *CreateBinary) Execute(userID uuid.UUID, content []byte) (uuid.UUID, error) {
+// Do - Вызов исполнения сценария использования, возвращает идентификатор ресурса
+func (u *CreateBinary) Do(userID uuid.UUID, content []byte) (uuid.UUID, error) {
 	binID := uuid.New()
 	encryptedContent, err := u.Crypto.Encrypt(content)
 	if err != nil {

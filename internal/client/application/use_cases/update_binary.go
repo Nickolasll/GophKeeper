@@ -13,8 +13,8 @@ type UpdateBinary struct {
 	BinaryRepository domain.BinaryRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u UpdateBinary) Execute(session domain.Session, binID string, content []byte) error {
+// Do - Вызов логики сценария использования
+func (u UpdateBinary) Do(session domain.Session, binID string, content []byte) error {
 	bin, err := u.BinaryRepository.Get(session.UserID, binID)
 	if err != nil {
 		return err

@@ -18,8 +18,8 @@ type Registration struct {
 	JOSE services.JOSEService
 }
 
-// Execute - Вызов исполнения сценария использования
-func (u Registration) Execute(login, password string) ([]byte, error) {
+// Do - Вызов исполнения сценария использования
+func (u Registration) Do(login, password string) ([]byte, error) {
 	var token []byte
 
 	user, err := u.UserRepository.GetByLogin(login)

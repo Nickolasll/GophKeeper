@@ -15,8 +15,8 @@ type Login struct {
 	SessionRepository domain.SessionRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u Login) Execute(login, password string) (domain.Session, error) {
+// Do - Вызов логики сценария использования
+func (u Login) Do(login, password string) (domain.Session, error) {
 	var session domain.Session
 	token, err := u.Client.Login(login, password)
 	if err != nil {

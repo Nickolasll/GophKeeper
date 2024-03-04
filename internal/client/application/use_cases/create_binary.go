@@ -13,8 +13,8 @@ type CreateBinary struct {
 	BinaryRepository domain.BinaryRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u CreateBinary) Execute(session domain.Session, content []byte) error {
+// Do - Вызов логики сценария использования
+func (u CreateBinary) Do(session domain.Session, content []byte) error {
 	textID, err := u.Client.CreateBinary(session, content)
 	if err != nil {
 		return err

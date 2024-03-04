@@ -13,10 +13,10 @@ type ShowBinary struct {
 	BinaryRepository domain.BinaryRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u ShowBinary) Execute(session domain.Session) ([]domain.Binary, error) {
+// Do - Вызов логики сценария использования
+func (u ShowBinary) Do(session domain.Session) ([]domain.Binary, error) {
 	result := []domain.Binary{}
-	_, err := u.CheckToken.Execute(session.Token)
+	_, err := u.CheckToken.Do(session.Token)
 	if err != nil {
 		return result, err
 	}

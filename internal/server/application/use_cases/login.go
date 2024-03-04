@@ -16,8 +16,8 @@ type Login struct {
 	JOSE services.JOSEService
 }
 
-// Execute - Вызов исполнения сценария использования
-func (u Login) Execute(login, password string) ([]byte, error) {
+// Do - Вызов исполнения сценария использования
+func (u Login) Do(login, password string) ([]byte, error) {
 	var token []byte
 
 	user, err := u.UserRepository.GetByLogin(login)

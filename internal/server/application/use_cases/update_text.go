@@ -15,8 +15,8 @@ type UpdateText struct {
 	Crypto domain.CryptoServiceInterface
 }
 
-// Execute - Вызов исполнения сценария использования
-func (u UpdateText) Execute(userID, id uuid.UUID, content string) error {
+// Do - Вызов исполнения сценария использования
+func (u UpdateText) Do(userID, id uuid.UUID, content string) error {
 	text, err := u.TextRepository.Get(userID, id)
 	if err != nil {
 		return err

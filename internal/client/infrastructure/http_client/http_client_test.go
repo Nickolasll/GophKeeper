@@ -1,4 +1,4 @@
-package infrastructure
+package httpclient
 
 import (
 	"crypto/tls"
@@ -14,6 +14,6 @@ func TestNewClient(t *testing.T) {
 		MinVersion:    tls.VersionTLS13,
 	}
 
-	client := HTTPClient{}.New(tlsConfig, time.Minute, "http://test.url")
+	client := New(tlsConfig, time.Minute, "http://test.url")
 	require.NotNil(t, client)
 }

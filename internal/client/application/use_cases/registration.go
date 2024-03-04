@@ -15,8 +15,8 @@ type Registration struct {
 	SessionRepository domain.SessionRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u Registration) Execute(login, password string) (domain.Session, error) {
+// Do - Вызов логики сценария использования
+func (u Registration) Do(login, password string) (domain.Session, error) {
 	var session domain.Session
 	token, err := u.Client.Register(login, password)
 	if err != nil {

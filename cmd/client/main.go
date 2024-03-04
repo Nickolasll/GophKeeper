@@ -13,27 +13,28 @@ import (
 
 	"github.com/Nickolasll/goph-keeper/internal/client/application"
 	"github.com/Nickolasll/goph-keeper/internal/client/infrastructure"
+	httpclient "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/http_client"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
 )
 
 type config struct {
-	CryptoSecretKey  []byte
-	DBName           string
-	DBFileMode       uint32
-	ClientTimeoutSec int64
-	ServerURL        string
+	CryptoSecretKey []byte
+	DBName          string
+	DBFileMode      uint32
+	ClientTimeout   time.Duration
+	ServerURL       string
 }
 
 func main() {
 	var cmd *cli.Command
 	var err error
 	cfg := config{
-		CryptoSecretKey:  []byte("1234567812345678"),
-		DBName:           "user.db",
-		DBFileMode:       0600,
-		ClientTimeoutSec: 30,
-		ServerURL:        "https://localhost:8080/api/v1/",
+		CryptoSecretKey: []byte("1234567812345678"),
+		DBName:          "user.db",
+		DBFileMode:      0600,
+		ClientTimeout:   time.Duration(30) * time.Second, //nolint: gomnd
+		ServerURL:       "https://localhost:8080/api/v1/",
 	}
 
 	log := logrus.New()
@@ -55,8 +56,7 @@ func main() {
 		MinVersion:    tls.VersionTLS13,
 	}
 
-	timeout := time.Duration(cfg.ClientTimeoutSec) * time.Second
-	client := infrastructure.HTTPClient{}.New(tlsConfig, timeout, cfg.ServerURL)
+	client := httpclient.New(tlsConfig, cfg.ClientTimeout, cfg.ServerURL)
 
 	cryptoService := crypto.New(cfg.CryptoSecretKey)
 

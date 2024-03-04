@@ -13,10 +13,10 @@ type ShowText struct {
 	TextRepository domain.TextRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u ShowText) Execute(session domain.Session) ([]domain.Text, error) {
+// Do - Вызов логики сценария использования
+func (u ShowText) Do(session domain.Session) ([]domain.Text, error) {
 	result := []domain.Text{}
-	_, err := u.CheckToken.Execute(session.Token)
+	_, err := u.CheckToken.Do(session.Token)
 	if err != nil {
 		return result, err
 	}

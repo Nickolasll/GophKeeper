@@ -1,5 +1,5 @@
-// Package infrastructure содержит имплементацию репозиториев и клиентов
-package infrastructure
+// Package httpclient содержит имплементацию клиента GophKeeper
+package httpclient
 
 import (
 	"crypto/tls"
@@ -17,10 +17,10 @@ type HTTPClient struct {
 }
 
 // New - Конструктор нового инстанса клиента
-func (HTTPClient) New(tlsConfig *tls.Config, timeout time.Duration, baseURL string) HTTPClient {
+func New(tlsConfig *tls.Config, timeout time.Duration, baseURL string) *HTTPClient {
 	client := resty.New().SetTLSClientConfig(tlsConfig).SetTimeout(timeout).SetBaseURL(baseURL)
 
-	return HTTPClient{
+	return &HTTPClient{
 		client: client,
 	}
 }

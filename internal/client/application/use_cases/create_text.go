@@ -13,8 +13,8 @@ type CreateText struct {
 	TextRepository domain.TextRepositoryInterface
 }
 
-// Execute - Вызов логики сценария использования
-func (u CreateText) Execute(session domain.Session, content string) error {
+// Do - Вызов логики сценария использования
+func (u CreateText) Do(session domain.Session, content string) error {
 	textID, err := u.Client.CreateText(session, content)
 	if err != nil {
 		return err

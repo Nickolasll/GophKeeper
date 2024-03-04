@@ -15,8 +15,8 @@ type UpdateBinary struct {
 	Crypto domain.CryptoServiceInterface
 }
 
-// Execute - Вызов исполнения сценария использования
-func (u UpdateBinary) Execute(userID, id uuid.UUID, content []byte) error {
+// Do - Вызов исполнения сценария использования
+func (u UpdateBinary) Do(userID, id uuid.UUID, content []byte) error {
 	bin, err := u.BinaryRepository.Get(userID, id)
 	if err != nil {
 		return err
