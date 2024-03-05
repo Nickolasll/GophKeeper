@@ -66,8 +66,21 @@ func (c CryptoService) Decrypt(value []byte) ([]byte, error) {
 	return result, nil
 }
 
-func New(secretKey []byte) *CryptoService {
-	return &CryptoService{
+// New инициализирует сервис, проверяет введенный ключ
+func New(secretKey []byte) (*CryptoService, error) {
+	aesblock, err := aes.NewCipher(secretKey)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = cipher.NewGCM(aesblock)
+	if err != nil {
+		return nil, err
+	}
+
+	crypto := CryptoService{
 		SecretKey: secretKey,
 	}
+
+	return &crypto, nil
 }

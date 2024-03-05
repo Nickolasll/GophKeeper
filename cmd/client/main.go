@@ -58,7 +58,10 @@ func main() {
 
 	client := httpclient.New(tlsConfig, cfg.ClientTimeout, cfg.ServerURL)
 
-	cryptoService := crypto.New(cfg.CryptoSecretKey)
+	cryptoService, err := crypto.New(cfg.CryptoSecretKey)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	sessionRepository := infrastructure.SessionRepository{
 		DB:     db,

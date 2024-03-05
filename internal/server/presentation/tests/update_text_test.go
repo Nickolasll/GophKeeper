@@ -50,7 +50,7 @@ func TestUpdateTextBadRequest(t *testing.T) { //nolint: dupl
 			userID := uuid.New()
 			err = createUser(userID)
 			require.NoError(t, err)
-			token, err := jose.IssueToken(userID)
+			token, err := joseService.IssueToken(userID)
 			require.NoError(t, err)
 
 			bodyReader := bytes.NewReader(tt.body)
@@ -72,7 +72,7 @@ func TestUpdateTextSuccess(t *testing.T) {
 	userID := uuid.New()
 	err = createUser(userID)
 	require.NoError(t, err)
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	textID := uuid.New()
@@ -111,7 +111,7 @@ func TestUpdateTextNotFound(t *testing.T) {
 	userID := uuid.New()
 	err = createUser(userID)
 	require.NoError(t, err)
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	message := "my message to update"
@@ -133,7 +133,7 @@ func TestUpdateTextInvalidID(t *testing.T) { //nolint: dupl
 	userID := uuid.New()
 	err = createUser(userID)
 	require.NoError(t, err)
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader([]byte("message"))

@@ -1,4 +1,4 @@
-package services
+package jose
 
 import (
 	"testing"
@@ -28,7 +28,7 @@ func TestJOSEIssue(t *testing.T) {
 		require.NoError(t, err)
 		joseService := JOSEService{
 			TokenExp: time.Duration(60) * time.Second,
-			JWKS:     key,
+			JWKs:     key,
 		}
 		t.Run(tt.name, func(t *testing.T) {
 			token, err := joseService.IssueToken(tt.want)
@@ -60,7 +60,7 @@ func TestJOSEHash(t *testing.T) {
 		require.NoError(t, err)
 		joseService := JOSEService{
 			TokenExp: time.Duration(60) * time.Second,
-			JWKS:     key,
+			JWKs:     key,
 		}
 		t.Run(tt.name, func(t *testing.T) {
 			hash1 := joseService.Hash(tt.want)
@@ -82,7 +82,7 @@ func TestJOSEInvalidJWK(t *testing.T) {
 	var key jwk.Key
 	joseService := JOSEService{
 		TokenExp: time.Duration(60) * time.Second,
-		JWKS:     key,
+		JWKs:     key,
 	}
 	_, err := joseService.IssueToken(uuid.New())
 	require.Error(t, err)
@@ -102,7 +102,7 @@ func TestJOSEInvalidUserID(t *testing.T) {
 
 	joseService := JOSEService{
 		TokenExp: time.Duration(60) * time.Second,
-		JWKS:     key,
+		JWKs:     key,
 	}
 	_, err = joseService.ParseUserID(signed)
 	require.Error(t, err)

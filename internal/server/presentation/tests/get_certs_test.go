@@ -30,7 +30,7 @@ func TestGetCerts(t *testing.T) {
 	assert.NotEmpty(t, body)
 
 	userID := uuid.New()
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	key, err := jwk.ParseKey(body)

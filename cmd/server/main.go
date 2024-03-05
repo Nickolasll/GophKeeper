@@ -4,82 +4,63 @@ import (
 	"context"
 	"crypto/tls"
 	"net/http"
-	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/lestrrat-go/jwx/v2/jwk"
-	"github.com/sirupsen/logrus"
 
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
 	"github.com/Nickolasll/goph-keeper/internal/server/application"
-	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
-	"github.com/Nickolasll/goph-keeper/internal/server/infrastructure"
+	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
+	"github.com/Nickolasll/goph-keeper/internal/server/config"
+	binrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/binary_repository"
+	txtrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/text_repository"
+	usrrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/user_repository"
+	"github.com/Nickolasll/goph-keeper/internal/server/logger"
 	"github.com/Nickolasll/goph-keeper/internal/server/presentation"
-
-	"github.com/sethvargo/go-envconfig"
 )
 
-type Config struct {
-	Addr              string        `env:"ADDR, default=localhost:8080"`
-	DBTimeOut         time.Duration `env:"DB_TIMEOUT, default=15s"`
-	JWTExpiration     time.Duration `env:"JWT_EXPIRATION, default=600s"`
-	RawJWK            []byte        `env:"RAW_JWK, default=My secret keys"`
-	PostgresURL       string        `env:"POSTGRES_URL, default=postgresql://admin:admin@localhost:5432/gophkeeper"`
-	CryptoSecret      []byte        `env:"CRYPTO_SECRET, default=1234567812345678"`
-	ReadHeaderTimeout time.Duration `env:"READ_HEADER_TIMEOUT, default=600s"`
-}
-
 func main() {
-	var cfg Config
+	log := logger.New()
 
-	log := logrus.New()
-	ctx := context.Background()
-
-	if err := envconfig.Process(ctx, &cfg); err != nil {
-		log.Fatal(err)
-	}
-
-	pool, err := pgxpool.New(ctx, cfg.PostgresURL)
+	cfg, err := config.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	key, err := jwk.FromRaw(cfg.RawJWK)
+	joseService, err := jose.New(cfg.RawJWK, cfg.JWTExpiration, log)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cert, err := tls.LoadX509KeyPair("server.crt", "server.key")
+	cryptoService, err := crypto.New(cfg.CryptoSecret)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	jose := services.JOSEService{TokenExp: cfg.JWTExpiration, JWKS: key}
-	cryptoService := crypto.New(cfg.CryptoSecret)
+	pool, err := pgxpool.New(context.Background(), cfg.PostgresURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer pool.Close()
 
-	userRepository := infrastructure.UserRepository{
-		DBPool:  pool,
-		Timeout: cfg.DBTimeOut,
-	}
-	textRepository := infrastructure.TextRepository{
-		DBPool:  pool,
-		Timeout: cfg.DBTimeOut,
-	}
-	binaryRepository := infrastructure.BinaryRepository{
-		DBPool:  pool,
-		Timeout: cfg.DBTimeOut,
-	}
+	userRepository := usrrepo.New(pool, cfg.DBTimeOut, log)
+	textRepository := txtrepo.New(pool, cfg.DBTimeOut, log)
+	binaryRepository := binrepo.New(pool, cfg.DBTimeOut, log)
 
 	app := application.New(
-		jose,
+		log,
+		joseService,
 		cryptoService,
 		userRepository,
 		textRepository,
 		binaryRepository,
 	)
 
-	router := presentation.New(&app, &jose, log)
+	router := presentation.New(app, joseService, log)
 
+	cert, err := tls.LoadX509KeyPair(cfg.X509CertPath, cfg.X509KeyPath)
+	if err != nil {
+		log.Fatal(err) //nolint: gocritic
+	}
 	tlsConfig := &tls.Config{
 		Certificates: []tls.Certificate{cert},
 		MinVersion:   tls.VersionTLS13,
@@ -90,6 +71,13 @@ func main() {
 		ReadHeaderTimeout: cfg.ReadHeaderTimeout,
 		TLSConfig:         tlsConfig,
 	}
+	defer func() {
+		err = server.Shutdown(context.Background())
+		if err != nil {
+			log.Fatal(nil)
+		}
+	}()
+
 	if err = server.ListenAndServeTLS("", ""); err != nil {
 		log.Fatal(err)
 	}

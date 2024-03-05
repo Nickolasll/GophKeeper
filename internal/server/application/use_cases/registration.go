@@ -5,8 +5,9 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
-	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
+	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
@@ -15,7 +16,9 @@ type Registration struct {
 	// UserRepository - Интерфейс репозитория пользователя
 	UserRepository domain.UserRepositoryInterface
 	// JOSE - Сервис выдачи и верификации JWT
-	JOSE services.JOSEService
+	JOSE *jose.JOSEService
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 // Do - Вызов исполнения сценария использования

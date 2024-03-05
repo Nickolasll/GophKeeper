@@ -1,5 +1,5 @@
-// Package infrastructure содержит имлементацию репозиториев
-package infrastructure //nolint: dupl
+// Package binaryrepository содержит имлементацию интерфейса репозитория BinaryRepositoryInterface
+package binaryrepository
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
 
@@ -20,6 +21,7 @@ type BinaryRepository struct {
 	DBPool *pgxpool.Pool
 	// Timeout - Таймаут операции
 	Timeout time.Duration
+	log     *logrus.Logger
 }
 
 // Create - Сохраняет новые бинарные данных
@@ -143,4 +145,17 @@ func (r BinaryRepository) GetAll(userID uuid.UUID) ([]domain.Binary, error) {
 	}
 
 	return result, err
+}
+
+// New - Возвращает новый инстанс репозитория
+func New(
+	dbPool *pgxpool.Pool,
+	timeout time.Duration,
+	log *logrus.Logger,
+) *BinaryRepository {
+	return &BinaryRepository{
+		DBPool:  dbPool,
+		Timeout: timeout,
+		log:     log,
+	}
 }

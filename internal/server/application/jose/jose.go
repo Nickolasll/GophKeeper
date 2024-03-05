@@ -1,5 +1,5 @@
-// Package services содержит имплементацию сервиса JOSE
-package services
+// Package jose содержит имплементацию сервиса JOSE
+package jose
 
 import (
 	"time"
@@ -8,6 +8,7 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/lestrrat-go/jwx/v2/jwt"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,18 +17,23 @@ type JOSEService struct {
 	// TokenExp - Время жизни токена в секундах
 	TokenExp time.Duration
 	// JWKS - Ключ подписания токена
-	JWKS jwk.Key
+	JWKs jwk.Key
+	log  *logrus.Logger
 }
 
 // IssueToken - Выпускает JWT для userID и подписывает его с помощью jwks
 func (jose JOSEService) IssueToken(userID uuid.UUID) ([]byte, error) {
 	issuedAt := time.Now()
 	expiration := issuedAt.Add(jose.TokenExp)
-	token, err := jwt.NewBuilder().IssuedAt(time.Now()).Expiration(expiration).Claim("UserID", userID.String()).Build()
+	token, err := jwt.NewBuilder().
+		IssuedAt(time.Now()).
+		Expiration(expiration).
+		Claim("UserID", userID.String()).
+		Build()
 	if err != nil {
 		return []byte{}, err
 	}
-	signed, err := jwt.Sign(token, jwt.WithKey(jwa.HS256, jose.JWKS))
+	signed, err := jwt.Sign(token, jwt.WithKey(jwa.HS256, jose.JWKs))
 	if err != nil {
 		return []byte{}, err
 	}
@@ -40,7 +46,7 @@ func (jose JOSEService) ParseUserID(signed []byte) (uuid.UUID, error) {
 	var userID uuid.UUID
 	token, err := jwt.Parse(
 		signed,
-		jwt.WithKey(jwa.HS256, jose.JWKS),
+		jwt.WithKey(jwa.HS256, jose.JWKs),
 		jwt.WithValidate(true),
 	)
 	if err != nil {
@@ -71,11 +77,31 @@ func (jose JOSEService) VerifyPassword(hashedPassword, currPassword string) bool
 	return err == nil
 }
 
+// GetCerts - Возвращает публичный ключ для верификации jwt на стороне клиента
 func (jose JOSEService) GetCerts() (jwk.Key, error) {
-	key, err := jose.JWKS.PublicKey()
+	key, err := jose.JWKs.PublicKey()
 	if err != nil {
 		return key, err
 	}
 
 	return key, nil
+}
+
+// New - Возвращает инстанс JOSEService, проверяет jwks на валидность
+func New(
+	rawJWK []byte,
+	jwtExpiration time.Duration,
+	log *logrus.Logger,
+) (*JOSEService, error) {
+	key, err := jwk.FromRaw(rawJWK)
+	if err != nil {
+		return nil, err
+	}
+	joseService := JOSEService{
+		JWKs:     key,
+		TokenExp: jwtExpiration,
+		log:      log,
+	}
+
+	return &joseService, nil
 }

@@ -2,7 +2,9 @@
 package application
 
 import (
-	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
+	"github.com/sirupsen/logrus"
+
+	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
 	usecases "github.com/Nickolasll/goph-keeper/internal/server/application/use_cases"
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
@@ -25,43 +27,50 @@ type Application struct {
 
 // New - Фабрика приложения
 func New(
-	jose services.JOSEService,
+	log *logrus.Logger,
+	joseService *jose.JOSEService,
 	crypto domain.CryptoServiceInterface,
 	userRepository domain.UserRepositoryInterface,
 	textRepository domain.TextRepositoryInterface,
 	binaryRepository domain.BinaryRepositoryInterface,
-) Application {
+) *Application {
 	registration := usecases.Registration{
 		UserRepository: userRepository,
-		JOSE:           jose,
+		JOSE:           joseService,
+		Log:            log,
 	}
 
 	login := usecases.Login{
 		UserRepository: userRepository,
-		JOSE:           jose,
+		JOSE:           joseService,
+		Log:            log,
 	}
 
 	createText := usecases.CreateText{
 		TextRepository: textRepository,
 		Crypto:         crypto,
+		Log:            log,
 	}
 
 	updateText := usecases.UpdateText{
 		TextRepository: textRepository,
 		Crypto:         crypto,
+		Log:            log,
 	}
 
 	createBinary := usecases.CreateBinary{
 		BinaryRepository: binaryRepository,
 		Crypto:           crypto,
+		Log:              log,
 	}
 
 	updateBinary := usecases.UpdateBinary{
 		BinaryRepository: binaryRepository,
 		Crypto:           crypto,
+		Log:              log,
 	}
 
-	return Application{
+	return &Application{
 		Registration: registration,
 		Login:        login,
 		CreateText:   createText,

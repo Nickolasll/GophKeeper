@@ -166,7 +166,7 @@ func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 }
 
 func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
-	certs, err := jose.GetCerts()
+	certs, err := joseService.GetCerts()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Error(err)

@@ -3,51 +3,41 @@ package tests
 
 import (
 	"context"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/lestrrat-go/jwx/v2/jwk"
-	"github.com/sirupsen/logrus"
 
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
 	"github.com/Nickolasll/goph-keeper/internal/server/application"
-	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
+	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
+	"github.com/Nickolasll/goph-keeper/internal/server/config"
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
-	"github.com/Nickolasll/goph-keeper/internal/server/infrastructure"
+	binrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/binary_repository"
+	txtrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/text_repository"
+	usrrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/user_repository"
+	"github.com/Nickolasll/goph-keeper/internal/server/logger"
 	"github.com/Nickolasll/goph-keeper/internal/server/presentation"
 )
 
-var jose services.JOSEService
+var joseService *jose.JOSEService
 var pool *pgxpool.Pool
 var cryptoService *crypto.CryptoService
-var userRepository infrastructure.UserRepository
-var textRepository infrastructure.TextRepository
-var binaryRepository infrastructure.BinaryRepository
-
-type config struct {
-	TimeoutDuration time.Duration
-	CryptoSecretKey []byte
-	RawJWK          []byte
-	PostgresURL     string
-}
+var userRepository *usrrepo.UserRepository
+var textRepository *txtrepo.TextRepository
+var binaryRepository *binrepo.BinaryRepository
 
 func setup() (*chi.Mux, error) {
-	cfg := config{
-		TimeoutDuration: time.Duration(30) * time.Second,
-		CryptoSecretKey: []byte("1234567812345678"),
-		RawJWK:          []byte("My secret keys"),
-		PostgresURL:     "postgresql://admin:admin@localhost:5432/gophkeeper",
-	}
+	log := logger.New()
 
-	key, err := jwk.FromRaw(cfg.RawJWK)
+	cfg, err := config.New()
 	if err != nil {
 		return nil, err
 	}
-	jose = services.JOSEService{
-		TokenExp: cfg.TimeoutDuration,
-		JWKS:     key,
+
+	joseService, err = jose.New(cfg.RawJWK, cfg.JWTExpiration, log)
+	if err != nil {
+		return nil, err
 	}
 
 	pool, err = pgxpool.New(context.Background(), cfg.PostgresURL)
@@ -55,30 +45,25 @@ func setup() (*chi.Mux, error) {
 		return nil, err
 	}
 
-	cryptoService = crypto.New(cfg.CryptoSecretKey)
+	cryptoService, err = crypto.New(cfg.CryptoSecret)
+	if err != nil {
+		return nil, err
+	}
 
-	userRepository = infrastructure.UserRepository{
-		DBPool:  pool,
-		Timeout: cfg.TimeoutDuration,
-	}
-	textRepository = infrastructure.TextRepository{
-		DBPool:  pool,
-		Timeout: cfg.TimeoutDuration,
-	}
-	binaryRepository = infrastructure.BinaryRepository{
-		DBPool:  pool,
-		Timeout: cfg.TimeoutDuration,
-	}
+	userRepository = usrrepo.New(pool, cfg.DBTimeOut, log)
+	textRepository = txtrepo.New(pool, cfg.DBTimeOut, log)
+	binaryRepository = binrepo.New(pool, cfg.DBTimeOut, log)
 
 	app := application.New(
-		jose,
+		log,
+		joseService,
 		cryptoService,
 		userRepository,
 		textRepository,
 		binaryRepository,
 	)
-	log := logrus.New()
-	router := presentation.New(&app, &jose, log)
+
+	router := presentation.New(app, joseService, log)
 
 	return router, nil
 }

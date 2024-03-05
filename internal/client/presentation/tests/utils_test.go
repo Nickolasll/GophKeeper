@@ -22,7 +22,7 @@ import (
 )
 
 var db *bolt.DB
-var cryptoService crypto.CryptoService
+var cryptoService *crypto.CryptoService
 var sessionRepository infrastructure.SessionRepository
 var textRepository infrastructure.TextRepository
 var jwkRepository infrastructure.JWKRepository
@@ -74,8 +74,9 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		return cmd, err
 	}
 
-	cryptoService = crypto.CryptoService{
-		SecretKey: cfg.CryptoSecretKey,
+	cryptoService, err = crypto.New(cfg.CryptoSecretKey)
+	if err != nil {
+		return cmd, err
 	}
 
 	client.Certs = certs

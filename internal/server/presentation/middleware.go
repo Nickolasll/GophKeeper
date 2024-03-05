@@ -52,7 +52,7 @@ func auth(handlerFn authenticatedHandler) http.HandlerFunc {
 
 			return
 		}
-		UserID, err := jose.ParseUserID([]byte(token))
+		UserID, err := joseService.ParseUserID([]byte(token))
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 

@@ -1,5 +1,5 @@
-// Package infrastructure содержит имлементацию репозиториев
-package infrastructure
+// Package userrepository содержит имлементацию интерфейса репозитория UserRepositoryInterface
+package userrepository
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sirupsen/logrus"
 
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
@@ -18,6 +19,7 @@ type UserRepository struct {
 	DBPool *pgxpool.Pool
 	// Timeout - Таймаут операции
 	Timeout time.Duration
+	log     *logrus.Logger
 }
 
 // Create - Сохраняет нового пользователя
@@ -76,4 +78,17 @@ func (r UserRepository) GetByLogin(login string) (*domain.User, error) {
 	}
 
 	return &user, nil
+}
+
+// New - Возвращает новый инстанс репозитория
+func New(
+	dbPool *pgxpool.Pool,
+	timeout time.Duration,
+	log *logrus.Logger,
+) *UserRepository {
+	return &UserRepository{
+		DBPool:  dbPool,
+		Timeout: timeout,
+		log:     log,
+	}
 }

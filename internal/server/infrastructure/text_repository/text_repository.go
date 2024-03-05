@@ -1,5 +1,5 @@
-// Package infrastructure содержит имлементацию репозиториев
-package infrastructure //nolint: dupl
+// Package textrepository содержит имлементацию интерфейса репозитория TextRepositoryInterface
+package textrepository
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
 
@@ -20,6 +21,7 @@ type TextRepository struct {
 	DBPool *pgxpool.Pool
 	// Timeout - Таймаут операции
 	Timeout time.Duration
+	log     *logrus.Logger
 }
 
 // Create - Сохраняет новые текстовые данные
@@ -143,4 +145,17 @@ func (r TextRepository) GetAll(userID uuid.UUID) ([]domain.Text, error) {
 	}
 
 	return result, err
+}
+
+// New - Возвращает новый инстанс репозитория
+func New(
+	dbPool *pgxpool.Pool,
+	timeout time.Duration,
+	log *logrus.Logger,
+) *TextRepository {
+	return &TextRepository{
+		DBPool:  dbPool,
+		Timeout: timeout,
+		log:     log,
+	}
 }

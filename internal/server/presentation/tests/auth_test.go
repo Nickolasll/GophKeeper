@@ -40,10 +40,10 @@ func TestAuthorizationExpiredToken(t *testing.T) {
 	defer teardown()
 
 	userID := uuid.New()
-	jose.TokenExp = 0
-	expiredToken, err := jose.IssueToken(userID)
+	joseService.TokenExp = 0
+	expiredToken, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
-	jose.TokenExp = 30
+	joseService.TokenExp = 30
 
 	req := httptest.NewRequest("POST", "/api/v1/text/create", http.NoBody)
 	req.Header.Add("Authorization", string(expiredToken))

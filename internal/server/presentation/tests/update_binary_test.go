@@ -50,7 +50,7 @@ func TestUpdateBinaryBadRequest(t *testing.T) { //nolint: dupl
 			userID := uuid.New()
 			err = createUser(userID)
 			require.NoError(t, err)
-			token, err := jose.IssueToken(userID)
+			token, err := joseService.IssueToken(userID)
 			require.NoError(t, err)
 
 			bodyReader := bytes.NewReader(tt.body)
@@ -72,7 +72,7 @@ func TestUpdateBinarySuccess(t *testing.T) {
 	userID := uuid.New()
 	err = createUser(userID)
 	require.NoError(t, err)
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	binID := uuid.New()
@@ -111,7 +111,7 @@ func TestUpdateBinaryNotFound(t *testing.T) {
 	userID := uuid.New()
 	err = createUser(userID)
 	require.NoError(t, err)
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	message := []byte("my message to update")
@@ -133,7 +133,7 @@ func TestUpdateBinaryInvalidID(t *testing.T) { //nolint: dupl
 	userID := uuid.New()
 	err = createUser(userID)
 	require.NoError(t, err)
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader([]byte("message"))

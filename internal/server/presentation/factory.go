@@ -7,23 +7,23 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/Nickolasll/goph-keeper/internal/server/application"
-	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
+	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
 )
 
 var app *application.Application
 var log *logrus.Logger
-var jose *services.JOSEService
+var joseService *jose.JOSEService
 var validate *validator.Validate
 var router *chi.Mux
 
 // New - Фабрика HTTP роутера
 func New(
 	_app *application.Application,
-	_jose *services.JOSEService,
+	_jose *jose.JOSEService,
 	_log *logrus.Logger,
 ) *chi.Mux {
 	app = _app
-	jose = _jose
+	joseService = _jose
 	log = _log
 
 	validate = validator.New(validator.WithRequiredStructEnabled())

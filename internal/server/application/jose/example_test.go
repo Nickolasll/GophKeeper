@@ -1,10 +1,10 @@
-package services_test
+package jose_test
 
 import (
 	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 
-	"github.com/Nickolasll/goph-keeper/internal/server/application/services"
+	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
 )
 
 func ExampleJOSEService() {
@@ -13,9 +13,9 @@ func ExampleJOSEService() {
 	if err != nil {
 		// В процессе формирования ключей возникла ошибка
 	}
-	joseService := services.JOSEService{
+	joseService := jose.JOSEService{
 		TokenExp: 60,
-		JWKS:     key,
+		JWKs:     key,
 	}
 
 	userID := uuid.New()

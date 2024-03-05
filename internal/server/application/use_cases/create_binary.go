@@ -3,6 +3,7 @@ package usecases
 
 import (
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
@@ -13,6 +14,8 @@ type CreateBinary struct {
 	BinaryRepository domain.BinaryRepositoryInterface
 	// Crypto - Сервис для шифрования данных
 	Crypto domain.CryptoServiceInterface
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 // Do - Вызов исполнения сценария использования, возвращает идентификатор ресурса

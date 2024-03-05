@@ -37,7 +37,7 @@ func TestCreateTextBadRequest(t *testing.T) { //nolint: dupl
 			userID := uuid.New()
 			err = createUser(userID)
 			require.NoError(t, err)
-			token, err := jose.IssueToken(userID)
+			token, err := joseService.IssueToken(userID)
 			require.NoError(t, err)
 
 			bodyReader := bytes.NewReader(tt.body)
@@ -59,7 +59,7 @@ func TestCreateTextSuccess(t *testing.T) {
 	userID := uuid.New()
 	err = createUser(userID)
 	require.NoError(t, err)
-	token, err := jose.IssueToken(userID)
+	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
 	message := "my text message to store"

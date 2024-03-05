@@ -91,7 +91,7 @@ func TestLoginSuccess(t *testing.T) {
 
 	login := uuid.NewString()
 	password := "password"
-	hashedPassword := jose.Hash(password)
+	hashedPassword := joseService.Hash(password)
 
 	user := domain.User{
 		ID:       uuid.New(),
