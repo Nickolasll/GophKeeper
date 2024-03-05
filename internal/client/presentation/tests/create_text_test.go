@@ -13,7 +13,7 @@ import (
 
 func TestCreateTextSuccess(t *testing.T) {
 	content := "my fancy content for test"
-	textID := uuid.NewString()
+	textID := uuid.New()
 	client := FakeHTTPClient{
 		Response: textID,
 	}

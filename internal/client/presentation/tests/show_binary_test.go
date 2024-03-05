@@ -24,13 +24,13 @@ func TestShowBinarySuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	bin := domain.Binary{
-		ID:      uuid.NewString(),
+		ID:      uuid.New(),
 		Content: []byte("old content"),
 	}
 	err = binaryRepository.Create(userID, bin)
 	require.NoError(t, err)
 	secondBin := domain.Binary{
-		ID:      uuid.NewString(),
+		ID:      uuid.New(),
 		Content: []byte("second text"),
 	}
 	err = binaryRepository.Create(userID, secondBin)

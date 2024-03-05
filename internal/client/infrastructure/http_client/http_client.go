@@ -3,10 +3,13 @@ package httpclient
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"net/http"
 	"time"
 
 	"github.com/go-resty/resty/v2"
+	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
@@ -14,14 +17,32 @@ import (
 // HTTPClient - Имплементация клиента GophKeeper
 type HTTPClient struct {
 	client *resty.Client
+	log    *logrus.Logger
 }
 
 // New - Конструктор нового инстанса клиента
-func New(tlsConfig *tls.Config, timeout time.Duration, baseURL string) *HTTPClient {
-	client := resty.New().SetTLSClientConfig(tlsConfig).SetTimeout(timeout).SetBaseURL(baseURL)
+func New(
+	log *logrus.Logger,
+	cert []byte,
+	timeout time.Duration,
+	baseURL string,
+) *HTTPClient {
+	caCertPool := x509.NewCertPool()
+	caCertPool.AppendCertsFromPEM(cert)
+
+	tlsConfig := &tls.Config{
+		Renegotiation: tls.RenegotiateOnceAsClient,
+		RootCAs:       caCertPool,
+		MinVersion:    tls.VersionTLS13,
+	}
+	client := resty.New().
+		SetTLSClientConfig(tlsConfig).
+		SetTimeout(timeout).
+		SetBaseURL(baseURL)
 
 	return &HTTPClient{
 		client: client,
+		log:    log,
 	}
 }
 
@@ -115,19 +136,25 @@ func (c HTTPClient) update(authToken, uri, contentType string, body any) error {
 }
 
 // CreateText - Создает текст, возвращает идентификатор ресурса от сервера
-func (c HTTPClient) CreateText(session domain.Session, content string) (string, error) {
+func (c HTTPClient) CreateText(session domain.Session, content string) (uuid.UUID, error) {
+	var uid uuid.UUID
 	id, err := c.create(session.Token, "text/create", "plain/text", content)
 
 	if err != nil {
-		return "", err
+		return uid, err
 	}
 
-	return id, nil
+	uid, err = c.parseID(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
 }
 
 // UpdateText - Обновляет существующий текст
 func (c HTTPClient) UpdateText(session domain.Session, text domain.Text) error {
-	err := c.update(session.Token, "text/"+text.ID, "plain/text", text.Content)
+	err := c.update(session.Token, "text/"+text.ID.String(), "plain/text", text.Content)
 
 	if err != nil {
 		return err
@@ -151,23 +178,38 @@ func (c HTTPClient) GetCerts() ([]byte, error) {
 }
 
 // CreateBinary - Создает бинарные данные, возвращает идентификатор ресурса от сервера
-func (c HTTPClient) CreateBinary(session domain.Session, content []byte) (string, error) {
+func (c HTTPClient) CreateBinary(session domain.Session, content []byte) (uuid.UUID, error) {
+	var uid uuid.UUID
 	id, err := c.create(session.Token, "binary/create", "multipart/form-data", content)
 
 	if err != nil {
-		return "", err
+		return uid, err
 	}
 
-	return id, nil
+	uid, err = c.parseID(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
 }
 
 // UpdateBinary - Обновляет существующие бинарные данные
 func (c HTTPClient) UpdateBinary(session domain.Session, bin domain.Binary) error {
-	err := c.update(session.Token, "binary/"+bin.ID, "multipart/form-data", bin.Content)
+	err := c.update(session.Token, "binary/"+bin.ID.String(), "multipart/form-data", bin.Content)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (c HTTPClient) parseID(id string) (uuid.UUID, error) {
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
 }

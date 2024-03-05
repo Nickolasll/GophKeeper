@@ -13,7 +13,7 @@ import (
 )
 
 func TestUpdateBinarySuccess(t *testing.T) {
-	binID := uuid.NewString()
+	binID := uuid.New()
 	client := FakeHTTPClient{}
 
 	cmd, err := setup(client)
@@ -37,7 +37,7 @@ func TestUpdateBinarySuccess(t *testing.T) {
 		"gophkeeper",
 		"binary",
 		"update",
-		binID,
+		binID.String(),
 		"./binary_file_for_test",
 	}
 
@@ -52,7 +52,7 @@ func TestUpdateBinarySuccess(t *testing.T) {
 }
 
 func TestUpdateBinaryBadRequest(t *testing.T) {
-	binID := uuid.NewString()
+	binID := uuid.New()
 	oldContent := []byte("old content")
 	client := FakeHTTPClient{
 		Err: domain.ErrBadRequest,
@@ -79,7 +79,7 @@ func TestUpdateBinaryBadRequest(t *testing.T) {
 		"gophkeeper",
 		"binary",
 		"update",
-		binID,
+		binID.String(),
 		"",
 	}
 
@@ -133,6 +133,33 @@ func TestUpdateBinaryNotFound(t *testing.T) {
 		"binary",
 		"update",
 		uuid.NewString(),
+		"",
+	}
+
+	err = cmd.Run(context.Background(), args)
+	require.NoError(t, err)
+}
+
+func TestUpdateBinaryInvalidUUID(t *testing.T) {
+	client := FakeHTTPClient{
+		Err: domain.ErrBadRequest,
+	}
+
+	cmd, err := setup(client)
+	require.NoError(t, err)
+	defer func() {
+		err = teardown()
+		require.NoError(t, err)
+	}()
+
+	_, err = createSession()
+	require.NoError(t, err)
+
+	args := []string{
+		"gophkeeper",
+		"binary",
+		"update",
+		"invalid value",
 		"",
 	}
 

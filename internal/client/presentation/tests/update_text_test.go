@@ -13,7 +13,7 @@ import (
 
 func TestUpdateTextSuccess(t *testing.T) {
 	content := "my fancy content to update"
-	textID := uuid.NewString()
+	textID := uuid.New()
 	client := FakeHTTPClient{}
 
 	cmd, err := setup(client)
@@ -37,7 +37,7 @@ func TestUpdateTextSuccess(t *testing.T) {
 		"gophkeeper",
 		"text",
 		"update",
-		textID,
+		textID.String(),
 		content,
 	}
 
@@ -50,7 +50,7 @@ func TestUpdateTextSuccess(t *testing.T) {
 }
 
 func TestUpdateTextBadRequest(t *testing.T) {
-	textID := uuid.NewString()
+	textID := uuid.New()
 	oldContent := "old content"
 	client := FakeHTTPClient{
 		Err: domain.ErrBadRequest,
@@ -77,7 +77,7 @@ func TestUpdateTextBadRequest(t *testing.T) {
 		"gophkeeper",
 		"text",
 		"update",
-		textID,
+		textID.String(),
 		"",
 	}
 
@@ -131,6 +131,33 @@ func TestUpdateTextNotFound(t *testing.T) {
 		"text",
 		"update",
 		uuid.NewString(),
+		"",
+	}
+
+	err = cmd.Run(context.Background(), args)
+	require.NoError(t, err)
+}
+
+func TestUpdateTextInvalidValue(t *testing.T) {
+	client := FakeHTTPClient{
+		Err: domain.ErrBadRequest,
+	}
+
+	cmd, err := setup(client)
+	require.NoError(t, err)
+	defer func() {
+		err = teardown()
+		require.NoError(t, err)
+	}()
+
+	_, err = createSession()
+	require.NoError(t, err)
+
+	args := []string{
+		"gophkeeper",
+		"text",
+		"update",
+		"invalid value",
 		"",
 	}
 

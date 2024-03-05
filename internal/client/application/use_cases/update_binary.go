@@ -2,6 +2,9 @@
 package usecases
 
 import (
+	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
+
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
@@ -11,10 +14,12 @@ type UpdateBinary struct {
 	Client domain.GophKeeperClientInterface
 	// BinaryRepository - Реализация интерфейса BinaryRepositoryInterface
 	BinaryRepository domain.BinaryRepositoryInterface
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 // Do - Вызов логики сценария использования
-func (u UpdateBinary) Do(session domain.Session, binID string, content []byte) error {
+func (u UpdateBinary) Do(session domain.Session, binID uuid.UUID, content []byte) error {
 	bin, err := u.BinaryRepository.Get(session.UserID, binID)
 	if err != nil {
 		return err

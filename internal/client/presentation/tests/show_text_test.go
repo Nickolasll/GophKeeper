@@ -24,13 +24,13 @@ func TestShowTextSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	text := domain.Text{
-		ID:      uuid.NewString(),
+		ID:      uuid.New(),
 		Content: "old content",
 	}
 	err = textRepository.Create(userID, text)
 	require.NoError(t, err)
 	secondText := domain.Text{
-		ID:      uuid.NewString(),
+		ID:      uuid.New(),
 		Content: "second text",
 	}
 	err = textRepository.Create(userID, secondText)

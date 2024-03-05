@@ -1,7 +1,9 @@
 // Package usecases содержит имплементацию бизнес логики приложения
-package usecases //nolint: dupl
+package usecases
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
@@ -13,6 +15,8 @@ type Login struct {
 	CheckToken *CheckToken
 	// SessionRepository - Реализация интерфейса SessionRepository
 	SessionRepository domain.SessionRepositoryInterface
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 // Do - Вызов логики сценария использования

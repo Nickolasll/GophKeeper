@@ -1,3 +1,4 @@
+//go:generate swagger generate spec
 package main
 
 import (
@@ -57,7 +58,7 @@ func main() {
 
 	router := presentation.New(app, joseService, log)
 
-	cert, err := tls.LoadX509KeyPair(cfg.X509CertPath, cfg.X509KeyPath)
+	cert, err := tls.LoadX509KeyPair(cfg.X509CertPath, cfg.TLSKeyPath)
 	if err != nil {
 		log.Fatal(err) //nolint: gocritic
 	}

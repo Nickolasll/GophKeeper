@@ -2,6 +2,7 @@
 package domain
 
 import (
+	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 )
 
@@ -18,13 +19,13 @@ type SessionRepositoryInterface interface {
 // TextRepositoryInterface - Интерфейс репозитория для произвольных текстовых данных
 type TextRepositoryInterface interface {
 	// Create - Сохраняет новые текстовые данные
-	Create(userID string, text Text) error
+	Create(userID uuid.UUID, text Text) error
 	// Update - Сохраняет существующие текстовые данные
-	Update(userID string, text Text) error
+	Update(userID uuid.UUID, text Text) error
 	// Get - Возвращает текстовые данные по идентификатору данных и пользователя, если они существуют
-	Get(userID string, textID string) (Text, error)
+	Get(userID, textID uuid.UUID) (Text, error)
 	// GetAll - возвращает все текстовые данные для пользователя
-	GetAll(userID string) ([]Text, error)
+	GetAll(userID uuid.UUID) ([]Text, error)
 }
 
 // JWKRepositoryInterface - Интерфейс хранилища публичного ключа
@@ -40,11 +41,11 @@ type JWKRepositoryInterface interface {
 // BinaryRepositoryInterface - Интерфейс репозитория для произвольных бинарных данных
 type BinaryRepositoryInterface interface {
 	// Create - Сохраняет новые бинарные данные
-	Create(userID string, bin Binary) error
+	Create(userID uuid.UUID, bin Binary) error
 	// Update - Сохраняет существующие бинарные данные
-	Update(userID string, bin Binary) error
+	Update(userID uuid.UUID, bin Binary) error
 	// Get - Возвращает бинарные данные по идентификатору данных и пользователя, если они существуют
-	Get(userID string, binID string) (Binary, error)
+	Get(userID, binID uuid.UUID) (Binary, error)
 	// GetAll - возвращает все бинарные данные для пользователя
-	GetAll(userID string) ([]Binary, error)
+	GetAll(userID uuid.UUID) ([]Binary, error)
 }

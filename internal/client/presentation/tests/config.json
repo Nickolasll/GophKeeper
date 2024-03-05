@@ -1,0 +1,4 @@
+{
+    "server_url": "https://localhost:8080/",
+    "db_file_path": "user.db"
+}

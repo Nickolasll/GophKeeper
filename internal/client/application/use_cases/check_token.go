@@ -2,9 +2,11 @@
 package usecases
 
 import (
+	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/lestrrat-go/jwx/v2/jwt"
+	"github.com/sirupsen/logrus"
 
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
@@ -17,6 +19,8 @@ type CheckToken struct {
 	JWKRepository domain.JWKRepositoryInterface
 	// Key - Ключ для проверки JWT
 	Key jwk.Key
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 func (u CheckToken) getUserID(token string) (string, error) {
@@ -51,31 +55,51 @@ func (u *CheckToken) setupKey() error {
 	return nil
 }
 
+func (u CheckToken) parseID(id string) (uuid.UUID, error) {
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
+}
+
 // Do - Вызов логики сценария использования
-func (u CheckToken) Do(token string) (string, error) {
+func (u CheckToken) Do(token string) (uuid.UUID, error) {
+	var uid uuid.UUID
 	if u.Key == nil {
 		err := u.setupKey()
 		if err != nil {
-			return "", err
+			return uid, err
 		}
 	}
 
-	userID, err := u.getUserID(token)
+	id, err := u.getUserID(token)
 
 	if err != nil {
-		err := u.setupKey()
+		err = u.setupKey()
 		if err != nil {
-			return "", err
+			return uid, err
 		}
-		userID, err = u.getUserID(token)
+		id, err = u.getUserID(token)
 		if err != nil {
-			return "", domain.ErrInvalidToken
+			return uid, domain.ErrInvalidToken
 		}
 
-		return userID, nil
+		uid, err = u.parseID(id)
+		if err != nil {
+			return uid, err
+		}
+
+		return uid, nil
 	}
 
-	return userID, nil
+	uid, err = u.parseID(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
 }
 
 func (u CheckToken) getSessionFromToken(token string) (domain.Session, error) {

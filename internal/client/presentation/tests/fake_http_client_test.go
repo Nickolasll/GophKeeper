@@ -34,12 +34,12 @@ func (c FakeHTTPClient) Register(_, _ string) (string, error) {
 }
 
 // CreateText - Создает текст, возвращает идентификатор ресурса от сервера
-func (c FakeHTTPClient) CreateText(_ domain.Session, _ string) (string, error) {
+func (c FakeHTTPClient) CreateText(_ domain.Session, _ string) (uuid.UUID, error) {
 	if c.Err != nil {
-		return uuid.NewString(), c.Err
+		return uuid.New(), c.Err
 	}
 
-	return c.Response.(string), nil
+	return c.Response.(uuid.UUID), nil
 }
 
 // UpdateText - Обновляет существующий текст
@@ -53,12 +53,12 @@ func (c FakeHTTPClient) GetCerts() ([]byte, error) {
 }
 
 // CreateText - Создает текст, возвращает идентификатор ресурса от сервера
-func (c FakeHTTPClient) CreateBinary(_ domain.Session, _ []byte) (string, error) {
+func (c FakeHTTPClient) CreateBinary(_ domain.Session, _ []byte) (uuid.UUID, error) {
 	if c.Err != nil {
-		return uuid.NewString(), c.Err
+		return uuid.New(), c.Err
 	}
 
-	return c.Response.(string), nil
+	return c.Response.(uuid.UUID), nil
 }
 
 // UpdateText - Обновляет существующий текст

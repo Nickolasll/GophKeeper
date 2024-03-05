@@ -125,7 +125,7 @@ func TestUpdateBinaryNotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, responseRecorder.Code)
 }
 
-func TestUpdateBinaryInvalidID(t *testing.T) { //nolint: dupl
+func TestUpdateBinaryInvalidID(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()

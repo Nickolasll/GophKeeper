@@ -5,5 +5,8 @@ import "github.com/sirupsen/logrus"
 
 // New - Возвращает инстанс нового логгера
 func New() *logrus.Logger {
-	return logrus.New()
+	log := logrus.New()
+	log.SetFormatter(&logrus.JSONFormatter{})
+
+	return log
 }

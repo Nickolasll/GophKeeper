@@ -125,7 +125,7 @@ func TestUpdateTextNotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, responseRecorder.Code)
 }
 
-func TestUpdateTextInvalidID(t *testing.T) { //nolint: dupl
+func TestUpdateTextInvalidID(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()

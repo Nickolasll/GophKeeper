@@ -2,6 +2,9 @@
 package usecases
 
 import (
+	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
+
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
@@ -11,10 +14,12 @@ type UpdateText struct {
 	Client domain.GophKeeperClientInterface
 	// TextRepository - Реализация интерфейса TextRepository
 	TextRepository domain.TextRepositoryInterface
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 // Do - Вызов логики сценария использования
-func (u UpdateText) Do(session domain.Session, textID, content string) error {
+func (u UpdateText) Do(session domain.Session, textID uuid.UUID, content string) error {
 	text, err := u.TextRepository.Get(session.UserID, textID)
 	if err != nil {
 		return err

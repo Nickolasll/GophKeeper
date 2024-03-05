@@ -8,10 +8,20 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/urfave/cli/v3"
 
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
+
+func parseID(id string) (uuid.UUID, error) {
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
+}
 
 func registration() cli.Command {
 	return cli.Command{
@@ -114,9 +124,17 @@ func updateText() cli.Command {
 				return nil
 			}
 
-			textID := cmd.Args().Get(0)
+			id := cmd.Args().Get(0)
 			content := cmd.Args().Get(1)
-			err := app.UpdateText.Do(*currentSession, textID, content)
+
+			textID, err := parseID(id)
+			if err != nil {
+				fmt.Println(err, "invalid text id: ", id)
+
+				return nil
+			}
+
+			err = app.UpdateText.Do(*currentSession, textID, content)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
 					fmt.Println("Text not found, id: ", textID)
@@ -139,7 +157,7 @@ func updateText() cli.Command {
 	}
 }
 
-func showText() cli.Command { //nolint: dupl
+func showText() cli.Command {
 	return cli.Command{
 		Name:    "show",
 		Usage:   "shows current user text data",
@@ -230,8 +248,16 @@ func updateBinary() cli.Command {
 				return nil
 			}
 
-			binID := cmd.Args().Get(0)
+			id := cmd.Args().Get(0)
 			contentPath := cmd.Args().Get(1)
+
+			binID, err := parseID(id)
+			if err != nil {
+				fmt.Println(err, "invalid binary id: ", id)
+
+				return nil
+			}
+
 			content, err := os.ReadFile(contentPath) //nolint: gosec
 			if err != nil {
 				fmt.Println(err)
@@ -262,7 +288,7 @@ func updateBinary() cli.Command {
 	}
 }
 
-func showBinary() cli.Command { //nolint: dupl
+func showBinary() cli.Command {
 	return cli.Command{
 		Name:    "show",
 		Usage:   "shows current user binary data",

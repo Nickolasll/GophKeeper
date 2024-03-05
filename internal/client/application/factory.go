@@ -2,6 +2,8 @@
 package application
 
 import (
+	"github.com/sirupsen/logrus"
+
 	usecases "github.com/Nickolasll/goph-keeper/internal/client/application/use_cases"
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
@@ -28,12 +30,13 @@ type Application struct {
 
 // New - Фабрика приложения
 func New(
+	log *logrus.Logger,
 	client domain.GophKeeperClientInterface,
 	sessionRepository domain.SessionRepositoryInterface,
 	textRepository domain.TextRepositoryInterface,
 	jwkRepository domain.JWKRepositoryInterface,
 	binaryRepository domain.BinaryRepositoryInterface,
-) Application {
+) *Application {
 	jwk, err := jwkRepository.Get()
 
 	if err != nil {
@@ -45,51 +48,60 @@ func New(
 		Client:        client,
 		JWKRepository: jwkRepository,
 		Key:           jwk,
+		Log:           log,
 	}
 
 	registration := usecases.Registration{
 		Client:            client,
 		SessionRepository: sessionRepository,
 		CheckToken:        &checkToken,
+		Log:               log,
 	}
 
 	login := usecases.Login{
 		Client:            client,
 		SessionRepository: sessionRepository,
 		CheckToken:        &checkToken,
+		Log:               log,
 	}
 
 	createText := usecases.CreateText{
 		Client:         client,
 		TextRepository: textRepository,
+		Log:            log,
 	}
 
 	updateText := usecases.UpdateText{
 		Client:         client,
 		TextRepository: textRepository,
+		Log:            log,
 	}
 
 	showText := usecases.ShowText{
 		CheckToken:     &checkToken,
 		TextRepository: textRepository,
+		Log:            log,
 	}
 
 	createBinary := usecases.CreateBinary{
 		Client:           client,
 		BinaryRepository: binaryRepository,
+		Log:              log,
 	}
 
 	updateBinary := usecases.UpdateBinary{
 		Client:           client,
 		BinaryRepository: binaryRepository,
+		Log:              log,
 	}
 
 	showBinary := usecases.ShowBinary{
 		CheckToken:       &checkToken,
 		BinaryRepository: binaryRepository,
+		Log:              log,
 	}
 
-	return Application{
+	return &Application{
 		Registration: registration,
 		Login:        login,
 		CreateText:   createText,

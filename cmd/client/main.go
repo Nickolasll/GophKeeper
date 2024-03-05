@@ -1,86 +1,78 @@
 package main
 
 import (
-	"context"
-	"crypto/tls"
-	"crypto/x509"
-	"os"
-	"time"
+	_ "embed"
+	"path/filepath"
 
-	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v3"
+	"context"
+	"os"
+
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/Nickolasll/goph-keeper/internal/client/application"
-	"github.com/Nickolasll/goph-keeper/internal/client/infrastructure"
+	"github.com/Nickolasll/goph-keeper/internal/client/config"
+	binrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/binary_repository"
 	httpclient "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/http_client"
+	jwkrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/jwk_repository"
+	sessrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/session_repository"
+	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/test_repository"
+	"github.com/Nickolasll/goph-keeper/internal/client/logger"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
 )
 
-type config struct {
-	CryptoSecretKey []byte
-	DBName          string
-	DBFileMode      uint32
-	ClientTimeout   time.Duration
-	ServerURL       string
-}
+//go:embed ca.crt
+var caCRT []byte
+
+//go:embed secret.key
+var secret []byte
+
+var (
+	Version   string
+	BuildDate string
+)
 
 func main() {
-	var cmd *cli.Command
-	var err error
-	cfg := config{
-		CryptoSecretKey: []byte("1234567812345678"),
-		DBName:          "user.db",
-		DBFileMode:      0600,
-		ClientTimeout:   time.Duration(30) * time.Second, //nolint: gomnd
-		ServerURL:       "https://localhost:8080/api/v1/",
-	}
+	ex, _ := os.Executable()
+	root := filepath.Dir(ex)
 
-	log := logrus.New()
+	log := logger.New(root)
 
-	db, err := bolt.Open(cfg.DBName, os.FileMode(cfg.DBFileMode), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	cert, err := os.ReadFile("ca.crt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	caCertPool := x509.NewCertPool()
-	caCertPool.AppendCertsFromPEM(cert)
-
-	tlsConfig := &tls.Config{
-		Renegotiation: tls.RenegotiateOnceAsClient,
-		RootCAs:       caCertPool,
-		MinVersion:    tls.VersionTLS13,
-	}
-
-	client := httpclient.New(tlsConfig, cfg.ClientTimeout, cfg.ServerURL)
-
-	cryptoService, err := crypto.New(cfg.CryptoSecretKey)
+	cfg, err := config.New(root)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	sessionRepository := infrastructure.SessionRepository{
-		DB:     db,
-		Crypto: cryptoService,
+	db, err := bolt.Open(cfg.DBFilePath, os.FileMode(cfg.DBFileMode), nil)
+	if err != nil {
+		log.Fatal(err)
 	}
-	textRepository := infrastructure.TextRepository{
-		DB:     db,
-		Crypto: cryptoService,
+	defer func() {
+		err = db.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	client := httpclient.New(
+		log,
+		caCRT,
+		cfg.ClientTimeout,
+		cfg.ServerURL+cfg.APIVer,
+	)
+
+	cryptoService, err := crypto.New(secret)
+	if err != nil {
+		log.Fatal(err) //nolint: gocritic
 	}
-	jwkRepository := infrastructure.JWKRepository{
-		DB:     db,
-		Crypto: cryptoService,
-	}
-	binaryRepository := infrastructure.BinaryRepository{
-		DB:     db,
-		Crypto: cryptoService,
-	}
+
+	sessionRepository := sessrepo.New(db, cryptoService, log)
+	textRepository := txtrepo.New(db, cryptoService, log)
+	jwkRepository := jwkrepo.New(db, cryptoService, log)
+	binaryRepository := binrepo.New(db, cryptoService, log)
 
 	app := application.New(
+		log,
 		client,
 		sessionRepository,
 		textRepository,
@@ -88,8 +80,7 @@ func main() {
 		binaryRepository,
 	)
 
-	cmd = presentation.New(&app, log, sessionRepository)
-
+	cmd := presentation.New(Version, BuildDate, app, log, sessionRepository)
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}

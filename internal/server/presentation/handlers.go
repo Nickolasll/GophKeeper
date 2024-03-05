@@ -180,12 +180,17 @@ func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
 
 		return
 	}
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(resp)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Error(err)
 	}
+}
+
+func getHealthHandler(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
 }
 
 func createBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {

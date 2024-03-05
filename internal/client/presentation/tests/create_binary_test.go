@@ -13,7 +13,7 @@ import (
 )
 
 func TestCreateBinarySuccess(t *testing.T) {
-	binID := uuid.NewString()
+	binID := uuid.New()
 	client := FakeHTTPClient{
 		Response: binID,
 	}

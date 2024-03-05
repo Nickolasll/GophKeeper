@@ -2,6 +2,8 @@
 package usecases
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
@@ -11,6 +13,8 @@ type ShowText struct {
 	CheckToken *CheckToken
 	// TextRepository - Реализация интерфейса TextRepository
 	TextRepository domain.TextRepositoryInterface
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 // Do - Вызов логики сценария использования

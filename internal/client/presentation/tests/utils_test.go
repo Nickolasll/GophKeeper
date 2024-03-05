@@ -10,29 +10,27 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/lestrrat-go/jwx/v2/jwt"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v3"
 	bolt "go.etcd.io/bbolt"
 
 	"github.com/Nickolasll/goph-keeper/internal/client/application"
+	"github.com/Nickolasll/goph-keeper/internal/client/config"
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
-	"github.com/Nickolasll/goph-keeper/internal/client/infrastructure"
+	binrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/binary_repository"
+	jwkrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/jwk_repository"
+	sessrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/session_repository"
+	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/test_repository"
+	"github.com/Nickolasll/goph-keeper/internal/client/logger"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
 )
 
 var db *bolt.DB
 var cryptoService *crypto.CryptoService
-var sessionRepository infrastructure.SessionRepository
-var textRepository infrastructure.TextRepository
-var jwkRepository infrastructure.JWKRepository
-var binaryRepository infrastructure.BinaryRepository
-
-type config struct {
-	CryptoSecretKey []byte
-	DBName          string
-	DBFileMode      uint32
-}
+var sessionRepository *sessrepo.SessionRepository
+var textRepository *txtrepo.TextRepository
+var jwkRepository *jwkrepo.JWKRepository
+var binaryRepository *binrepo.BinaryRepository
 
 func getJWKs() (jwk.Key, error) {
 	jwks, err := jwk.FromRaw([]byte("My secret keys"))
@@ -46,15 +44,15 @@ func getJWKs() (jwk.Key, error) {
 func setup(client FakeHTTPClient) (*cli.Command, error) {
 	var cmd *cli.Command
 	var err error
-	cfg := config{
-		CryptoSecretKey: []byte("1234567812345678"),
-		DBName:          "test.db",
-		DBFileMode:      0600,
+
+	log := logger.New("./")
+
+	cfg, err := config.New("./")
+	if err != nil {
+		return cmd, err
 	}
 
-	log := logrus.New()
-
-	db, err = bolt.Open(cfg.DBName, os.FileMode(cfg.DBFileMode), nil)
+	db, err = bolt.Open(cfg.DBFilePath, os.FileMode(cfg.DBFileMode), nil)
 	if err != nil {
 		return cmd, err
 	}
@@ -74,31 +72,20 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		return cmd, err
 	}
 
-	cryptoService, err = crypto.New(cfg.CryptoSecretKey)
+	cryptoService, err = crypto.New([]byte("1234567812345678"))
 	if err != nil {
 		return cmd, err
 	}
 
 	client.Certs = certs
 
-	sessionRepository = infrastructure.SessionRepository{
-		DB:     db,
-		Crypto: cryptoService,
-	}
-	textRepository = infrastructure.TextRepository{
-		DB:     db,
-		Crypto: cryptoService,
-	}
-	jwkRepository = infrastructure.JWKRepository{
-		DB:     db,
-		Crypto: cryptoService,
-	}
-	binaryRepository = infrastructure.BinaryRepository{
-		DB:     db,
-		Crypto: cryptoService,
-	}
+	sessionRepository = sessrepo.New(db, cryptoService, log)
+	textRepository = txtrepo.New(db, cryptoService, log)
+	jwkRepository = jwkrepo.New(db, cryptoService, log)
+	binaryRepository = binrepo.New(db, cryptoService, log)
 
 	app := application.New(
+		log,
 		client,
 		sessionRepository,
 		textRepository,
@@ -106,7 +93,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		binaryRepository,
 	)
 
-	cmd = presentation.New(&app, log, sessionRepository)
+	cmd = presentation.New("v0.0.1", "01.01.1999", app, log, sessionRepository)
 
 	return cmd, nil
 }
@@ -129,14 +116,18 @@ func teardown() error {
 	return nil
 }
 
-func issueToken(userID string, exp time.Duration) (string, error) {
+func issueToken(userID uuid.UUID, exp time.Duration) (string, error) {
 	jwks, err := getJWKs()
 	if err != nil {
 		return "", err
 	}
 	issuedAt := time.Now()
 	expiration := issuedAt.Add(exp)
-	token, err := jwt.NewBuilder().IssuedAt(time.Now()).Expiration(expiration).Claim("UserID", userID).Build()
+	token, err := jwt.NewBuilder().
+		IssuedAt(time.Now()).
+		Expiration(expiration).
+		Claim("UserID", userID.String()).
+		Build()
 	if err != nil {
 		return "", err
 	}
@@ -148,8 +139,8 @@ func issueToken(userID string, exp time.Duration) (string, error) {
 	return string(signed), nil
 }
 
-func createSession() (string, error) {
-	userID := uuid.NewString()
+func createSession() (uuid.UUID, error) {
+	userID := uuid.New()
 	expiration := time.Hour
 	token, err := issueToken(userID, expiration)
 	if err != nil {
@@ -170,7 +161,7 @@ func createSession() (string, error) {
 }
 
 func createExpiredSession() error {
-	userID := uuid.NewString()
+	userID := uuid.New()
 	token, err := issueToken(userID, time.Duration(0))
 	if err != nil {
 		return err

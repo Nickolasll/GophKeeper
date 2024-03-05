@@ -1,4 +1,21 @@
-// Package presentation содержит фабрику роутера, обработчики и схемы валидации
+// Package presentation GophKeeper представляет собой серверную систему, позволяющую пользователю
+// надёжно и безопасно хранить логины, пароли, бинарные данные и прочую приватную информацию.
+//
+//		Schemes: https
+//		Host: localhost
+//		BasePath: /api/v1
+//
+//		components:
+//			securitySchemes:
+//		  		bearerAuth:
+//		    		type: http
+//		    		scheme: bearer
+//		    		bearerFormat: JWT  # optional, for documentation purposes only
+//
+//		security:
+//	  	- bearerAuth: []
+//
+// swagger:meta
 package presentation
 
 import (
@@ -30,6 +47,14 @@ func New(
 
 	router = chi.NewRouter()
 	router.Use(logging)
+
+	// swagger:route GET /health health
+	// Return that server is alive
+	//
+	// responses:
+	//  200: someResponse
+	//  500: genericError
+	router.Get("/api/v1/health", getHealthHandler)
 
 	router.Post("/api/v1/auth/register", registrationHandler)
 	router.Post("/api/v1/auth/login", loginHandler)

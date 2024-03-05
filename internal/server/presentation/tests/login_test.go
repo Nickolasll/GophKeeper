@@ -110,7 +110,7 @@ func TestLoginSuccess(t *testing.T) {
 	require.NotEmpty(t, responseRecorder.Header().Get("Authorization"))
 }
 
-func TestLoginWrongPasswordUnauthorized(t *testing.T) { //nolint: dupl
+func TestLoginWrongPasswordUnauthorized(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()

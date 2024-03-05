@@ -15,6 +15,8 @@ var sessionRepository domain.SessionRepositoryInterface
 var log *logrus.Logger
 
 func New(
+	version string,
+	buildDate string,
 	_app *application.Application,
 	_log *logrus.Logger,
 	_sessionRepository domain.SessionRepositoryInterface,
@@ -42,7 +44,7 @@ func New(
 
 	cmd := cli.Command{
 		Name:                  "gophkeeper",
-		Version:               "v0.0.1",
+		Version:               version + ", build at: " + buildDate,
 		Usage:                 "Password and user data manager",
 		EnableShellCompletion: true,
 		Commands: []*cli.Command{

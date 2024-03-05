@@ -2,6 +2,8 @@
 package usecases
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
@@ -11,6 +13,8 @@ type CreateBinary struct {
 	Client domain.GophKeeperClientInterface
 	// BinaryRepository - Реализация интерфейса BinaryRepositoryInterface
 	BinaryRepository domain.BinaryRepositoryInterface
+	// Log - логгер
+	Log *logrus.Logger
 }
 
 // Do - Вызов логики сценария использования

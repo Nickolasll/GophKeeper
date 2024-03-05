@@ -23,11 +23,11 @@ type Config struct {
 	// CryptoSecret - Приватный ключ для шифрования данных
 	CryptoSecret []byte `env:"CRYPTO_SECRET, default=1234567812345678"`
 	// ReadHeaderTimeout - Таймаут чтения заголовков
-	ReadHeaderTimeout time.Duration `env:"READ_HEADER_TIMEOUT, default=600s"`
+	ReadHeaderTimeout time.Duration `env:"READ_HEADER_TIMEOUT, default=2s"`
 	// X509CertPath - Путь до сертификата x509
 	X509CertPath string `env:"X509_CERT_PATH, default=server.crt"`
 	// X509KeyPath - Путь до ключа tls
-	X509KeyPath string `env:"X509_KEY_PATH, default=server.key"`
+	TLSKeyPath string `env:"TLS_KEY_PATH, default=server.key"`
 }
 
 // New - Возвращает инстанс конфигурации сервера из переменных окружения

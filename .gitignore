@@ -34,3 +34,6 @@ go.work
 
 # database
 *.db
+
+# logs
+*.log

@@ -13,7 +13,7 @@ import (
 )
 
 func TestRegistrationSuccess(t *testing.T) {
-	userID := uuid.NewString()
+	userID := uuid.New()
 	token, err := issueToken(userID, time.Hour)
 	require.NoError(t, err)
 	client := FakeHTTPClient{

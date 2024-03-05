@@ -30,15 +30,12 @@ func logging(handler http.Handler) http.Handler {
 		duration := time.Since(start)
 
 		log.WithFields(logrus.Fields{
-			"uri":      uri,
-			"method":   method,
-			"duration": duration,
-		}).Info("Request info")
-
-		log.WithFields(logrus.Fields{
+			"uri":            uri,
+			"method":         method,
+			"duration_ms":    duration.Milliseconds(),
 			"status":         recorder.Status,
 			"content length": recorder.ContentLength,
-		}).Info("Response info")
+		}).Info("Request info")
 	}
 
 	return http.HandlerFunc(logFn)
