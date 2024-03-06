@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateTextBadRequest(t *testing.T) { //nolint: dupl
+func TestCreateTextBadRequest(t *testing.T) {
 	tests := []struct {
 		name        string
 		body        []byte

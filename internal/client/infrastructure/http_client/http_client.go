@@ -213,3 +213,39 @@ func (c HTTPClient) parseID(id string) (uuid.UUID, error) {
 
 	return uid, nil
 }
+
+// CreateCredentials - Создает пару логин и парль, возвращает идентификатор ресурса от сервера
+func (c HTTPClient) CreateCredentials(session domain.Session, name, login, password string) (uuid.UUID, error) {
+	var uid uuid.UUID
+	payload, err := credentialsToJSON(name, login, password)
+	if err != nil {
+		return uid, err
+	}
+	id, err := c.create(session.Token, "credentials/create", "application/json", payload)
+
+	if err != nil {
+		return uid, err
+	}
+
+	uid, err = c.parseID(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
+}
+
+// UpdateCredentials - Обновляет существующие логин и пароль
+func (c HTTPClient) UpdateCredentials(session domain.Session, cred domain.Credentials) error {
+	payload, err := credentialsToJSON(cred.Name, cred.Login, cred.Password)
+	if err != nil {
+		return err
+	}
+	err = c.update(session.Token, "credentials/"+cred.ID.String(), "application/json", payload)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

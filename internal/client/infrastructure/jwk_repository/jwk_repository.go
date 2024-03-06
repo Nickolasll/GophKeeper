@@ -12,6 +12,9 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
+const bucketName = "JWK"
+const keyName = "Keys"
+
 // JWKRepository - Имплементация репозитория публичного ключа
 type JWKRepository struct {
 	// DB - Инстанс базы данных bbolt
@@ -41,12 +44,12 @@ func (r JWKRepository) Save(key jwk.Key) error {
 		err = tx.Rollback()
 	}()
 
-	b, err := tx.CreateBucketIfNotExists([]byte("JWK"))
+	b, err := tx.CreateBucketIfNotExists([]byte(bucketName))
 	if err != nil {
 		return err
 	}
 
-	err = b.Put([]byte("Keys"), encrypted)
+	err = b.Put([]byte(keyName), encrypted)
 	if err != nil {
 		return err
 	}
@@ -65,11 +68,11 @@ func (r JWKRepository) Get() (jwk.Key, error) {
 	var raw []byte
 
 	err := r.DB.View(func(tx *bolt.Tx) error {
-		root := tx.Bucket([]byte("JWK"))
+		root := tx.Bucket([]byte(bucketName))
 		if root == nil {
 			return domain.ErrEntityNotFound
 		}
-		raw = root.Get([]byte("Keys"))
+		raw = root.Get([]byte(keyName))
 
 		return nil
 	})
@@ -97,9 +100,9 @@ func (r JWKRepository) Get() (jwk.Key, error) {
 // Delete - Удаляет существующий ключ
 func (r JWKRepository) Delete() error {
 	return r.DB.Update(func(tx *bolt.Tx) error {
-		root := tx.Bucket([]byte("JWK"))
+		root := tx.Bucket([]byte(bucketName))
 		if root != nil {
-			err := root.Delete([]byte("Keys"))
+			err := root.Delete([]byte(keyName))
 			if err != nil {
 				return err
 			}

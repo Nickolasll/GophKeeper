@@ -64,6 +64,7 @@
 * `make test` - запуск юнит-тестов;
 * `make client-build` - сборка исполняемых файлов клиента;
 * `make generate-spec` - кодогенерация по openapi-спецификации;
+* `make help` - вывод всех доступных команд;
 
 Список всех команд (Makefile targets) смотрите в [Makefile](Makefile).
 

@@ -12,6 +12,8 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
+const bucketName = "Binary"
+
 // BinaryRepository - Имплементация репозитория для произвольных бинарных данных
 type BinaryRepository struct {
 	// DB - Интерфейс базы данных bbolt
@@ -46,7 +48,7 @@ func (r BinaryRepository) Create(userID uuid.UUID, bin domain.Binary) error {
 		return domain.ErrEntityNotFound
 	}
 
-	bkt, err := root.CreateBucketIfNotExists([]byte("Binary"))
+	bkt, err := root.CreateBucketIfNotExists([]byte(bucketName))
 	if err != nil {
 		return err
 	}
@@ -82,7 +84,7 @@ func (r BinaryRepository) Update(userID uuid.UUID, bin domain.Binary) error {
 			return domain.ErrEntityNotFound
 		}
 
-		bkt := root.Bucket([]byte("Binary"))
+		bkt := root.Bucket([]byte(bucketName))
 		if bkt == nil {
 			return domain.ErrEntityNotFound
 		}
@@ -111,7 +113,7 @@ func (r BinaryRepository) Get(userID, binID uuid.UUID) (domain.Binary, error) {
 			return domain.ErrEntityNotFound
 		}
 
-		bkt := root.Bucket([]byte("Binary"))
+		bkt := root.Bucket([]byte(bucketName))
 		if bkt == nil {
 			return domain.ErrEntityNotFound
 		}
@@ -151,7 +153,7 @@ func (r BinaryRepository) GetAll(userID uuid.UUID) ([]domain.Binary, error) {
 			return nil
 		}
 
-		bkt := root.Bucket([]byte("Binary"))
+		bkt := root.Bucket([]byte(bucketName))
 		if bkt == nil {
 			return nil
 		}

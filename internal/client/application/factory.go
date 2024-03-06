@@ -26,6 +26,12 @@ type Application struct {
 	UpdateBinary usecases.UpdateBinary
 	// ShowBinary - Сценарий получения расшифрованных бинарных данных
 	ShowBinary usecases.ShowBinary
+	// CreateCredentials - Сценарий создания новой пары логин и пароль
+	CreateCredentials usecases.CreateCredentials
+	// UpdateCredentials - Сценарий обновления существующей пары логин и пароль
+	UpdateCredentials usecases.UpdateCredentials
+	// ShowCredentials - Сценарий получения расшифрованных логинов и паролей пользователя
+	ShowCredentials usecases.ShowCredentials
 }
 
 // New - Фабрика приложения
@@ -36,6 +42,7 @@ func New(
 	textRepository domain.TextRepositoryInterface,
 	jwkRepository domain.JWKRepositoryInterface,
 	binaryRepository domain.BinaryRepositoryInterface,
+	credentialsRepository domain.CredentialsRepositoryInterface,
 ) *Application {
 	jwk, err := jwkRepository.Get()
 
@@ -50,14 +57,12 @@ func New(
 		Key:           jwk,
 		Log:           log,
 	}
-
 	registration := usecases.Registration{
 		Client:            client,
 		SessionRepository: sessionRepository,
 		CheckToken:        &checkToken,
 		Log:               log,
 	}
-
 	login := usecases.Login{
 		Client:            client,
 		SessionRepository: sessionRepository,
@@ -70,13 +75,11 @@ func New(
 		TextRepository: textRepository,
 		Log:            log,
 	}
-
 	updateText := usecases.UpdateText{
 		Client:         client,
 		TextRepository: textRepository,
 		Log:            log,
 	}
-
 	showText := usecases.ShowText{
 		CheckToken:     &checkToken,
 		TextRepository: textRepository,
@@ -88,27 +91,44 @@ func New(
 		BinaryRepository: binaryRepository,
 		Log:              log,
 	}
-
 	updateBinary := usecases.UpdateBinary{
 		Client:           client,
 		BinaryRepository: binaryRepository,
 		Log:              log,
 	}
-
 	showBinary := usecases.ShowBinary{
 		CheckToken:       &checkToken,
 		BinaryRepository: binaryRepository,
 		Log:              log,
 	}
 
+	createCredentials := usecases.CreateCredentials{
+		Client:                client,
+		CredentialsRepository: credentialsRepository,
+		Log:                   log,
+	}
+	updateCredentials := usecases.UpdateCredentials{
+		Client:                client,
+		CredentialsRepository: credentialsRepository,
+		Log:                   log,
+	}
+	showCredentials := usecases.ShowCredentials{
+		CheckToken:            &checkToken,
+		CredentialsRepository: credentialsRepository,
+		Log:                   log,
+	}
+
 	return &Application{
-		Registration: registration,
-		Login:        login,
-		CreateText:   createText,
-		UpdateText:   updateText,
-		ShowText:     showText,
-		CreateBinary: createBinary,
-		UpdateBinary: updateBinary,
-		ShowBinary:   showBinary,
+		Registration:      registration,
+		Login:             login,
+		CreateText:        createText,
+		UpdateText:        updateText,
+		ShowText:          showText,
+		CreateBinary:      createBinary,
+		UpdateBinary:      updateBinary,
+		ShowBinary:        showBinary,
+		CreateCredentials: createCredentials,
+		UpdateCredentials: updateCredentials,
+		ShowCredentials:   showCredentials,
 	}
 }

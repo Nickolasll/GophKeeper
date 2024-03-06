@@ -14,6 +14,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/config"
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/binary_repository"
+	crederepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/credentials_repository"
 	txtrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/text_repository"
 	usrrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/user_repository"
 	"github.com/Nickolasll/goph-keeper/internal/server/logger"
@@ -26,6 +27,7 @@ var cryptoService *crypto.CryptoService
 var userRepository *usrrepo.UserRepository
 var textRepository *txtrepo.TextRepository
 var binaryRepository *binrepo.BinaryRepository
+var credentialsRepository *crederepo.CredentialsRepository
 
 func setup() (*chi.Mux, error) {
 	log := logger.New()
@@ -53,6 +55,7 @@ func setup() (*chi.Mux, error) {
 	userRepository = usrrepo.New(pool, cfg.DBTimeOut, log)
 	textRepository = txtrepo.New(pool, cfg.DBTimeOut, log)
 	binaryRepository = binrepo.New(pool, cfg.DBTimeOut, log)
+	credentialsRepository = crederepo.New(pool, cfg.DBTimeOut, log)
 
 	app := application.New(
 		log,
@@ -61,6 +64,7 @@ func setup() (*chi.Mux, error) {
 		userRepository,
 		textRepository,
 		binaryRepository,
+		credentialsRepository,
 	)
 
 	router := presentation.New(app, joseService, log)

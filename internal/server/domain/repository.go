@@ -36,3 +36,15 @@ type BinaryRepositoryInterface interface {
 	// GetAll - Возвращает список бинарных данных, принадлежащих пользователю
 	GetAll(userID uuid.UUID) ([]Binary, error)
 }
+
+// CredentialsRepositoryInterface - Интерфейс репозитория для логинов и паролей
+type CredentialsRepositoryInterface interface {
+	// Create - Сохраняет новую пару логина и пароля
+	Create(cred *Credentials) error
+	// Update - Сохраняет существующую пару логина и пароля
+	Update(cred *Credentials) error
+	// Get - Возвращает пару логин и пароль по идентификатору пользователя и данных, если они существуют
+	Get(userID uuid.UUID, credID uuid.UUID) (*Credentials, error)
+	// GetAll - Возвращает список логинов и паролей, принадлежащих пользователю
+	GetAll(userID uuid.UUID) ([]Credentials, error)
+}

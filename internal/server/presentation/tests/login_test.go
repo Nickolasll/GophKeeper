@@ -13,7 +13,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
-func TestLoginBadRequest(t *testing.T) { //nolint: dupl
+func TestLoginBadRequest(t *testing.T) {
 	tests := []struct {
 		name        string
 		body        []byte
@@ -76,7 +76,7 @@ func TestLoginNoUserUnauthorized(t *testing.T) {
 	require.NoError(t, err)
 	defer teardown()
 
-	bodyReader := bytes.NewReader([]byte(`{"login": "` + uuid.NewString() + `", "password": "password"}`)) //nolint: goconst
+	bodyReader := bytes.NewReader([]byte(`{"login": "` + uuid.NewString() + `", "password": "password"}`))
 	req := httptest.NewRequest("POST", "/api/v1/auth/login", bodyReader)
 	req.Header.Add("Content-Type", "application/json")
 	responseRecorder := httptest.NewRecorder()

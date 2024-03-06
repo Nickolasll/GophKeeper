@@ -23,6 +23,10 @@ type Application struct {
 	CreateBinary usecases.CreateBinary
 	// UpdateText - Сценарий использования для обновления существующих зашифрованных бинарных данных
 	UpdateBinary usecases.UpdateBinary
+	// CreateCredentials - Сценарий использования для создания зашифрованной пары логин и пароль
+	CreateCredentials usecases.CreateCredentials
+	// UpdateCredentials - Сценарий использования для обновления существующей зашифрованной пары логин и пароль
+	UpdateCredentials usecases.UpdateCredentials
 }
 
 // New - Фабрика приложения
@@ -33,6 +37,7 @@ func New(
 	userRepository domain.UserRepositoryInterface,
 	textRepository domain.TextRepositoryInterface,
 	binaryRepository domain.BinaryRepositoryInterface,
+	credentialsRepository domain.CredentialsRepositoryInterface,
 ) *Application {
 	registration := usecases.Registration{
 		UserRepository: userRepository,
@@ -51,7 +56,6 @@ func New(
 		Crypto:         crypto,
 		Log:            log,
 	}
-
 	updateText := usecases.UpdateText{
 		TextRepository: textRepository,
 		Crypto:         crypto,
@@ -63,19 +67,31 @@ func New(
 		Crypto:           crypto,
 		Log:              log,
 	}
-
 	updateBinary := usecases.UpdateBinary{
 		BinaryRepository: binaryRepository,
 		Crypto:           crypto,
 		Log:              log,
 	}
 
+	createCredentials := usecases.CreateCredentials{
+		CredentialsRepository: credentialsRepository,
+		Crypto:                crypto,
+		Log:                   log,
+	}
+	updateCredentials := usecases.UpdateCredentials{
+		CredentialsRepository: credentialsRepository,
+		Crypto:                crypto,
+		Log:                   log,
+	}
+
 	return &Application{
-		Registration: registration,
-		Login:        login,
-		CreateText:   createText,
-		UpdateText:   updateText,
-		CreateBinary: createBinary,
-		UpdateBinary: updateBinary,
+		Registration:      registration,
+		Login:             login,
+		CreateText:        createText,
+		UpdateText:        updateText,
+		CreateBinary:      createBinary,
+		UpdateBinary:      updateBinary,
+		CreateCredentials: createCredentials,
+		UpdateCredentials: updateCredentials,
 	}
 }

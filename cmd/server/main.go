@@ -13,6 +13,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
 	"github.com/Nickolasll/goph-keeper/internal/server/config"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/binary_repository"
+	crederepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/credentials_repository"
 	txtrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/text_repository"
 	usrrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/user_repository"
 	"github.com/Nickolasll/goph-keeper/internal/server/logger"
@@ -46,6 +47,7 @@ func main() {
 	userRepository := usrrepo.New(pool, cfg.DBTimeOut, log)
 	textRepository := txtrepo.New(pool, cfg.DBTimeOut, log)
 	binaryRepository := binrepo.New(pool, cfg.DBTimeOut, log)
+	credentialsRepository := crederepo.New(pool, cfg.DBTimeOut, log)
 
 	app := application.New(
 		log,
@@ -54,6 +56,7 @@ func main() {
 		userRepository,
 		textRepository,
 		binaryRepository,
+		credentialsRepository,
 	)
 
 	router := presentation.New(app, joseService, log)

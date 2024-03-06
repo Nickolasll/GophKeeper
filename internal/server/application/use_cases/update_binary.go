@@ -10,7 +10,7 @@ import (
 
 // UpdateBinary - Сценарий использования для обновления существующих зашифрованных бинарных данных
 type UpdateBinary struct {
-	// TextRepository - Интерфейс репозитория для сохранения бинарных данных
+	// BinaryRepository - Интерфейс репозитория для сохранения бинарных данных
 	BinaryRepository domain.BinaryRepositoryInterface
 	// Crypto - Сервис для шифрования данных
 	Crypto domain.CryptoServiceInterface

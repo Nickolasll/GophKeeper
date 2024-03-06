@@ -326,3 +326,151 @@ func showBinary() cli.Command {
 		},
 	}
 }
+
+func createCredentials() cli.Command {
+	return cli.Command{
+		Name:    "create",
+		Usage:   "create new credentials",
+		Aliases: []string{"c"},
+		Action: func(_ context.Context, cmd *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			name := cmd.Args().Get(0)
+			login := cmd.Args().Get(1)
+			password := cmd.Args().Get(2)
+
+			err := app.CreateCredentials.Do(*currentSession, name, login, password)
+			if err != nil {
+				if errors.Is(err, domain.ErrBadRequest) {
+					fmt.Println(err)
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+
+			fmt.Println("Credentials created successfully")
+
+			return nil
+		},
+	}
+}
+
+func updateCredentials() cli.Command {
+	return cli.Command{
+		Name:    "update",
+		Usage:   "update existing credentials via id and flags",
+		Aliases: []string{"c"},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "name",
+				Aliases:     []string{"n"},
+				Usage:       "name to update",
+				DefaultText: "",
+			},
+			&cli.StringFlag{
+				Name:        "login",
+				Aliases:     []string{"l"},
+				Usage:       "login to update",
+				DefaultText: "",
+			},
+			&cli.StringFlag{
+				Name:        "password",
+				Aliases:     []string{"p"},
+				Usage:       "password to update",
+				DefaultText: "",
+			},
+		},
+		Action: func(_ context.Context, cmd *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+			id := cmd.Args().First()
+
+			name := cmd.String("name")
+			login := cmd.String("login")
+			password := cmd.String("password")
+
+			credID, err := parseID(id)
+			if err != nil {
+				fmt.Println(err, "invalid credentials id: ", id)
+
+				return nil
+			}
+
+			if name == "" && login == "" && password == "" {
+				fmt.Println("invalid input: please pass at least one attribute (name, login, password) to update")
+
+				return nil
+			}
+
+			err = app.UpdateCredentials.Do(*currentSession, credID, name, login, password)
+			if err != nil {
+				if errors.Is(err, domain.ErrEntityNotFound) {
+					fmt.Println("Credentials not found, id: ", credID)
+
+					return nil
+				} else if errors.Is(err, domain.ErrBadRequest) {
+					fmt.Println(err)
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+			fmt.Println("Credentials updated successfully")
+
+			return nil
+		},
+	}
+}
+
+func showCredentials() cli.Command {
+	return cli.Command{
+		Name:    "show",
+		Usage:   "shows current user credentials data",
+		Aliases: []string{"c"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			text, err := app.ShowCredentials.Do(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+
+			s, err := json.MarshalIndent(text, "", "\t")
+			if err != nil {
+				log.Error(err)
+
+				return cli.Exit(err, 1)
+			}
+			fmt.Print(string(s))
+
+			return nil
+		},
+	}
+}

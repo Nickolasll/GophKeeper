@@ -139,3 +139,5 @@ linters:
 
 run:
   timeout: 5m
+  skip-dirs:
+    - internal/server/presentation/tests

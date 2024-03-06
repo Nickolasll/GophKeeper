@@ -11,6 +11,9 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
+const bucketName = "ActiveSession"
+const keyName = "Session"
+
 // SessionRepository - Имплементация репозитория сессий
 type SessionRepository struct {
 	// DB - Инстанс базы данных bbolt
@@ -40,12 +43,12 @@ func (r SessionRepository) Save(session domain.Session) error {
 		err = tx.Rollback()
 	}()
 
-	b, err := tx.CreateBucketIfNotExists([]byte("ActiveSession"))
+	b, err := tx.CreateBucketIfNotExists([]byte(bucketName))
 	if err != nil {
 		return err
 	}
 
-	err = b.Put([]byte("Session"), encrypted)
+	err = b.Put([]byte(keyName), encrypted)
 	if err != nil {
 		return err
 	}
@@ -68,11 +71,11 @@ func (r SessionRepository) Get() (*domain.Session, error) {
 	var raw []byte
 
 	err := r.DB.View(func(tx *bolt.Tx) error {
-		root := tx.Bucket([]byte("ActiveSession"))
+		root := tx.Bucket([]byte(bucketName))
 		if root == nil {
 			return domain.ErrEntityNotFound
 		}
-		raw = root.Get([]byte("Session"))
+		raw = root.Get([]byte(keyName))
 
 		return nil
 	})
@@ -100,9 +103,9 @@ func (r SessionRepository) Get() (*domain.Session, error) {
 // Delete - Удаляет существуюущую сессию
 func (r SessionRepository) Delete() error {
 	return r.DB.Update(func(tx *bolt.Tx) error {
-		root := tx.Bucket([]byte("ActiveSession"))
+		root := tx.Bucket([]byte(bucketName))
 		if root != nil {
-			err := root.Delete([]byte("Session"))
+			err := root.Delete([]byte(keyName))
 			if err != nil {
 				return err
 			}

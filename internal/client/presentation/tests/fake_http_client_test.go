@@ -52,7 +52,7 @@ func (c FakeHTTPClient) GetCerts() ([]byte, error) {
 	return c.Certs, nil
 }
 
-// CreateText - Создает текст, возвращает идентификатор ресурса от сервера
+// CreateBinary - Создает бинарные данные, возвращает идентификатор ресурса от сервера
 func (c FakeHTTPClient) CreateBinary(_ domain.Session, _ []byte) (uuid.UUID, error) {
 	if c.Err != nil {
 		return uuid.New(), c.Err
@@ -61,7 +61,21 @@ func (c FakeHTTPClient) CreateBinary(_ domain.Session, _ []byte) (uuid.UUID, err
 	return c.Response.(uuid.UUID), nil
 }
 
-// UpdateText - Обновляет существующий текст
+// UpdateText - Обновляет существующие бинарные данные
 func (c FakeHTTPClient) UpdateBinary(_ domain.Session, _ domain.Binary) error {
+	return c.Err
+}
+
+// CreateCredentials - Создает пару логин и пароль, возвращает идентификатор ресурса от сервера
+func (c FakeHTTPClient) CreateCredentials(_ domain.Session, _, _, _ string) (uuid.UUID, error) {
+	if c.Err != nil {
+		return uuid.New(), c.Err
+	}
+
+	return c.Response.(uuid.UUID), nil
+}
+
+// UpdateCredentials - Обновляет существующий логин и пароль
+func (c FakeHTTPClient) UpdateCredentials(_ domain.Session, _ domain.Credentials) error {
 	return c.Err
 }

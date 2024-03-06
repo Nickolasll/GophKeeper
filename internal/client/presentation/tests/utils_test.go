@@ -17,9 +17,10 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/config"
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/binary_repository"
+	credrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/credentials_repository"
 	jwkrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/jwk_repository"
 	sessrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/session_repository"
-	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/test_repository"
+	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/text_repository"
 	"github.com/Nickolasll/goph-keeper/internal/client/logger"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
@@ -31,6 +32,7 @@ var sessionRepository *sessrepo.SessionRepository
 var textRepository *txtrepo.TextRepository
 var jwkRepository *jwkrepo.JWKRepository
 var binaryRepository *binrepo.BinaryRepository
+var credentialsRepository *credrepo.CredentialsRepository
 
 func getJWKs() (jwk.Key, error) {
 	jwks, err := jwk.FromRaw([]byte("My secret keys"))
@@ -83,6 +85,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 	textRepository = txtrepo.New(db, cryptoService, log)
 	jwkRepository = jwkrepo.New(db, cryptoService, log)
 	binaryRepository = binrepo.New(db, cryptoService, log)
+	credentialsRepository = credrepo.New(db, cryptoService, log)
 
 	app := application.New(
 		log,
@@ -91,6 +94,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		textRepository,
 		jwkRepository,
 		binaryRepository,
+		credentialsRepository,
 	)
 
 	cmd = presentation.New("v0.0.1", "01.01.1999", app, log, sessionRepository)

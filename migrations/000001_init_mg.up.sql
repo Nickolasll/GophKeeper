@@ -23,3 +23,14 @@ CREATE TABLE binary_data (
 
 ALTER TABLE binary_data
 	ADD FOREIGN KEY (user_id) REFERENCES users(id);
+
+CREATE TABLE credentials_data (
+	id          uuid          NOT NULL PRIMARY KEY
+	, user_id   uuid          NOT NULL
+	, name      bytea         NOT NULL
+	, login     bytea         NOT NULL
+	, password  bytea         NOT NULL
+);
+
+ALTER TABLE credentials_data
+	ADD FOREIGN KEY (user_id) REFERENCES users(id);

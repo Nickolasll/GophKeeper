@@ -26,3 +26,15 @@ type Binary struct {
 	// Content - Бинарные данные
 	Content []byte
 }
+
+// Credentials - Сущность типа хранимой информации "Логин и пароль"
+type Credentials struct {
+	// ID - Уникальный идентификатор "логина и пароля"
+	ID uuid.UUID
+	// Name - Наименование ресурса
+	Name string
+	// Login - Логин
+	Login string
+	// Password - пароль
+	Password string
+}

@@ -12,10 +12,11 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/application"
 	"github.com/Nickolasll/goph-keeper/internal/client/config"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/binary_repository"
+	credrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/credentials_repository"
 	httpclient "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/http_client"
 	jwkrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/jwk_repository"
 	sessrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/session_repository"
-	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/test_repository"
+	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/text_repository"
 	"github.com/Nickolasll/goph-keeper/internal/client/logger"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
@@ -70,6 +71,7 @@ func main() {
 	textRepository := txtrepo.New(db, cryptoService, log)
 	jwkRepository := jwkrepo.New(db, cryptoService, log)
 	binaryRepository := binrepo.New(db, cryptoService, log)
+	credentialsRepository := credrepo.New(db, cryptoService, log)
 
 	app := application.New(
 		log,
@@ -78,6 +80,7 @@ func main() {
 		textRepository,
 		jwkRepository,
 		binaryRepository,
+		credentialsRepository,
 	)
 
 	cmd := presentation.New(Version, BuildDate, app, log, sessionRepository)

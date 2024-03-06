@@ -15,7 +15,7 @@ import (
 
 const textURL = "/api/v1/text/"
 
-func TestUpdateTextBadRequest(t *testing.T) { //nolint: dupl
+func TestUpdateTextBadRequest(t *testing.T) {
 	tests := []struct {
 		name        string
 		body        []byte

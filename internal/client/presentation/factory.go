@@ -42,6 +42,10 @@ func New(
 	cmdUpdateBinary := updateBinary()
 	cmdShowBinary := showBinary()
 
+	cmdCreateCredentials := createCredentials()
+	cmdUpdateCredentials := updateCredentials()
+	cmdShowCredentials := showCredentials()
+
 	cmd := cli.Command{
 		Name:                  "gophkeeper",
 		Version:               version + ", build at: " + buildDate,
@@ -68,6 +72,16 @@ func New(
 					&cmdCreateBinary,
 					&cmdUpdateBinary,
 					&cmdShowBinary,
+				},
+			},
+			{
+				Name:    "credentials",
+				Aliases: []string{"cred"},
+				Usage:   "options for credentials",
+				Commands: []*cli.Command{
+					&cmdCreateCredentials,
+					&cmdUpdateCredentials,
+					&cmdShowCredentials,
 				},
 			},
 		},

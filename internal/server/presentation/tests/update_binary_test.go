@@ -15,7 +15,7 @@ import (
 
 const binaryURL = "/api/v1/binary/"
 
-func TestUpdateBinaryBadRequest(t *testing.T) { //nolint: dupl
+func TestUpdateBinaryBadRequest(t *testing.T) {
 	tests := []struct {
 		name        string
 		body        []byte
