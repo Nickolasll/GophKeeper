@@ -10,7 +10,7 @@ import (
 
 // CreateBinary - Сценарий использования для создания зашифрованных бинарных данных
 type CreateBinary struct {
-	// TextRepository - Интерфейс репозитория для сохранения бинарных данных
+	// BinaryRepository - Интерфейс репозитория для сохранения бинарных данных
 	BinaryRepository domain.BinaryRepositoryInterface
 	// Crypto - Сервис для шифрования данных
 	Crypto domain.CryptoServiceInterface

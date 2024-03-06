@@ -10,7 +10,7 @@ import (
 
 // CreateCredentials - Сценарий использования для создания зашифрованного логина и пароля
 type CreateCredentials struct {
-	// TextRepository - Интерфейс репозитория для сохранения логина и пароля
+	// CredentialsRepository - Интерфейс репозитория для сохранения логина и пароля
 	CredentialsRepository domain.CredentialsRepositoryInterface
 	// Crypto - Сервис для шифрования данных
 	Crypto domain.CryptoServiceInterface

@@ -27,6 +27,10 @@ type Application struct {
 	CreateCredentials usecases.CreateCredentials
 	// UpdateCredentials - Сценарий использования для обновления существующей зашифрованной пары логин и пароль
 	UpdateCredentials usecases.UpdateCredentials
+	// CreateBankCard - Сценарий использования для создания зашифрованной банковской карты
+	CreateBankCard usecases.CreateBankCard
+	// UpdateBankCard - Сценарий использования для обновления существующей зашифрованной банковской карты
+	UpdateBankCard usecases.UpdateBankCard
 }
 
 // New - Фабрика приложения
@@ -38,6 +42,7 @@ func New(
 	textRepository domain.TextRepositoryInterface,
 	binaryRepository domain.BinaryRepositoryInterface,
 	credentialsRepository domain.CredentialsRepositoryInterface,
+	bankCardRepository domain.BankCardRepositoryInterface,
 ) *Application {
 	registration := usecases.Registration{
 		UserRepository: userRepository,
@@ -84,6 +89,17 @@ func New(
 		Log:                   log,
 	}
 
+	createBankCard := usecases.CreateBankCard{
+		BankCardRepository: bankCardRepository,
+		Crypto:             crypto,
+		Log:                log,
+	}
+	updateBankCard := usecases.UpdateBankCard{
+		BankCardRepository: bankCardRepository,
+		Crypto:             crypto,
+		Log:                log,
+	}
+
 	return &Application{
 		Registration:      registration,
 		Login:             login,
@@ -93,5 +109,7 @@ func New(
 		UpdateBinary:      updateBinary,
 		CreateCredentials: createCredentials,
 		UpdateCredentials: updateCredentials,
+		CreateBankCard:    createBankCard,
+		UpdateBankCard:    updateBankCard,
 	}
 }

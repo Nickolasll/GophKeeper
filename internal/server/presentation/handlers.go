@@ -327,3 +327,80 @@ func updateCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 	}
 	w.WriteHeader(http.StatusOK)
 }
+
+func createBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	var payload bankCardPayload
+	body, err := parseBody(jsonType, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	payload, err = payload.LoadFromJSON(body)
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+	cardID, err := app.CreateBankCard.Do(
+		userID,
+		payload.Number,
+		payload.ValidThru,
+		payload.CVV,
+		payload.CardHolder,
+	)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Error(err)
+
+		return
+	}
+	w.Header().Add("Location", cardID.String())
+	w.WriteHeader(http.StatusCreated)
+}
+
+func updateBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
+	var payload bankCardPayload
+	id, err := getRouteID(r, "cardID")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	body, err := parseBody(jsonType, r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	payload, err = payload.LoadFromJSON(body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Error(err)
+
+		return
+	}
+	err = app.UpdateBankCard.Do(
+		userID,
+		id,
+		payload.Number,
+		payload.ValidThru,
+		payload.CVV,
+		payload.CardHolder,
+	)
+	if err != nil {
+		if errors.Is(err, domain.ErrEntityNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Error(err)
+		}
+
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}

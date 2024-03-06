@@ -6,16 +6,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
-const credURL = "/api/v1/credentials/"
+const cardURL = "/api/v1/bank_card/"
 
-func TestUpdateCredentialsBadRequest(t *testing.T) {
+func TestUpdateBankCardBadRequest(t *testing.T) {
 	tests := []struct {
 		name        string
 		body        []byte
@@ -54,7 +53,7 @@ func TestUpdateCredentialsBadRequest(t *testing.T) {
 			require.NoError(t, err)
 
 			bodyReader := bytes.NewReader(tt.body)
-			req := httptest.NewRequest("POST", credURL+tt.resuorceID, bodyReader)
+			req := httptest.NewRequest("POST", cardURL+tt.resuorceID, bodyReader)
 			req.Header.Add("Content-Type", tt.contentType)
 			req.Header.Add("Authorization", string(token))
 			responseRecorder := httptest.NewRecorder()
@@ -64,7 +63,7 @@ func TestUpdateCredentialsBadRequest(t *testing.T) {
 	}
 }
 
-func TestUpdateCredentialsSuccess(t *testing.T) {
+func TestUpdateBankCardSuccess(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()
@@ -75,53 +74,61 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
-	credID := uuid.New()
-	cred := domain.Credentials{
-		ID:       credID,
-		UserID:   userID,
-		Name:     []byte("name"),
-		Login:    []byte("login"),
-		Password: []byte("password"),
+	cardID := uuid.New()
+	card := domain.BankCard{
+		ID:         cardID,
+		UserID:     userID,
+		Number:     []byte("0000 0000 0000 0000"),
+		CVV:        []byte("000"),
+		ValidThru:  []byte("01/11"),
+		CardHolder: []byte(""),
 	}
-	err = credentialsRepository.Create(&cred)
+	err = cardRepository.Create(&card)
 	require.NoError(t, err)
 
-	name := "my name to update"
-	login := "my login to update"
-	password := "my password to update"
+	number := "1234 5678 1234 5678"
+	validThru := "01/30"
+	cvv := "123"
+	cardHolder := "Card Holder"
 
 	bodyReader := bytes.NewReader([]byte(`{
-		"name": "` + name + `", ` +
-		`"login": "` + login + `", ` +
-		`"password": "` + password + `"` +
+		"number": "` + number + `", ` +
+		`"valid_thru": "` + validThru + `", ` +
+		`"cvv": "` + cvv + `", ` +
+		`"card_holder": "` + cardHolder + `"` +
 		`}`))
-	req := httptest.NewRequest("POST", credURL+credID.String(), bodyReader)
+	req := httptest.NewRequest("POST", cardURL+cardID.String(), bodyReader)
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()
 	router.ServeHTTP(responseRecorder, req)
 	assert.Equal(t, http.StatusOK, responseRecorder.Code)
 
-	credObj, err := credentialsRepository.Get(userID, credID)
+	cardObj, err := cardRepository.Get(userID, cardID)
 	require.NoError(t, err)
 
-	decrName, err := cryptoService.Decrypt(credObj.Name)
+	decrNumber, err := cryptoService.Decrypt(cardObj.Number)
 	require.NoError(t, err)
 
-	assert.Equal(t, name, string(decrName))
+	assert.Equal(t, number, string(decrNumber))
 
-	decrLogin, err := cryptoService.Decrypt(credObj.Login)
+	decrValidThru, err := cryptoService.Decrypt(cardObj.ValidThru)
 	require.NoError(t, err)
 
-	assert.Equal(t, login, string(decrLogin))
+	assert.Equal(t, validThru, string(decrValidThru))
 
-	decrPassword, err := cryptoService.Decrypt(credObj.Password)
+	decrCVV, err := cryptoService.Decrypt(cardObj.CVV)
 	require.NoError(t, err)
 
-	assert.Equal(t, password, string(decrPassword))
+	assert.Equal(t, cvv, string(decrCVV))
+
+	decrCardHolder, err := cryptoService.Decrypt(cardObj.CardHolder)
+	require.NoError(t, err)
+
+	assert.Equal(t, cardHolder, string(decrCardHolder))
 }
 
-func TestUpdateCredentialsNotFound(t *testing.T) {
+func TestUpdateBankCardNotFound(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()
@@ -132,16 +139,18 @@ func TestUpdateCredentialsNotFound(t *testing.T) {
 	token, err := joseService.IssueToken(userID)
 	require.NoError(t, err)
 
-	name := "my name to update"
-	login := "my login to update"
-	password := "my password to update"
+	number := "1234 5678 1234 5678"
+	validThru := "01/30"
+	cvv := "123"
+	cardHolder := "Card Holder"
 
 	bodyReader := bytes.NewReader([]byte(`{
-		"name": "` + name + `", ` +
-		`"login": "` + login + `", ` +
-		`"password": "` + password + `"` +
+		"number": "` + number + `", ` +
+		`"valid_thru": "` + validThru + `", ` +
+		`"cvv": "` + cvv + `", ` +
+		`"card_holder": "` + cardHolder + `"` +
 		`}`))
-	req := httptest.NewRequest("POST", credURL+uuid.NewString(), bodyReader)
+	req := httptest.NewRequest("POST", cardURL+uuid.NewString(), bodyReader)
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()
@@ -149,7 +158,7 @@ func TestUpdateCredentialsNotFound(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, responseRecorder.Code)
 }
 
-func TestUpdateCredentialsInvalidID(t *testing.T) {
+func TestUpdateBankCardInvalidID(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()
@@ -161,7 +170,7 @@ func TestUpdateCredentialsInvalidID(t *testing.T) {
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader([]byte{})
-	req := httptest.NewRequest("POST", textURL+"invalid", bodyReader)
+	req := httptest.NewRequest("POST", cardURL+"invalid", bodyReader)
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", string(token))
 	responseRecorder := httptest.NewRecorder()

@@ -12,6 +12,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/application"
 	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
 	"github.com/Nickolasll/goph-keeper/internal/server/config"
+	bcardrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/bank_card_repository"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/binary_repository"
 	crederepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/credentials_repository"
 	txtrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/text_repository"
@@ -48,6 +49,7 @@ func main() {
 	textRepository := txtrepo.New(pool, cfg.DBTimeOut, log)
 	binaryRepository := binrepo.New(pool, cfg.DBTimeOut, log)
 	credentialsRepository := crederepo.New(pool, cfg.DBTimeOut, log)
+	cardRepository := bcardrepo.New(pool, cfg.DBTimeOut, log)
 
 	app := application.New(
 		log,
@@ -57,6 +59,7 @@ func main() {
 		textRepository,
 		binaryRepository,
 		credentialsRepository,
+		cardRepository,
 	)
 
 	router := presentation.New(app, joseService, log)

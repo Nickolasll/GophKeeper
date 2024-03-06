@@ -13,6 +13,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/application/jose"
 	"github.com/Nickolasll/goph-keeper/internal/server/config"
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
+	bcardrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/bank_card_repository"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/binary_repository"
 	crederepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/credentials_repository"
 	txtrepo "github.com/Nickolasll/goph-keeper/internal/server/infrastructure/text_repository"
@@ -28,6 +29,7 @@ var userRepository *usrrepo.UserRepository
 var textRepository *txtrepo.TextRepository
 var binaryRepository *binrepo.BinaryRepository
 var credentialsRepository *crederepo.CredentialsRepository
+var cardRepository *bcardrepo.BankCardRepository
 
 func setup() (*chi.Mux, error) {
 	log := logger.New()
@@ -56,6 +58,7 @@ func setup() (*chi.Mux, error) {
 	textRepository = txtrepo.New(pool, cfg.DBTimeOut, log)
 	binaryRepository = binrepo.New(pool, cfg.DBTimeOut, log)
 	credentialsRepository = crederepo.New(pool, cfg.DBTimeOut, log)
+	cardRepository = bcardrepo.New(pool, cfg.DBTimeOut, log)
 
 	app := application.New(
 		log,
@@ -65,6 +68,7 @@ func setup() (*chi.Mux, error) {
 		textRepository,
 		binaryRepository,
 		credentialsRepository,
+		cardRepository,
 	)
 
 	router := presentation.New(app, joseService, log)

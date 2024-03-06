@@ -39,11 +39,16 @@ func New(
 	_jose *jose.JOSEService,
 	_log *logrus.Logger,
 ) *chi.Mux {
+	var err error
+
 	app = _app
 	joseService = _jose
 	log = _log
 
-	validate = validator.New(validator.WithRequiredStructEnabled())
+	validate, err = newValidator()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	router = chi.NewRouter()
 	router.Use(logging)
@@ -68,6 +73,9 @@ func New(
 
 	router.Post("/api/v1/credentials/create", auth(createCredentialsHandler))
 	router.Post("/api/v1/credentials/{credID}", auth(updateCredentialsHandler))
+
+	router.Post("/api/v1/bank_card/create", auth(createBankCardHandler))
+	router.Post("/api/v1/bank_card/{cardID}", auth(updateBankCardHandler))
 
 	return router
 }

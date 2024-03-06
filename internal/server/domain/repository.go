@@ -48,3 +48,15 @@ type CredentialsRepositoryInterface interface {
 	// GetAll - Возвращает список логинов и паролей, принадлежащих пользователю
 	GetAll(userID uuid.UUID) ([]Credentials, error)
 }
+
+// BankCardRepositoryInterface - Интерфейс репозитория для банковских карт
+type BankCardRepositoryInterface interface {
+	// Create - Сохраняет новую банковскую карту
+	Create(card *BankCard) error
+	// Update - Сохраняет существующую банковскую карту
+	Update(card *BankCard) error
+	// Get - Возвращает банковскую карту по идентификатору пользователя и данных, если они существуют
+	Get(userID uuid.UUID, cardID uuid.UUID) (*BankCard, error)
+	// GetAll - Возвращает список банковских карт, принадлежащих пользователю
+	GetAll(userID uuid.UUID) ([]BankCard, error)
+}
