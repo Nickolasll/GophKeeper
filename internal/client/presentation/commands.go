@@ -221,6 +221,7 @@ func syncText() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
+			fmt.Println("Text syncronized successfully")
 
 			return nil
 		},
