@@ -1,4 +1,3 @@
-// Package domain содержит сущности и интерфейсы к репозиториям и клиенту
 package domain
 
 import "github.com/google/uuid"
@@ -23,4 +22,8 @@ type GophKeeperClientInterface interface {
 	CreateCredentials(session Session, name, login, password string) (uuid.UUID, error)
 	// UpdateCredentials - Обновляет существующую пару логина и пароля
 	UpdateCredentials(session Session, cred Credentials) error
+	// CreateBankCard - Создает банковскую карту, возвращает идентификатор ресурса от сервера
+	CreateBankCard(session Session, number, validThru, cvv, cardHolder string) (uuid.UUID, error)
+	// UpdateBankCard - Обновляет существующую банковскую карту
+	UpdateBankCard(session Session, card *BankCard) error
 }

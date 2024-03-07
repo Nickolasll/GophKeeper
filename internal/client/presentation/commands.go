@@ -394,12 +394,8 @@ func updateCredentials() cli.Command {
 
 				return nil
 			}
+
 			id := cmd.Args().First()
-
-			name := cmd.String("name")
-			login := cmd.String("login")
-			password := cmd.String("password")
-
 			credID, err := parseID(id)
 			if err != nil {
 				fmt.Println(err, "invalid credentials id: ", id)
@@ -407,11 +403,15 @@ func updateCredentials() cli.Command {
 				return nil
 			}
 
-			if name == "" && login == "" && password == "" {
+			if cmd.NumFlags() == 0 {
 				fmt.Println("invalid input: please pass at least one attribute (name, login, password) to update")
 
 				return nil
 			}
+
+			name := cmd.String("name")
+			login := cmd.String("login")
+			password := cmd.String("password")
 
 			err = app.UpdateCredentials.Do(*currentSession, credID, name, login, password)
 			if err != nil {
@@ -449,6 +449,207 @@ func showCredentials() cli.Command {
 			}
 
 			text, err := app.ShowCredentials.Do(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+
+			s, err := json.MarshalIndent(text, "", "\t")
+			if err != nil {
+				log.Error(err)
+
+				return cli.Exit(err, 1)
+			}
+			fmt.Print(string(s))
+
+			return nil
+		},
+	}
+}
+
+func createBankCard() cli.Command {
+	return cli.Command{
+		Name:    "create",
+		Usage:   "create new bank card",
+		Aliases: []string{"b"},
+		Action: func(_ context.Context, cmd *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			number := cmd.Args().Get(0)
+			validThru := cmd.Args().Get(1)
+			cvv := cmd.Args().Get(2)
+			cardHolder := ""
+			if cmd.Args().Len() == 4 { //nolint: gomnd
+				cardHolder = cmd.Args().Get(3)
+			}
+
+			if !validCardNumber.MatchString(number) {
+				fmt.Println("invalid card number: ", number)
+
+				return nil
+			}
+			if !validValidThru.MatchString(validThru) {
+				fmt.Println("invalid valid thru value: ", validThru)
+
+				return nil
+			}
+			if !validCVV.MatchString(cvv) {
+				fmt.Println("invalid cvv value: ", cvv)
+
+				return nil
+			}
+			if !validCardHolder.MatchString(cardHolder) {
+				fmt.Println("invalid card holder value: ", cardHolder)
+
+				return nil
+			}
+
+			err := app.CreateBankCard.Do(*currentSession, number, validThru, cvv, cardHolder)
+			if err != nil {
+				if errors.Is(err, domain.ErrBadRequest) {
+					fmt.Println(err)
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+
+			fmt.Println("Bank card created successfully")
+
+			return nil
+		},
+	}
+}
+
+func updateBankCard() cli.Command {
+	return cli.Command{
+		Name:    "update",
+		Usage:   "update existing bank card via id and flags",
+		Aliases: []string{"c"},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "number",
+				Aliases:     []string{"n"},
+				Usage:       "number to update",
+				DefaultText: "",
+			},
+			&cli.StringFlag{
+				Name:        "valid_thru",
+				Aliases:     []string{"vt"},
+				Usage:       "valid thru value to update",
+				DefaultText: "",
+			},
+			&cli.StringFlag{
+				Name:        "cvv",
+				Aliases:     []string{"c"},
+				Usage:       "cvv value to update",
+				DefaultText: "",
+			},
+			&cli.StringFlag{
+				Name:        "card_holder",
+				Aliases:     []string{"ch"},
+				Usage:       "card holder value to update",
+				DefaultText: "",
+			},
+		},
+		Action: func(_ context.Context, cmd *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+			id := cmd.Args().First()
+
+			cardID, err := parseID(id)
+			if err != nil {
+				fmt.Println(err, "invalid bank card id: ", id)
+
+				return nil
+			}
+
+			if cmd.NumFlags() == 0 {
+				fmt.Println("invalid input: please pass at least one attribute (number, valid_thru, cvv, card_holder) to update")
+
+				return nil
+			}
+
+			number := cmd.String("number")
+			validThru := cmd.String("valid_thru")
+			cvv := cmd.String("cvv")
+			cardHolder := cmd.String("card_holder")
+
+			if number != "" && !validCardNumber.MatchString(number) {
+				fmt.Println("invalid card number: ", number)
+
+				return nil
+			}
+			if validThru != "" && !validValidThru.MatchString(validThru) {
+				fmt.Println("invalid valid thru value: ", validThru)
+
+				return nil
+			}
+			if cvv != "" && !validCVV.MatchString(cvv) {
+				fmt.Println("invalid cvv value: ", cvv)
+
+				return nil
+			}
+			if cardHolder != "" && !validCardHolder.MatchString(cardHolder) {
+				fmt.Println("invalid card holder value: ", cardHolder)
+
+				return nil
+			}
+
+			err = app.UpdateBankCard.Do(*currentSession, cardID, number, validThru, cvv, cardHolder)
+			if err != nil {
+				if errors.Is(err, domain.ErrEntityNotFound) {
+					fmt.Println("Bank card not found, id: ", cardID)
+
+					return nil
+				} else if errors.Is(err, domain.ErrBadRequest) {
+					fmt.Println(err)
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+			fmt.Println("Credentials updated successfully")
+
+			return nil
+		},
+	}
+}
+
+func showBankCards() cli.Command {
+	return cli.Command{
+		Name:    "show",
+		Usage:   "shows current user bank cards",
+		Aliases: []string{"c"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			text, err := app.ShowBankCards.Do(*currentSession)
 
 			if err != nil {
 				if errors.Is(err, domain.ErrInvalidToken) {

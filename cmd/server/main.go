@@ -1,4 +1,4 @@
-//go:generate swagger generate spec
+// Package main - инициализация сервера GophKeeper API
 package main
 
 import (
@@ -20,6 +20,16 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/logger"
 	"github.com/Nickolasll/goph-keeper/internal/server/presentation"
 )
+
+// @Title GophKeeper API
+// @Description Сервис хранения логинов, паролей, бинарных данных и прочей приватной информации.
+
+// @BasePath /api/v1
+// @Host 0.0.0.0:8080
+
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @In header
+// @Name Authorization
 
 func main() {
 	log := logger.New()

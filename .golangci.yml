@@ -115,7 +115,6 @@ linters:
     - nilnil
     - nlreturn
     - noctx
-    - nolintlint
     - revive
     - staticcheck
     - stylecheck
@@ -133,11 +132,10 @@ linters:
   # - godox
   # - goerr113
   # - nestif
+  # - nolintlint
   # - prealloc
   # - testpackage
   # - wsl
 
 run:
   timeout: 5m
-  skip-dirs:
-    - internal/server/presentation/tests

@@ -21,3 +21,25 @@ func credentialsToJSON(name, login, password string) ([]byte, error) {
 
 	return data, nil
 }
+
+type bankCardPayload struct {
+	Number     string `json:"number"`
+	ValidThru  string `json:"valid_thru"`
+	CVV        string `json:"cvv"`
+	CardHolder string `json:"card_holder"`
+}
+
+func bankCardToJSON(number, validThru, cvv, cardHolder string) ([]byte, error) {
+	cred := bankCardPayload{
+		Number:     number,
+		ValidThru:  validThru,
+		CVV:        cvv,
+		CardHolder: cardHolder,
+	}
+	data, err := json.Marshal(cred)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return data, nil
+}

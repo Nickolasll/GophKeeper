@@ -1,4 +1,3 @@
-// Package domain содержит сущности и интерфейсы к репозиториям и клиенту
 package domain
 
 import (
@@ -24,7 +23,7 @@ type TextRepositoryInterface interface {
 	Update(userID uuid.UUID, text Text) error
 	// Get - Возвращает текстовые данные по идентификатору данных и пользователя, если они существуют
 	Get(userID, textID uuid.UUID) (Text, error)
-	// GetAll - возвращает все текстовые данные для пользователя
+	// GetAll - Возвращает все текстовые данные для пользователя
 	GetAll(userID uuid.UUID) ([]Text, error)
 }
 
@@ -46,7 +45,7 @@ type BinaryRepositoryInterface interface {
 	Update(userID uuid.UUID, bin Binary) error
 	// Get - Возвращает бинарные данные по идентификатору данных и пользователя, если они существуют
 	Get(userID, binID uuid.UUID) (Binary, error)
-	// GetAll - возвращает все бинарные данные для пользователя
+	// GetAll - Возвращает все бинарные данные для пользователя
 	GetAll(userID uuid.UUID) ([]Binary, error)
 }
 
@@ -58,6 +57,18 @@ type CredentialsRepositoryInterface interface {
 	Update(userID uuid.UUID, cred Credentials) error
 	// Get - Возвращает пару логин и парль по идентификатору данных и пользователя, если они существуют
 	Get(userID, credID uuid.UUID) (Credentials, error)
-	// GetAll - возвращает все логины и пароли для пользователя
+	// GetAll - Возвращает все логины и пароли для пользователя
 	GetAll(userID uuid.UUID) ([]Credentials, error)
+}
+
+// BankCardRepositoryInterface - Интерфейс репозитория для банковских карт
+type BankCardRepositoryInterface interface {
+	// Create - Сохраняет новую банковскую карту
+	Create(userID uuid.UUID, card *BankCard) error
+	// Update - Сохраняет существующую банковскую карту
+	Update(userID uuid.UUID, card *BankCard) error
+	// Get - Возвращает банковскую карту по идентификатору данных и пользователя, если они существуют
+	Get(userID, cardID uuid.UUID) (BankCard, error)
+	// GetAll - Возвращает все банковские карты для пользователя
+	GetAll(userID uuid.UUID) ([]BankCard, error)
 }

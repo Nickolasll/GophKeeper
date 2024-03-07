@@ -22,7 +22,8 @@ format:  ## Запуск форматтеров
 	golangci-lint run --fix ./...
 
 lint:  ## Последовательный запуск всех линтеров
-	golangci-lint run ./... || golangci-lint run ./... --out-format json > $(REPORTS)/golangci-lint.json
+	golangci-lint run ./...
+	golangci-lint run ./... --out-format json > $(REPORTS)/golangci-lint.json
 
 test:  ## Запуск тестов
 	go test -race -coverpkg=./... -coverprofile=$(REPORTS)/coverage.out -v 2>&1 ./... | go-junit-report -out $(REPORTS)/junit.xml -iocopy -set-exit-code
@@ -56,7 +57,13 @@ build-client:  ## Сборка бинарников клиента под раз
 	cp $(CLIENT_DIR)/config.json $(CLIENT_BIN)/config.json
 
 generate-spec:  ## Генерация swagger spec
-	swagger generate spec -o ./api/swagger.json
+	swag init --parseInternal --dir cmd/server/,internal/server/presentation/ -o ./docs/api
+
+godoc-run: ## Запустить сервер документации
+	godoc -http=:9094
+
+godoc-get:  ## Получить документацию в формате html
+	curl -G -d "m=all" http://localhost:9094/pkg/github.com/Nickolasll/goph-keeper/ -o ./docs/godoc.html
 
 help:  ## Показать описание всех команд
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

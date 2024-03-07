@@ -1,3 +1,4 @@
+// nolint: goconst
 package tests
 
 import (
@@ -6,15 +7,16 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
 const cardURL = "/api/v1/bank_card/"
 
-func TestUpdateBankCardBadRequest(t *testing.T) {
+func TestUpdateBankCardBadRequest(t *testing.T) { //nolint: dupl
 	tests := []struct {
 		name        string
 		body        []byte

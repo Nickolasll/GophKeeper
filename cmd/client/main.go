@@ -11,6 +11,7 @@ import (
 
 	"github.com/Nickolasll/goph-keeper/internal/client/application"
 	"github.com/Nickolasll/goph-keeper/internal/client/config"
+	cardrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/bank_card_repository"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/binary_repository"
 	credrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/credentials_repository"
 	httpclient "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/http_client"
@@ -59,7 +60,7 @@ func main() {
 		log,
 		caCRT,
 		cfg.ClientTimeout,
-		cfg.ServerURL+cfg.APIVer,
+		cfg.ServerURL+cfg.ServerBasePath,
 	)
 
 	cryptoService, err := crypto.New(secret)
@@ -72,6 +73,7 @@ func main() {
 	jwkRepository := jwkrepo.New(db, cryptoService, log)
 	binaryRepository := binrepo.New(db, cryptoService, log)
 	credentialsRepository := credrepo.New(db, cryptoService, log)
+	bankCardRepository := cardrepo.New(db, cryptoService, log)
 
 	app := application.New(
 		log,
@@ -81,6 +83,7 @@ func main() {
 		jwkRepository,
 		binaryRepository,
 		credentialsRepository,
+		bankCardRepository,
 	)
 
 	cmd := presentation.New(Version, BuildDate, app, log, sessionRepository)

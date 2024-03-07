@@ -11,7 +11,7 @@ import (
 type ShowCredentials struct {
 	// CheckToken - Сценарий проверки JWT, возвращает UserID в формате строки
 	CheckToken *CheckToken
-	// TextRepository - Реализация интерфейса CredentialsRepositoryInterface
+	// CredentialsRepository - Реализация интерфейса CredentialsRepositoryInterface
 	CredentialsRepository domain.CredentialsRepositoryInterface
 	// Log - логгер
 	Log *logrus.Logger

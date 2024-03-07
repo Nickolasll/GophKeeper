@@ -1,4 +1,3 @@
-// Package domain содержит сущности и интерфейсы к репозиториям и клиенту
 package domain
 
 import "github.com/google/uuid"
@@ -37,4 +36,18 @@ type Credentials struct {
 	Login string
 	// Password - пароль
 	Password string
+}
+
+// BankCard - Сущность типа хранимой информации "Банковкая карта"
+type BankCard struct {
+	// ID - Уникальный идентификатор "Банковской карты"
+	ID uuid.UUID
+	// Number - Зашифрованный номер карты
+	Number string
+	// ValidThru - Зашифрованный срок действия карты
+	ValidThru string
+	// CVV - Зашифрованный CVV код карты
+	CVV string
+	// CardHolder - Зашифрованные имя и фамилия держателя карты
+	CardHolder string
 }

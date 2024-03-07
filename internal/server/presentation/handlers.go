@@ -45,7 +45,7 @@ func registrationHandler(w http.ResponseWriter, r *http.Request) { //nolint: dup
 
 		return
 	}
-	payload, err = payload.LoadFromJSON(body)
+	payload, err = payload.Load(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Error(err)
@@ -77,7 +77,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) { //nolint: dupl
 
 		return
 	}
-	payload, err = payload.LoadFromJSON(body)
+	payload, err = payload.Load(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Error(err)
@@ -101,22 +101,14 @@ func loginHandler(w http.ResponseWriter, r *http.Request) { //nolint: dupl
 }
 
 func createTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
-	var payload textPayload
 	body, err := parseBody(textType, r)
-	if err != nil {
+	if err != nil || len(body) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Error(err)
 
 		return
 	}
-	payload, err = payload.Load(nil, body)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Error(err)
-
-		return
-	}
-	textID, err := app.CreateText.Do(userID, payload.Content)
+	textID, err := app.CreateText.Do(userID, string(body))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Error(err)
@@ -128,7 +120,6 @@ func createTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 }
 
 func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
-	var payload textPayload
 	id, err := getRouteID(r, "textID")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -138,20 +129,13 @@ func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 	}
 
 	body, err := parseBody(textType, r)
-	if err != nil {
+	if err != nil || len(body) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Error(err)
 
 		return
 	}
-	payload, err = payload.Load(&id, body)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Error(err)
-
-		return
-	}
-	err = app.UpdateText.Do(userID, payload.ID, payload.Content)
+	err = app.UpdateText.Do(userID, id, string(body))
 	if err != nil {
 		if errors.Is(err, domain.ErrEntityNotFound) {
 			w.WriteHeader(http.StatusNotFound)
@@ -189,6 +173,12 @@ func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
+// Health godoc
+// @Summary Запрос состояния сервиса
+// @ID health
+// @Success 200
+// @Failure 500
+// @Router /health [get]
 func getHealthHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
@@ -262,7 +252,7 @@ func createCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 
 		return
 	}
-	payload, err = payload.LoadFromJSON(body)
+	payload, err = payload.Load(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Error(err)
@@ -301,7 +291,7 @@ func updateCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 
 		return
 	}
-	payload, err = payload.LoadFromJSON(body)
+	payload, err = payload.Load(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Error(err)
@@ -337,7 +327,7 @@ func createBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 
 		return
 	}
-	payload, err = payload.LoadFromJSON(body)
+	payload, err = payload.Load(body)
 	if err != nil {
 		log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -377,7 +367,7 @@ func updateBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 
 		return
 	}
-	payload, err = payload.LoadFromJSON(body)
+	payload, err = payload.Load(body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Error(err)

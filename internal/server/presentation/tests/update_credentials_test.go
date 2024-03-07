@@ -13,9 +13,9 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
-const credURL = "/api/v1/credentials/"
+const credURL = "/api/v1/credentials/" //nolint: gosec
 
-func TestUpdateCredentialsBadRequest(t *testing.T) {
+func TestUpdateCredentialsBadRequest(t *testing.T) { //nolint: dupl
 	tests := []struct {
 		name        string
 		body        []byte

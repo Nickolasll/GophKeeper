@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestBinaryBadRequest(t *testing.T) {
+func TestBinaryBadRequest(t *testing.T) { //nolint: dupl
 	tests := []struct {
 		name        string
 		body        []byte

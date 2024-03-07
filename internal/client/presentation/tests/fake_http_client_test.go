@@ -79,3 +79,17 @@ func (c FakeHTTPClient) CreateCredentials(_ domain.Session, _, _, _ string) (uui
 func (c FakeHTTPClient) UpdateCredentials(_ domain.Session, _ domain.Credentials) error {
 	return c.Err
 }
+
+// CreateCredentials - Создает новую банковскую карту, возвращает идентификатор ресурса от сервера
+func (c FakeHTTPClient) CreateBankCard(_ domain.Session, _, _, _, _ string) (uuid.UUID, error) {
+	if c.Err != nil {
+		return uuid.New(), c.Err
+	}
+
+	return c.Response.(uuid.UUID), nil
+}
+
+// UpdateBankCard - Обновляет существующую банковскую карту
+func (c FakeHTTPClient) UpdateBankCard(_ domain.Session, _ *domain.BankCard) error {
+	return c.Err
+}

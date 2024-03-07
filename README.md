@@ -3,7 +3,7 @@
 
 ## Сервер
 
-### [API спецификация](api/swagger.json)
+### [API спецификация](docs/api/swagger.json)
 У запущенного сервиса есть endpoint с актуальной спецификацией на `/api/v1/swagger.json`. Его можно использовать в Swagger UI или Postman для импорта.
 
 ### Эксплуатация
@@ -48,13 +48,17 @@
 | db_client_timeout | Таймаут запроса клиента | 30s          |
 | server_url        | URL сервера             |              |
 
+#### Список доступных команд
+
+TODO
 
 ## Разработка
 
 ### Зависимости
 * [Go 1.21](https://golang.org)
 * [Make](https://www.gnu.org/software/make/)
-* [go-swagger](https://github.com/go-swagger)
+* [swag](https://github.com/swaggo/swag)
+* [godoc](https://cs.opensource.google/go/x/tools/+/master:godoc/)
 
 ### Команды
 
@@ -70,5 +74,9 @@
 
 ### Изменение API
 
-1. После изменения в сервере, добавьте аннотации в роутере;
+1. После изменения в сервере, добавьте [аннотации](https://github.com/swaggo/swag?tab=readme-ov-file#general-api-info);
 2. Выполните команду `make generate-spec` для генерации `openapi`;
+
+### [Документация](docs/arc42/)
+
+Для всего проекта необходимо поддерживать документацию в формате [arc42](https://arc42.org/overview)

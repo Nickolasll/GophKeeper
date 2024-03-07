@@ -1,4 +1,3 @@
-// Package httpclient содержит имплементацию клиента GophKeeper
 package httpclient
 
 import (
@@ -242,6 +241,42 @@ func (c HTTPClient) UpdateCredentials(session domain.Session, cred domain.Creden
 		return err
 	}
 	err = c.update(session.Token, "credentials/"+cred.ID.String(), "application/json", payload)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// CreateBankCard - Создает банковскую карту, возвращает идентификатор ресурса от сервера
+func (c HTTPClient) CreateBankCard(session domain.Session, number, validThru, cvv, cardHolder string) (uuid.UUID, error) {
+	var uid uuid.UUID
+	payload, err := bankCardToJSON(number, validThru, cvv, cardHolder)
+	if err != nil {
+		return uid, err
+	}
+	id, err := c.create(session.Token, "bank_card/create", "application/json", payload)
+
+	if err != nil {
+		return uid, err
+	}
+
+	uid, err = c.parseID(id)
+	if err != nil {
+		return uid, err
+	}
+
+	return uid, nil
+}
+
+// UpdateBankCard - Обновляет существующую банковскую карту
+func (c HTTPClient) UpdateBankCard(session domain.Session, card *domain.BankCard) error {
+	payload, err := bankCardToJSON(card.Number, card.ValidThru, card.CVV, card.CardHolder)
+	if err != nil {
+		return err
+	}
+	err = c.update(session.Token, "bank_card/"+card.ID.String(), "application/json", payload)
 
 	if err != nil {
 		return err

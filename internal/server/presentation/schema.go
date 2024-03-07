@@ -6,7 +6,6 @@ import (
 	"regexp"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
 )
 
 var validCardNumber *regexp.Regexp
@@ -19,7 +18,7 @@ type registrationPayload struct {
 	Password string `json:"password" validate:"required"`
 }
 
-func (registrationPayload) LoadFromJSON(data []byte) (registrationPayload, error) {
+func (registrationPayload) Load(data []byte) (registrationPayload, error) {
 	var payload registrationPayload
 	err := json.Unmarshal(data, &payload)
 	if err != nil {
@@ -30,28 +29,13 @@ func (registrationPayload) LoadFromJSON(data []byte) (registrationPayload, error
 	return payload, err
 }
 
-type textPayload struct {
-	ID      uuid.UUID `json:"id"`
-	Content string    `json:"content" validate:"required,min=1"`
-}
-
-func (textPayload) Load(id *uuid.UUID, content []byte) (textPayload, error) {
-	payload := textPayload{Content: string(content)}
-	if id != nil {
-		payload.ID = *id
-	}
-	err := validate.Struct(payload)
-
-	return payload, err
-}
-
 type credentialsPayload struct {
 	Name     string `json:"name" validate:"required,min=1"`
 	Login    string `json:"login" validate:"required,min=1"`
 	Password string `json:"password" validate:"required,min=1"`
 }
 
-func (credentialsPayload) LoadFromJSON(data []byte) (credentialsPayload, error) {
+func (credentialsPayload) Load(data []byte) (credentialsPayload, error) {
 	var payload credentialsPayload
 	err := json.Unmarshal(data, &payload)
 	if err != nil {
@@ -69,7 +53,7 @@ type bankCardPayload struct {
 	CardHolder string `json:"card_holder" validate:"is-valid-card-holder"`
 }
 
-func (bankCardPayload) LoadFromJSON(data []byte) (bankCardPayload, error) {
+func (bankCardPayload) Load(data []byte) (bankCardPayload, error) {
 	var payload bankCardPayload
 	err := json.Unmarshal(data, &payload)
 	if err != nil {

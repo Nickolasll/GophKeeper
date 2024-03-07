@@ -16,6 +16,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/application"
 	"github.com/Nickolasll/goph-keeper/internal/client/config"
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
+	cardrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/bank_card_repository"
 	binrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/binary_repository"
 	credrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/credentials_repository"
 	jwkrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/jwk_repository"
@@ -33,6 +34,7 @@ var textRepository *txtrepo.TextRepository
 var jwkRepository *jwkrepo.JWKRepository
 var binaryRepository *binrepo.BinaryRepository
 var credentialsRepository *credrepo.CredentialsRepository
+var bankCardRepository *cardrepo.BankCardRepository
 
 func getJWKs() (jwk.Key, error) {
 	jwks, err := jwk.FromRaw([]byte("My secret keys"))
@@ -86,6 +88,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 	jwkRepository = jwkrepo.New(db, cryptoService, log)
 	binaryRepository = binrepo.New(db, cryptoService, log)
 	credentialsRepository = credrepo.New(db, cryptoService, log)
+	bankCardRepository = cardrepo.New(db, cryptoService, log)
 
 	app := application.New(
 		log,
@@ -95,6 +98,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		jwkRepository,
 		binaryRepository,
 		credentialsRepository,
+		bankCardRepository,
 	)
 
 	cmd = presentation.New("v0.0.1", "01.01.1999", app, log, sessionRepository)
