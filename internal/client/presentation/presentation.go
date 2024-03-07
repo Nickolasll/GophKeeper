@@ -39,6 +39,7 @@ func New(
 	cmdCreateText := createText()
 	cmdUpdateText := updateText()
 	cmdShowText := showText()
+	cmdSyncText := syncText()
 
 	cmdCreateBinary := createBinary()
 	cmdUpdateBinary := updateBinary()
@@ -68,6 +69,7 @@ func New(
 					&cmdCreateText,
 					&cmdUpdateText,
 					&cmdShowText,
+					&cmdSyncText,
 				},
 			},
 			{

@@ -25,6 +25,8 @@ type TextRepositoryInterface interface {
 	Get(userID, textID uuid.UUID) (Text, error)
 	// GetAll - Возвращает все текстовые данные для пользователя
 	GetAll(userID uuid.UUID) ([]Text, error)
+	// ReplaceAll - Заменяет все локальные текстовые данные пользователя на новые
+	ReplaceAll(userID uuid.UUID, texts []Text) error
 }
 
 // JWKRepositoryInterface - Интерфейс хранилища публичного ключа

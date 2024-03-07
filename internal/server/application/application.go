@@ -19,6 +19,8 @@ type Application struct {
 	CreateText usecases.CreateText
 	// UpdateText - Сценарий использования для обновления существующих зашифрованных текстовых данных
 	UpdateText usecases.UpdateText
+	// GetAllTexts - Получение всех расшифрованных текстовых данных
+	GetAllTexts usecases.GetAllTexts
 	// CreateText - Сценарий использования для создания зашифрованных бинарных данных
 	CreateBinary usecases.CreateBinary
 	// UpdateText - Сценарий использования для обновления существующих зашифрованных бинарных данных
@@ -66,6 +68,11 @@ func New(
 		Crypto:         crypto,
 		Log:            log,
 	}
+	getAllTexts := usecases.GetAllTexts{
+		TextRepository: textRepository,
+		Crypto:         crypto,
+		Log:            log,
+	}
 
 	createBinary := usecases.CreateBinary{
 		BinaryRepository: binaryRepository,
@@ -105,6 +112,7 @@ func New(
 		Login:             login,
 		CreateText:        createText,
 		UpdateText:        updateText,
+		GetAllTexts:       getAllTexts,
 		CreateBinary:      createBinary,
 		UpdateBinary:      updateBinary,
 		CreateCredentials: createCredentials,

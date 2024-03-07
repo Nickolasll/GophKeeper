@@ -135,7 +135,7 @@ func (r BinaryRepository) GetAll(userID uuid.UUID) ([]domain.Binary, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var bin domain.Binary
-		err = rows.Scan(&bin)
+		err = rows.Scan(&bin.ID, &bin.UserID, &bin.Content)
 		if err == nil {
 			result = append(result, bin)
 		}

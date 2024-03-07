@@ -80,6 +80,25 @@ func validateCardHolder(fl validator.FieldLevel) bool {
 	return validCardHolder.MatchString(fl.Field().String())
 }
 
+type textResponse struct {
+	ID      string `json:"id"`
+	Content string `json:"content"`
+}
+
+type GetAllTextsResponse struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Texts []textResponse `json:"texts"`
+	} `json:"data"`
+}
+
+type ErrorResponse struct {
+	Status  bool     `json:"status"`
+	Message string   `json:"message"`
+	Data    struct{} `json:"data"`
+}
+
 func newValidator() (*validator.Validate, error) {
 	validCardNumber = regexp.MustCompile(`\b(\d{4}\s\d{4}\s\d{4}\s\d{4}$)\b`)
 	validThru = regexp.MustCompile(`(0[1-9]|1[012])/\d{2}`)

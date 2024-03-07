@@ -135,7 +135,7 @@ func (r TextRepository) GetAll(userID uuid.UUID) ([]domain.Text, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var text domain.Text
-		err = rows.Scan(&text)
+		err = rows.Scan(&text.ID, &text.UserID, &text.Content)
 		if err == nil {
 			result = append(result, text)
 		}

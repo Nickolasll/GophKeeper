@@ -1,6 +1,10 @@
 package httpclient
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/Nickolasll/goph-keeper/internal/client/domain"
+)
 
 type credentialsPayload struct {
 	Name     string `json:"name"`
@@ -42,4 +46,14 @@ func bankCardToJSON(number, validThru, cvv, cardHolder string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+type errorResponse struct {
+	Message string `json:"message"`
+}
+
+type getAllTextsResponse struct {
+	Data struct {
+		Texts []domain.Text `json:"texts"`
+	} `json:"data"`
 }

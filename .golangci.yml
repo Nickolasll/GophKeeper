@@ -78,6 +78,8 @@ linters-settings:
     
 issues:
   exclude-use-default: false
+  exclude:
+    - declaration of "(err|ctx)" shadows declaration at
 
 linters:
   disable-all: true

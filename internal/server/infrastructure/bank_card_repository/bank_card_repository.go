@@ -158,7 +158,7 @@ func (r BankCardRepository) GetAll(userID uuid.UUID) ([]domain.BankCard, error) 
 	defer rows.Close()
 	for rows.Next() {
 		var card domain.BankCard
-		err = rows.Scan(&card)
+		err = rows.Scan(&card.ID, &card.UserID, &card.Number, &card.ValidThru, &card.CVV, &card.CardHolder)
 		if err == nil {
 			result = append(result, card)
 		}

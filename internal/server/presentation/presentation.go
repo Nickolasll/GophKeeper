@@ -44,6 +44,7 @@ func New(
 
 	router.Post("/api/v1/text/create", auth(createTextHandler))
 	router.Post("/api/v1/text/{textID}", auth(updateTextHandler))
+	router.Get("/api/v1/text/all", auth(getAllTextsHandler))
 
 	router.Post("/api/v1/binary/create", auth(createBinaryHandler))
 	router.Post("/api/v1/binary/{binaryID}", auth(updateBinaryHandler))

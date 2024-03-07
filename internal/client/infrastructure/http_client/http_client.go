@@ -3,6 +3,8 @@ package httpclient
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
@@ -283,4 +285,37 @@ func (c HTTPClient) UpdateBankCard(session domain.Session, card *domain.BankCard
 	}
 
 	return nil
+}
+
+// GetAllTexts - Получает все расшифрованные тексты пользователя
+func (c HTTPClient) GetAllTexts(session domain.Session) ([]domain.Text, error) {
+	resp, err := c.client.R().
+		SetHeader("Authorization", session.Token).
+		Get("text/all")
+
+	if err != nil {
+		return []domain.Text{}, err
+	}
+
+	if resp.StatusCode() == http.StatusInternalServerError {
+		errorResp := errorResponse{}
+		err = json.Unmarshal(resp.Body(), &errorResp)
+		if err != nil {
+			return []domain.Text{}, err
+		}
+
+		return []domain.Text{}, errors.New(errorResp.Message)
+	}
+
+	if resp.StatusCode() == http.StatusOK {
+		respData := getAllTextsResponse{}
+		err = json.Unmarshal(resp.Body(), &respData)
+		if err != nil {
+			return []domain.Text{}, err
+		}
+
+		return respData.Data.Texts, nil
+	}
+
+	return []domain.Text{}, domain.ErrClientConnectionError
 }

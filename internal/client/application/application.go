@@ -20,6 +20,8 @@ type Application struct {
 	UpdateText usecases.UpdateText
 	// ShowText - Сценарий получения расшифрованных текстовых данных
 	ShowText usecases.ShowText
+	// Перезапись текущих пользовательских данных
+	SyncText usecases.SyncText
 	// CreateBinary - Сценарий создания новых бинарных данных
 	CreateBinary usecases.CreateBinary
 	// UpdateBinary - Сценарий обновления существующих бинарных данных
@@ -92,6 +94,11 @@ func New(
 		TextRepository: textRepository,
 		Log:            log,
 	}
+	syncText := usecases.SyncText{
+		Client:         client,
+		TextRepository: textRepository,
+		Log:            log,
+	}
 
 	createBinary := usecases.CreateBinary{
 		Client:           client,
@@ -147,6 +154,7 @@ func New(
 		CreateText:        createText,
 		UpdateText:        updateText,
 		ShowText:          showText,
+		SyncText:          syncText,
 		CreateBinary:      createBinary,
 		UpdateBinary:      updateBinary,
 		ShowBinary:        showBinary,

@@ -196,6 +196,37 @@ func showText() cli.Command {
 	}
 }
 
+func syncText() cli.Command {
+	return cli.Command{
+		Name:    "sync",
+		Usage:   "override current user text data from remote",
+		Aliases: []string{"s"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			err := app.SyncText.Do(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+
+			return nil
+		},
+	}
+}
+
 func createBinary() cli.Command {
 	return cli.Command{
 		Name:    "create",

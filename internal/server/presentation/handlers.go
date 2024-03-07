@@ -124,6 +124,46 @@ func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 	w.WriteHeader(http.StatusOK)
 }
 
+func getAllTextsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
+	textsResponse := []textResponse{}
+	w.Header().Set(contentTypeHeader, jsonType)
+	texts, err := app.GetAllTexts.Do(userID)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+
+	for _, v := range texts {
+		respItem := textResponse{
+			ID:      v.ID.String(),
+			Content: string(v.Content),
+		}
+		textsResponse = append(textsResponse, respItem)
+	}
+
+	response := GetAllTextsResponse{
+		Status: true,
+	}
+	response.Data.Texts = textsResponse
+
+	err = makeResponse(w, http.StatusOK, response)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+}
+
 func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
 	certs, err := joseService.GetCerts()
 	if err != nil {

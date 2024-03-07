@@ -93,3 +93,12 @@ func (c FakeHTTPClient) CreateBankCard(_ domain.Session, _, _, _, _ string) (uui
 func (c FakeHTTPClient) UpdateBankCard(_ domain.Session, _ *domain.BankCard) error {
 	return c.Err
 }
+
+// GetAllTexts - Получает все расшифрованные тексты пользователя
+func (c FakeHTTPClient) GetAllTexts(_ domain.Session) ([]domain.Text, error) {
+	if c.Err != nil {
+		return []domain.Text{}, c.Err
+	}
+
+	return c.Response.([]domain.Text), nil
+}
