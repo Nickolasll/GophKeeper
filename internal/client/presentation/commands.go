@@ -359,6 +359,38 @@ func showBinary() cli.Command {
 	}
 }
 
+func syncBinary() cli.Command {
+	return cli.Command{
+		Name:    "sync",
+		Usage:   "override current user binary data from remote",
+		Aliases: []string{"s"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			err := app.SyncBinary.Do(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+			fmt.Println("Binary syncronized successfully")
+
+			return nil
+		},
+	}
+}
+
 func createCredentials() cli.Command {
 	return cli.Command{
 		Name:    "create",

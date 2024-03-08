@@ -102,3 +102,12 @@ func (c FakeHTTPClient) GetAllTexts(_ domain.Session) ([]domain.Text, error) {
 
 	return c.Response.([]domain.Text), nil
 }
+
+// GetAllBinaries - Получает все расшифрованные бинарные данные пользователя
+func (c FakeHTTPClient) GetAllBinaries(_ domain.Session) ([]domain.Binary, error) {
+	if c.Err != nil {
+		return []domain.Binary{}, c.Err
+	}
+
+	return c.Response.([]domain.Binary), nil
+}

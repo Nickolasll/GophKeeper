@@ -71,7 +71,7 @@ func TestGetAllTextsSuccess(t *testing.T) {
 	assert.Equal(t, responseData.Data.Texts[1].Content, secondMessage)
 }
 
-func TestGetAllTextsInternalServerError(t *testing.T) {
+func TestGetAllTextsInternalServerError(t *testing.T) { // nolint: dupl
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()

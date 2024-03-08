@@ -3,6 +3,7 @@ package binaryrepository
 
 import (
 	"encoding/json"
+	"errors"
 
 	bolt "go.etcd.io/bbolt"
 
@@ -184,6 +185,56 @@ func (r BinaryRepository) GetAll(userID uuid.UUID) ([]domain.Binary, error) {
 	}
 
 	return result, nil
+}
+
+// ReplaceAll - Заменяет все локальные бинарные данные пользователя на новые
+func (r BinaryRepository) ReplaceAll(userID uuid.UUID, bins []domain.Binary) error {
+	tx, err := r.DB.Begin(true)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err = tx.Rollback()
+	}()
+
+	root := tx.Bucket([]byte(userID.String()))
+	if root == nil {
+		return domain.ErrEntityNotFound
+	}
+
+	err = root.DeleteBucket([]byte(bucketName))
+	if err != nil && !errors.Is(err, bolt.ErrBucketNotFound) {
+		return err
+	}
+
+	bkt, err := root.CreateBucketIfNotExists([]byte(bucketName))
+	if err != nil {
+		return err
+	}
+
+	for _, v := range bins {
+		buf, err := json.Marshal(v)
+		if err != nil {
+			return err
+		}
+
+		encrypted, err := r.Crypto.Encrypt(buf)
+		if err != nil {
+			return err
+		}
+
+		err = bkt.Put([]byte(v.ID.String()), encrypted)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return err
 }
 
 // New - Возвращает инстанс репозитория BinaryRepository

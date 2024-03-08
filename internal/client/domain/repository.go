@@ -49,6 +49,8 @@ type BinaryRepositoryInterface interface {
 	Get(userID, binID uuid.UUID) (Binary, error)
 	// GetAll - Возвращает все бинарные данные для пользователя
 	GetAll(userID uuid.UUID) ([]Binary, error)
+	// ReplaceAll - Заменяет все локальные бинарные данные пользователя на новые
+	ReplaceAll(userID uuid.UUID, bins []Binary) error
 }
 
 // CredentialsRepositoryInterface - Интерфейс репозитория для логинов и паролей

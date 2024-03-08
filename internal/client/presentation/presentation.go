@@ -44,6 +44,7 @@ func New(
 	cmdCreateBinary := createBinary()
 	cmdUpdateBinary := updateBinary()
 	cmdShowBinary := showBinary()
+	cmdSyncBinary := syncBinary()
 
 	cmdCreateCredentials := createCredentials()
 	cmdUpdateCredentials := updateCredentials()
@@ -80,6 +81,7 @@ func New(
 					&cmdCreateBinary,
 					&cmdUpdateBinary,
 					&cmdShowBinary,
+					&cmdSyncBinary,
 				},
 			},
 			{

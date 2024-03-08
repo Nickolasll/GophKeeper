@@ -24,6 +24,7 @@ const loginPath = "/auth/login"
 const textPath = "/text/"
 const textCreatePath = textPath + "create"
 const textAllPath = textPath + "all"
+const binaryAllPath = "/binary/all"
 
 func newClient(url string) *HTTPClient {
 	log := logrus.New()
@@ -678,5 +679,77 @@ func TestGetAllTextsBadRequest(t *testing.T) {
 	session := newSession()
 
 	_, err := client.GetAllTexts(session)
+	require.Error(t, err)
+}
+
+func TestGetAllBinariesSuccess(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == binaryAllPath {
+			response := getAllBinariesResponse{}
+			response.Data.Binaries = []domain.Binary{
+				{
+					ID:      uuid.New(),
+					Content: []byte("content"),
+				},
+				{
+					ID:      uuid.New(),
+					Content: []byte("content"),
+				},
+			}
+			respData, err := json.Marshal(response)
+			if err != nil {
+				return
+			}
+			w.WriteHeader(http.StatusOK)
+			if _, err = w.Write(respData); err != nil {
+				return
+			}
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	data, err := client.GetAllBinaries(session)
+	require.NoError(t, err)
+	assert.Equal(t, len(data), 2)
+}
+
+func TestGetAllBinariesInternalServerError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == binaryAllPath {
+			response := errorResponse{Message: "error :("}
+			respData, err := json.Marshal(response)
+			if err != nil {
+				return
+			}
+			w.WriteHeader(http.StatusInternalServerError)
+			if _, err = w.Write(respData); err != nil {
+				return
+			}
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	_, err := client.GetAllBinaries(session)
+	require.Error(t, err)
+}
+
+func TestGetAllBinariesBadRequest(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == binaryAllPath {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	_, err := client.GetAllBinaries(session)
 	require.Error(t, err)
 }

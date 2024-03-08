@@ -20,6 +20,8 @@ type GophKeeperClientInterface interface {
 	CreateBinary(session Session, content []byte) (uuid.UUID, error)
 	// UpdateBinary - Обновляет существующие бинарные данные
 	UpdateBinary(session Session, bin Binary) error
+	// GetAllBinaries - Получает все расшифрованные бинарные данные пользователя
+	GetAllBinaries(session Session) ([]Binary, error)
 	// CreateCredentials - Создает пару логин и пароль, возвращает идентификатор ресурса от сервера
 	CreateCredentials(session Session, name, login, password string) (uuid.UUID, error)
 	// UpdateCredentials - Обновляет существующую пару логина и пароля

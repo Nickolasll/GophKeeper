@@ -48,6 +48,7 @@ func New(
 
 	router.Post("/api/v1/binary/create", auth(createBinaryHandler))
 	router.Post("/api/v1/binary/{binaryID}", auth(updateBinaryHandler))
+	router.Get("/api/v1/binary/all", auth(getAllBinariesHandler))
 
 	router.Post("/api/v1/credentials/create", auth(createCredentialsHandler))
 	router.Post("/api/v1/credentials/{credID}", auth(updateCredentialsHandler))

@@ -258,6 +258,46 @@ func updateBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUI
 	w.WriteHeader(http.StatusOK)
 }
 
+func getAllBinariesHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
+	binariesResponse := []binaryResponse{}
+	w.Header().Set(contentTypeHeader, jsonType)
+	binaries, err := app.GetAllBinaries.Do(userID)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+
+	for _, v := range binaries {
+		respItem := binaryResponse{
+			ID:      v.ID.String(),
+			Content: v.Content,
+		}
+		binariesResponse = append(binariesResponse, respItem)
+	}
+
+	response := GetAllBinariesResponse{
+		Status: true,
+	}
+	response.Data.Binaries = binariesResponse
+
+	err = makeResponse(w, http.StatusOK, response)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+}
+
 func createCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	var payload credentialsPayload
 	body, err := parseBody(jsonType, r)

@@ -20,7 +20,7 @@ type Application struct {
 	UpdateText usecases.UpdateText
 	// ShowText - Сценарий получения расшифрованных текстовых данных
 	ShowText usecases.ShowText
-	// Перезапись текущих пользовательских данных
+	// SyncText - Перезапись текущих пользовательских текстовых данных
 	SyncText usecases.SyncText
 	// CreateBinary - Сценарий создания новых бинарных данных
 	CreateBinary usecases.CreateBinary
@@ -28,6 +28,8 @@ type Application struct {
 	UpdateBinary usecases.UpdateBinary
 	// ShowBinary - Сценарий получения расшифрованных бинарных данных
 	ShowBinary usecases.ShowBinary
+	// SyncBinary - Перезапись текущих пользовательских бинарных данных
+	SyncBinary usecases.SyncBinary
 	// CreateCredentials - Сценарий создания новой пары логин и пароль
 	CreateCredentials usecases.CreateCredentials
 	// UpdateCredentials - Сценарий обновления существующей пары логин и пароль
@@ -115,6 +117,11 @@ func New(
 		BinaryRepository: binaryRepository,
 		Log:              log,
 	}
+	syncBinary := usecases.SyncBinary{
+		Client:           client,
+		BinaryRepository: binaryRepository,
+		Log:              log,
+	}
 
 	createCredentials := usecases.CreateCredentials{
 		Client:                client,
@@ -158,6 +165,7 @@ func New(
 		CreateBinary:      createBinary,
 		UpdateBinary:      updateBinary,
 		ShowBinary:        showBinary,
+		SyncBinary:        syncBinary,
 		CreateCredentials: createCredentials,
 		UpdateCredentials: updateCredentials,
 		ShowCredentials:   showCredentials,

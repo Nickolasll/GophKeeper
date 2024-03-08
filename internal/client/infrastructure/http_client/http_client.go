@@ -289,7 +289,7 @@ func (c HTTPClient) UpdateBankCard(session domain.Session, card *domain.BankCard
 }
 
 // GetAllTexts - Получает все расшифрованные тексты пользователя
-func (c HTTPClient) GetAllTexts(session domain.Session) ([]domain.Text, error) {
+func (c HTTPClient) GetAllTexts(session domain.Session) ([]domain.Text, error) { // nolint: dupl
 	resp, err := c.client.R().
 		SetHeader("Authorization", session.Token).
 		Get("text/all")
@@ -321,4 +321,39 @@ func (c HTTPClient) GetAllTexts(session domain.Session) ([]domain.Text, error) {
 	}
 
 	return []domain.Text{}, domain.ErrClientConnectionError
+}
+
+// GetAllBinaries - Получает все расшифрованные бинарные данные пользователя
+func (c HTTPClient) GetAllBinaries(session domain.Session) ([]domain.Binary, error) { // nolint: dupl
+	resp, err := c.client.R().
+		SetHeader("Authorization", session.Token).
+		Get("binary/all")
+
+	if err != nil {
+		return []domain.Binary{}, err
+	}
+
+	statusCode := resp.StatusCode()
+
+	if statusCode == http.StatusInternalServerError {
+		errorResp := errorResponse{}
+		err = json.Unmarshal(resp.Body(), &errorResp)
+		if err != nil {
+			return []domain.Binary{}, err
+		}
+
+		return []domain.Binary{}, errors.New(errorResp.Message)
+	}
+
+	if statusCode == http.StatusOK {
+		respData := getAllBinariesResponse{}
+		err = json.Unmarshal(resp.Body(), &respData)
+		if err != nil {
+			return []domain.Binary{}, err
+		}
+
+		return respData.Data.Binaries, nil
+	}
+
+	return []domain.Binary{}, domain.ErrClientConnectionError
 }

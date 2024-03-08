@@ -57,3 +57,9 @@ type getAllTextsResponse struct {
 		Texts []domain.Text `json:"texts"`
 	} `json:"data"`
 }
+
+type getAllBinariesResponse struct {
+	Data struct {
+		Binaries []domain.Binary `json:"binaries"`
+	} `json:"data"`
+}

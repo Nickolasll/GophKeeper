@@ -25,6 +25,8 @@ type Application struct {
 	CreateBinary usecases.CreateBinary
 	// UpdateText - Сценарий использования для обновления существующих зашифрованных бинарных данных
 	UpdateBinary usecases.UpdateBinary
+	// GetAllBinaries - Получение всех расшифрованных бинарных данных
+	GetAllBinaries usecases.GetAllBinaries
 	// CreateCredentials - Сценарий использования для создания зашифрованной пары логин и пароль
 	CreateCredentials usecases.CreateCredentials
 	// UpdateCredentials - Сценарий использования для обновления существующей зашифрованной пары логин и пароль
@@ -84,6 +86,11 @@ func New(
 		Crypto:           crypto,
 		Log:              log,
 	}
+	getAllBinaries := usecases.GetAllBinaries{
+		BinaryRepository: binaryRepository,
+		Crypto:           crypto,
+		Log:              log,
+	}
 
 	createCredentials := usecases.CreateCredentials{
 		CredentialsRepository: credentialsRepository,
@@ -115,6 +122,7 @@ func New(
 		GetAllTexts:       getAllTexts,
 		CreateBinary:      createBinary,
 		UpdateBinary:      updateBinary,
+		GetAllBinaries:    getAllBinaries,
 		CreateCredentials: createCredentials,
 		UpdateCredentials: updateCredentials,
 		CreateBankCard:    createBankCard,

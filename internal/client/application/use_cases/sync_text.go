@@ -10,7 +10,7 @@ import (
 type SyncText struct {
 	// Client - Реализация интерфейса GophKeeperClient
 	Client domain.GophKeeperClientInterface
-	// TextRepository - Реализация интерфейса TextRepository
+	// TextRepository - Реализация интерфейса TextRepositoryInterface
 	TextRepository domain.TextRepositoryInterface
 	// Log - логгер
 	Log *logrus.Logger

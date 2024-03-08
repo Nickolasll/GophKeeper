@@ -93,6 +93,19 @@ type GetAllTextsResponse struct {
 	} `json:"data"`
 }
 
+type binaryResponse struct {
+	ID      string `json:"id"`
+	Content []byte `json:"content"`
+}
+
+type GetAllBinariesResponse struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Binaries []binaryResponse `json:"binaries"`
+	} `json:"data"`
+}
+
 type ErrorResponse struct {
 	Status  bool     `json:"status"`
 	Message string   `json:"message"`
