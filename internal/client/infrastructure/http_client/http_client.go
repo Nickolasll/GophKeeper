@@ -59,16 +59,15 @@ func (c HTTPClient) Login(login, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	if resp.StatusCode() == http.StatusUnauthorized {
+	statusCode := resp.StatusCode()
+	switch statusCode {
+	case http.StatusUnauthorized:
 		return "", domain.ErrUnauthorized
-	}
-
-	if resp.StatusCode() == http.StatusOK {
+	case http.StatusOK:
 		return resp.Header().Get("Authorization"), nil
+	default:
+		return "", domain.ErrClientConnectionError
 	}
-
-	return "", domain.ErrClientConnectionError
 }
 
 // Register - Регистрация по логину и паролю, возвращает токен авторизации
@@ -84,15 +83,15 @@ func (c HTTPClient) Register(login, password string) (string, error) {
 		return "", err
 	}
 
-	if resp.StatusCode() == http.StatusConflict {
+	statusCode := resp.StatusCode()
+	switch statusCode {
+	case http.StatusConflict:
 		return "", domain.ErrLoginConflict
-	}
-
-	if resp.StatusCode() == http.StatusOK {
+	case http.StatusOK:
 		return resp.Header().Get("Authorization"), nil
+	default:
+		return "", domain.ErrClientConnectionError
 	}
-
-	return "", domain.ErrClientConnectionError
 }
 
 func (c HTTPClient) create(authToken, uri, contentType string, body any) (string, error) {
@@ -123,17 +122,18 @@ func (c HTTPClient) update(authToken, uri, contentType string, body any) error {
 	if err != nil {
 		return err
 	}
-	if resp.StatusCode() == http.StatusNotFound {
-		return domain.ErrEntityNotFound
-	}
-	if resp.StatusCode() == http.StatusBadRequest {
-		return domain.ErrBadRequest
-	}
-	if resp.StatusCode() == http.StatusOK {
-		return nil
-	}
 
-	return domain.ErrClientConnectionError
+	statusCode := resp.StatusCode()
+	switch statusCode {
+	case http.StatusNotFound:
+		return domain.ErrEntityNotFound
+	case http.StatusBadRequest:
+		return domain.ErrBadRequest
+	case http.StatusOK:
+		return nil
+	default:
+		return domain.ErrClientConnectionError
+	}
 }
 
 // CreateText - Создает текст, возвращает идентификатор ресурса от сервера
@@ -171,6 +171,7 @@ func (c HTTPClient) GetCerts() ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
+
 	if resp.StatusCode() == http.StatusOK {
 		return resp.Body(), nil
 	}
@@ -297,7 +298,9 @@ func (c HTTPClient) GetAllTexts(session domain.Session) ([]domain.Text, error) {
 		return []domain.Text{}, err
 	}
 
-	if resp.StatusCode() == http.StatusInternalServerError {
+	statusCode := resp.StatusCode()
+
+	if statusCode == http.StatusInternalServerError {
 		errorResp := errorResponse{}
 		err = json.Unmarshal(resp.Body(), &errorResp)
 		if err != nil {
@@ -307,7 +310,7 @@ func (c HTTPClient) GetAllTexts(session domain.Session) ([]domain.Text, error) {
 		return []domain.Text{}, errors.New(errorResp.Message)
 	}
 
-	if resp.StatusCode() == http.StatusOK {
+	if statusCode == http.StatusOK {
 		respData := getAllTextsResponse{}
 		err = json.Unmarshal(resp.Body(), &respData)
 		if err != nil {
