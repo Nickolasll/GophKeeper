@@ -26,8 +26,12 @@ type GophKeeperClientInterface interface {
 	CreateCredentials(session Session, name, login, password string) (uuid.UUID, error)
 	// UpdateCredentials - Обновляет существующую пару логина и пароля
 	UpdateCredentials(session Session, cred Credentials) error
+	// GetAllCredentials - Получает все расшифрованные логины и пароли пользователя
+	GetAllCredentials(session Session) ([]Credentials, error)
 	// CreateBankCard - Создает банковскую карту, возвращает идентификатор ресурса от сервера
 	CreateBankCard(session Session, number, validThru, cvv, cardHolder string) (uuid.UUID, error)
 	// UpdateBankCard - Обновляет существующую банковскую карту
 	UpdateBankCard(session Session, card *BankCard) error
+	// GetAllBankCards - Получает все расшифрованные банковские карты пользователя
+	GetAllBankCards(session Session) ([]BankCard, error)
 }

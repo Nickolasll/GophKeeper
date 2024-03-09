@@ -63,6 +63,8 @@ type CredentialsRepositoryInterface interface {
 	Get(userID, credID uuid.UUID) (Credentials, error)
 	// GetAll - Возвращает все логины и пароли для пользователя
 	GetAll(userID uuid.UUID) ([]Credentials, error)
+	// ReplaceAll - Заменяет все локальные логины и пароли пользователя на новые
+	ReplaceAll(userID uuid.UUID, creds []Credentials) error
 }
 
 // BankCardRepositoryInterface - Интерфейс репозитория для банковских карт
@@ -75,4 +77,6 @@ type BankCardRepositoryInterface interface {
 	Get(userID, cardID uuid.UUID) (BankCard, error)
 	// GetAll - Возвращает все банковские карты для пользователя
 	GetAll(userID uuid.UUID) ([]BankCard, error)
+	// ReplaceAll - Заменяет все локальные банковские пользователя на новые
+	ReplaceAll(userID uuid.UUID, creds []BankCard) error
 }

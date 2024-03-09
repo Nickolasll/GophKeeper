@@ -25,6 +25,8 @@ const textPath = "/text/"
 const textCreatePath = textPath + "create"
 const textAllPath = textPath + "all"
 const binaryAllPath = "/binary/all"
+const credentialsAllPath = "/credentials/all"
+const bankCardsAllPath = "/bank_card/all"
 
 func newClient(url string) *HTTPClient {
 	log := logrus.New()
@@ -751,5 +753,183 @@ func TestGetAllBinariesBadRequest(t *testing.T) {
 	session := newSession()
 
 	_, err := client.GetAllBinaries(session)
+	require.Error(t, err)
+}
+
+func TestGetAllBinariesWrongURL(t *testing.T) {
+	client := newClient("wrongurl.com")
+	session := newSession()
+
+	_, err := client.GetAllBinaries(session)
+	require.Error(t, err)
+}
+
+func TestGetAllCredentialsSuccess(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == credentialsAllPath {
+			response := getAllCredentialsResponse{}
+			response.Data.Credentials = []domain.Credentials{
+				{
+					ID:       uuid.New(),
+					Name:     "name",
+					Login:    "login",
+					Password: "password",
+				},
+				{
+					ID:       uuid.New(),
+					Name:     "name",
+					Login:    "login",
+					Password: "password",
+				},
+			}
+			respData, err := json.Marshal(response)
+			if err != nil {
+				return
+			}
+			w.WriteHeader(http.StatusOK)
+			if _, err = w.Write(respData); err != nil {
+				return
+			}
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	data, err := client.GetAllCredentials(session)
+	require.NoError(t, err)
+	assert.Equal(t, len(data), 2)
+}
+
+func TestGetAllCredentialsInternalServerError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == credentialsAllPath {
+			response := errorResponse{Message: "error :("}
+			respData, err := json.Marshal(response)
+			if err != nil {
+				return
+			}
+			w.WriteHeader(http.StatusInternalServerError)
+			if _, err = w.Write(respData); err != nil {
+				return
+			}
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	_, err := client.GetAllCredentials(session)
+	require.Error(t, err)
+}
+
+func TestGetAllCredentialsBadRequest(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == credentialsAllPath {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	_, err := client.GetAllCredentials(session)
+	require.Error(t, err)
+}
+
+func TestGetAllCredentialsWrongURL(t *testing.T) {
+	client := newClient("wrongurl.com")
+	session := newSession()
+
+	_, err := client.GetAllCredentials(session)
+	require.Error(t, err)
+}
+
+func TestGetAllBankCardsSuccess(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == bankCardsAllPath {
+			response := getAllBankCardsResponse{}
+			response.Data.BankCards = []domain.BankCard{
+				{
+					ID:         uuid.New(),
+					Number:     "0000 0000 0000 0000",
+					ValidThru:  "01/11",
+					CVV:        "0000",
+					CardHolder: "name name",
+				},
+				{
+					ID:         uuid.New(),
+					Number:     "0000 0000 0000 0000",
+					ValidThru:  "01/11",
+					CVV:        "0000",
+					CardHolder: "name name",
+				},
+			}
+			respData, err := json.Marshal(response)
+			if err != nil {
+				return
+			}
+			w.WriteHeader(http.StatusOK)
+			if _, err = w.Write(respData); err != nil {
+				return
+			}
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	data, err := client.GetAllBankCards(session)
+	require.NoError(t, err)
+	assert.Equal(t, len(data), 2)
+}
+
+func TestGetAllBankCardsInternalServerError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == bankCardsAllPath {
+			response := errorResponse{Message: "error :("}
+			respData, err := json.Marshal(response)
+			if err != nil {
+				return
+			}
+			w.WriteHeader(http.StatusInternalServerError)
+			if _, err = w.Write(respData); err != nil {
+				return
+			}
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	_, err := client.GetAllBankCards(session)
+	require.Error(t, err)
+}
+
+func TestGetAllBankCardsBadRequest(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == bankCardsAllPath {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+	}))
+	defer server.Close()
+
+	client := newClient(server.URL)
+	session := newSession()
+
+	_, err := client.GetAllBankCards(session)
+	require.Error(t, err)
+}
+
+func TestGetAllBankCardsWrongURL(t *testing.T) {
+	client := newClient("wrongurl.com")
+	session := newSession()
+
+	_, err := client.GetAllBankCards(session)
 	require.Error(t, err)
 }

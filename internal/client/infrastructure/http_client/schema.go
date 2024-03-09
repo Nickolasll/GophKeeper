@@ -63,3 +63,15 @@ type getAllBinariesResponse struct {
 		Binaries []domain.Binary `json:"binaries"`
 	} `json:"data"`
 }
+
+type getAllCredentialsResponse struct {
+	Data struct {
+		Credentials []domain.Credentials `json:"credentials"`
+	} `json:"data"`
+}
+
+type getAllBankCardsResponse struct {
+	Data struct {
+		BankCards []domain.BankCard `json:"bank_cards"`
+	} `json:"data"`
+}

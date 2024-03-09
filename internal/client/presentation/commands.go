@@ -539,6 +539,38 @@ func showCredentials() cli.Command {
 	}
 }
 
+func syncCredentials() cli.Command {
+	return cli.Command{
+		Name:    "sync",
+		Usage:   "override current user credentials from remote",
+		Aliases: []string{"s"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			err := app.SyncCredentials.Do(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+			fmt.Println("Credentials syncronized successfully")
+
+			return nil
+		},
+	}
+}
+
 func createBankCard() cli.Command {
 	return cli.Command{
 		Name:    "create",
@@ -734,6 +766,38 @@ func showBankCards() cli.Command {
 				return cli.Exit(err, 1)
 			}
 			fmt.Print(string(s))
+
+			return nil
+		},
+	}
+}
+
+func syncBankCards() cli.Command {
+	return cli.Command{
+		Name:    "sync",
+		Usage:   "override current user bank cards from remote",
+		Aliases: []string{"s"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			err := app.SyncBankCards.Do(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+			fmt.Println("Bank cards syncronized successfully")
 
 			return nil
 		},

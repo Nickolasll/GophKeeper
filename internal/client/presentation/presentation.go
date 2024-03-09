@@ -49,10 +49,12 @@ func New(
 	cmdCreateCredentials := createCredentials()
 	cmdUpdateCredentials := updateCredentials()
 	cmdShowCredentials := showCredentials()
+	cmdSyncCredentials := syncCredentials()
 
 	cmdCreateBankCard := createBankCard()
 	cmdUpdateBankCard := updateBankCard()
 	cmdShowBankCard := showBankCards()
+	cmdSyncBankCards := syncBankCards()
 
 	cmd := cli.Command{
 		Name:                  "gophkeeper",
@@ -63,9 +65,8 @@ func New(
 			&cmdRegistration,
 			&cmdLogin,
 			{
-				Name:    "text",
-				Aliases: []string{"t"},
-				Usage:   "options for text",
+				Name:  "text",
+				Usage: "options for text",
 				Commands: []*cli.Command{
 					&cmdCreateText,
 					&cmdUpdateText,
@@ -74,9 +75,8 @@ func New(
 				},
 			},
 			{
-				Name:    "binary",
-				Aliases: []string{"b"},
-				Usage:   "options for binary",
+				Name:  "binary",
+				Usage: "options for binary",
 				Commands: []*cli.Command{
 					&cmdCreateBinary,
 					&cmdUpdateBinary,
@@ -85,23 +85,23 @@ func New(
 				},
 			},
 			{
-				Name:    "credentials",
-				Aliases: []string{"cred"},
-				Usage:   "options for credentials",
+				Name:  "credentials",
+				Usage: "options for credentials",
 				Commands: []*cli.Command{
 					&cmdCreateCredentials,
 					&cmdUpdateCredentials,
 					&cmdShowCredentials,
+					&cmdSyncCredentials,
 				},
 			},
 			{
-				Name:    "bank_card",
-				Aliases: []string{"bc"},
-				Usage:   "options for bank cards",
+				Name:  "bank_card",
+				Usage: "options for bank cards",
 				Commands: []*cli.Command{
 					&cmdCreateBankCard,
 					&cmdUpdateBankCard,
 					&cmdShowBankCard,
+					&cmdSyncBankCards,
 				},
 			},
 		},

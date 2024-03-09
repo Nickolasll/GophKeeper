@@ -36,12 +36,16 @@ type Application struct {
 	UpdateCredentials usecases.UpdateCredentials
 	// ShowCredentials - Сценарий получения расшифрованных логинов и паролей пользователя
 	ShowCredentials usecases.ShowCredentials
+	// SyncCredentials - Перезапись текущих пользовательских логинов и паролей
+	SyncCredentials usecases.SyncCredentials
 	// CreateBankCard - Сценарий создания новой банковской карты
 	CreateBankCard usecases.CreateBankCard
 	// UpdateCredentials - Сценарий обновления существующей банковской карты
 	UpdateBankCard usecases.UpdateBankCard
 	// ShowBankCards - Сценарий получения расшифрованных банковских карт
 	ShowBankCards usecases.ShowBankCards
+	// SyncBankCards - Перезапись текущих пользовательских банковских карт
+	SyncBankCards usecases.SyncBankCards
 }
 
 // New - Фабрика приложения
@@ -138,6 +142,11 @@ func New(
 		CredentialsRepository: credentialsRepository,
 		Log:                   log,
 	}
+	syncCredentials := usecases.SyncCredentials{
+		Client:                client,
+		CredentialsRepository: credentialsRepository,
+		Log:                   log,
+	}
 
 	createBankCard := usecases.CreateBankCard{
 		Client:             client,
@@ -151,6 +160,11 @@ func New(
 	}
 	showBankCards := usecases.ShowBankCards{
 		CheckToken:         &checkToken,
+		BankCardRepository: bankCardRepository,
+		Log:                log,
+	}
+	syncBankCards := usecases.SyncBankCards{
+		Client:             client,
 		BankCardRepository: bankCardRepository,
 		Log:                log,
 	}
@@ -169,8 +183,10 @@ func New(
 		CreateCredentials: createCredentials,
 		UpdateCredentials: updateCredentials,
 		ShowCredentials:   showCredentials,
+		SyncCredentials:   syncCredentials,
 		CreateBankCard:    createBankCard,
 		UpdateBankCard:    updateBankCard,
 		ShowBankCards:     showBankCards,
+		SyncBankCards:     syncBankCards,
 	}
 }

@@ -111,3 +111,21 @@ func (c FakeHTTPClient) GetAllBinaries(_ domain.Session) ([]domain.Binary, error
 
 	return c.Response.([]domain.Binary), nil
 }
+
+// GetAllCredentials - Получает все расшифрованные банковские карты пользователя
+func (c FakeHTTPClient) GetAllCredentials(_ domain.Session) ([]domain.Credentials, error) {
+	if c.Err != nil {
+		return []domain.Credentials{}, c.Err
+	}
+
+	return c.Response.([]domain.Credentials), nil
+}
+
+// GetAllBankCards - Получает все расшифрованные банковские карты пользователя
+func (c FakeHTTPClient) GetAllBankCards(_ domain.Session) ([]domain.BankCard, error) {
+	if c.Err != nil {
+		return []domain.BankCard{}, c.Err
+	}
+
+	return c.Response.([]domain.BankCard), nil
+}
