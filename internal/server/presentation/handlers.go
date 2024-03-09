@@ -373,6 +373,48 @@ func updateCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 	w.WriteHeader(http.StatusOK)
 }
 
+func getAllCredentialsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
+	credResponse := []credentialsResponse{}
+	w.Header().Set(contentTypeHeader, jsonType)
+	credentials, err := app.GetAllCredentials.Do(userID)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+
+	for _, v := range credentials {
+		respItem := credentialsResponse{
+			ID:       v.ID.String(),
+			Name:     string(v.Name),
+			Login:    string(v.Login),
+			Password: string(v.Password),
+		}
+		credResponse = append(credResponse, respItem)
+	}
+
+	response := GetAllCredentialsResponse{
+		Status: true,
+	}
+	response.Data.Credentials = credResponse
+
+	err = makeResponse(w, http.StatusOK, response)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+}
+
 func createBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	var payload bankCardPayload
 	body, err := parseBody(jsonType, r)
@@ -448,4 +490,47 @@ func updateBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+func getAllBankCardsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
+	bankCardsResponse := []bankCardResponse{}
+	w.Header().Set(contentTypeHeader, jsonType)
+	bankCards, err := app.GetAllBankCards.Do(userID)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+
+	for _, v := range bankCards {
+		respItem := bankCardResponse{
+			ID:         v.ID.String(),
+			Number:     string(v.Number),
+			ValidThru:  string(v.ValidThru),
+			CVV:        string(v.CVV),
+			CardHolder: string(v.CardHolder),
+		}
+		bankCardsResponse = append(bankCardsResponse, respItem)
+	}
+
+	response := GetAllBankCardsResponse{
+		Status: true,
+	}
+	response.Data.BankCards = bankCardsResponse
+
+	err = makeResponse(w, http.StatusOK, response)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
 }

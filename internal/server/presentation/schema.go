@@ -106,6 +106,37 @@ type GetAllBinariesResponse struct {
 	} `json:"data"`
 }
 
+type credentialsResponse struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+type GetAllCredentialsResponse struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Credentials []credentialsResponse `json:"credentials"`
+	} `json:"data"`
+}
+
+type bankCardResponse struct {
+	ID         string `json:"id"`
+	Number     string `json:"number"`
+	ValidThru  string `json:"valid_thru"`
+	CVV        string `json:"cvv"`
+	CardHolder string `json:"card_holder"`
+}
+
+type GetAllBankCardsResponse struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		BankCards []bankCardResponse `json:"bank_cards"`
+	} `json:"data"`
+}
+
 type ErrorResponse struct {
 	Status  bool     `json:"status"`
 	Message string   `json:"message"`

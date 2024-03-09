@@ -52,9 +52,11 @@ func New(
 
 	router.Post("/api/v1/credentials/create", auth(createCredentialsHandler))
 	router.Post("/api/v1/credentials/{credID}", auth(updateCredentialsHandler))
+	router.Get("/api/v1/credentials/all", auth(getAllCredentialsHandler))
 
 	router.Post("/api/v1/bank_card/create", auth(createBankCardHandler))
 	router.Post("/api/v1/bank_card/{cardID}", auth(updateBankCardHandler))
+	router.Get("/api/v1/bank_card/all", auth(getAllBankCardsHandler))
 
 	return router
 }

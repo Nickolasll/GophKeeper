@@ -31,10 +31,14 @@ type Application struct {
 	CreateCredentials usecases.CreateCredentials
 	// UpdateCredentials - Сценарий использования для обновления существующей зашифрованной пары логин и пароль
 	UpdateCredentials usecases.UpdateCredentials
+	// GetAllCredentials - Получение всех расшифрованных логинов и паролей
+	GetAllCredentials usecases.GetAllCredentials
 	// CreateBankCard - Сценарий использования для создания зашифрованной банковской карты
 	CreateBankCard usecases.CreateBankCard
 	// UpdateBankCard - Сценарий использования для обновления существующей зашифрованной банковской карты
 	UpdateBankCard usecases.UpdateBankCard
+	// GetAllBankCards - Получение всех расшифрованных банковских карт
+	GetAllBankCards usecases.GetAllBankCards
 }
 
 // New - Фабрика приложения
@@ -102,6 +106,11 @@ func New(
 		Crypto:                crypto,
 		Log:                   log,
 	}
+	getAllCredentials := usecases.GetAllCredentials{
+		CredentialsRepository: credentialsRepository,
+		Crypto:                crypto,
+		Log:                   log,
+	}
 
 	createBankCard := usecases.CreateBankCard{
 		BankCardRepository: bankCardRepository,
@@ -109,6 +118,11 @@ func New(
 		Log:                log,
 	}
 	updateBankCard := usecases.UpdateBankCard{
+		BankCardRepository: bankCardRepository,
+		Crypto:             crypto,
+		Log:                log,
+	}
+	getAllBankCards := usecases.GetAllBankCards{
 		BankCardRepository: bankCardRepository,
 		Crypto:             crypto,
 		Log:                log,
@@ -125,7 +139,9 @@ func New(
 		GetAllBinaries:    getAllBinaries,
 		CreateCredentials: createCredentials,
 		UpdateCredentials: updateCredentials,
+		GetAllCredentials: getAllCredentials,
 		CreateBankCard:    createBankCard,
 		UpdateBankCard:    updateBankCard,
+		GetAllBankCards:   getAllBankCards,
 	}
 }

@@ -130,8 +130,8 @@ func (r BankCardRepository) Get(userID, cardID uuid.UUID) (*domain.BankCard, err
 }
 
 // GetAll - Возвращает список банковских карт, принадлежащих пользователю
-func (r BankCardRepository) GetAll(userID uuid.UUID) ([]domain.BankCard, error) {
-	result := []domain.BankCard{}
+func (r BankCardRepository) GetAll(userID uuid.UUID) ([]*domain.BankCard, error) {
+	result := []*domain.BankCard{}
 	ctx, cancel := context.WithTimeout(context.Background(), r.Timeout)
 	defer cancel()
 	sql := `
@@ -160,7 +160,7 @@ func (r BankCardRepository) GetAll(userID uuid.UUID) ([]domain.BankCard, error) 
 		var card domain.BankCard
 		err = rows.Scan(&card.ID, &card.UserID, &card.Number, &card.ValidThru, &card.CVV, &card.CardHolder)
 		if err == nil {
-			result = append(result, card)
+			result = append(result, &card)
 		}
 	}
 	if rows.Err() != nil {
