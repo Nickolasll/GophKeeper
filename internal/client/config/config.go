@@ -11,12 +11,18 @@ import (
 const dbFileMode = 0600
 const configName = "config.json"
 
+// Config - Конфигурация клиента
 type Config struct {
-	DBFileMode     uint32
+	// DBFileMode - Режим чтения файла базы данных
+	DBFileMode uint32
+	// ServerBasePath - базовый url сервера
 	ServerBasePath string
-	DBFilePath     string        `json:"db_file_path"`
-	ClientTimeout  time.Duration `json:"db_client_timeout"`
-	ServerURL      string        `json:"server_url"`
+	// DBFilePath - Путь до файла базы данных
+	DBFilePath string `json:"db_file_path"`
+	// ClientTimeout - Таймаут запроса клиента до сервера
+	ClientTimeout time.Duration `json:"db_client_timeout"`
+	// ServerURL - URL сервера
+	ServerURL string `json:"server_url"`
 }
 
 // New - Возвращает инстанс конфигурации сервера из файла

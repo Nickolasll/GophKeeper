@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -13,7 +12,7 @@ type Login struct {
 	Client domain.GophKeeperClientInterface
 	// CheckToken - Сценарий проверки JWT, возвращает UserID в формате строки
 	CheckToken *CheckToken
-	// SessionRepository - Реализация интерфейса SessionRepository
+	// SessionRepository - Реализация интерфейса SessionRepositoryInterface
 	SessionRepository domain.SessionRepositoryInterface
 	// Log - логгер
 	Log *logrus.Logger

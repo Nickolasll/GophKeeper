@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -19,7 +18,11 @@ type UpdateText struct {
 }
 
 // Do - Вызов логики сценария использования
-func (u UpdateText) Do(session domain.Session, textID uuid.UUID, content string) error {
+func (u UpdateText) Do(
+	session domain.Session,
+	textID uuid.UUID,
+	content string,
+) error {
 	text, err := u.TextRepository.Get(session.UserID, textID)
 	if err != nil {
 		return err

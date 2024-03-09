@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -7,11 +6,11 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
-// ShowBankCards - Сценарий получения расшифрованных банковских карт
+// ShowBankCards - Сценарий получения всех локальных расшифрованных банковских карт
 type ShowBankCards struct {
 	// CheckToken - Сценарий проверки JWT, возвращает UserID в формате строки
 	CheckToken *CheckToken
-	// BankCardRepository - Реализация интерфейса BankCardRepository
+	// BankCardRepository - Реализация интерфейса BankCardRepositoryInterface
 	BankCardRepository domain.BankCardRepositoryInterface
 	// Log - логгер
 	Log *logrus.Logger

@@ -26,7 +26,10 @@ type BinaryRepository struct {
 }
 
 // Create - Сохраняет новые бинарные данные
-func (r BinaryRepository) Create(userID uuid.UUID, bin domain.Binary) error {
+func (r BinaryRepository) Create(
+	userID uuid.UUID,
+	bin domain.Binary,
+) error {
 	buf, err := json.Marshal(bin)
 	if err != nil {
 		return err
@@ -69,7 +72,10 @@ func (r BinaryRepository) Create(userID uuid.UUID, bin domain.Binary) error {
 }
 
 // Update - Сохраняет существующие бинарные данные
-func (r BinaryRepository) Update(userID uuid.UUID, bin domain.Binary) error {
+func (r BinaryRepository) Update(
+	userID uuid.UUID,
+	bin domain.Binary,
+) error {
 	buf, err := json.Marshal(bin)
 	if err != nil {
 		return err
@@ -189,7 +195,11 @@ func (r BinaryRepository) GetAll(userID uuid.UUID) ([]domain.Binary, error) {
 }
 
 // ReplaceAll - Заменяет все локальные бинарные данные пользователя на новые
-func (r BinaryRepository) ReplaceAll(userID uuid.UUID, bins []domain.Binary) (err error) {
+// Реализована работа в пределах одной транзакции в Unit Of Work
+func (r BinaryRepository) ReplaceAll(
+	userID uuid.UUID,
+	bins []domain.Binary,
+) (err error) {
 	managed := false
 	var tx *bolt.Tx
 	if r.Tx == nil {

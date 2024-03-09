@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -7,7 +6,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
-// CreateBankCard - Сценарий создания нового логина и пароля
+// CreateBankCard - Сценарий создания новой банковской карты
 type CreateBankCard struct {
 	// Client - Реализация интерфейса GophKeeperClient
 	Client domain.GophKeeperClientInterface

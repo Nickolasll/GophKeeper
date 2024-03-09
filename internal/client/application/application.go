@@ -1,4 +1,4 @@
-// Package application содержит фабрику приложения
+// Package application по сути является фасадом для перечисления всех доступных сценариев использования
 package application
 
 import (
@@ -20,7 +20,7 @@ type Application struct {
 	UpdateText usecases.UpdateText
 	// ShowText - Сценарий получения расшифрованных текстовых данных
 	ShowText usecases.ShowText
-	// SyncText - Перезапись текущих пользовательских текстовых данных
+	// SyncText - Сценарий перезаписи текущих пользовательских текстовых данных
 	SyncText usecases.SyncText
 	// CreateBinary - Сценарий создания новых бинарных данных
 	CreateBinary usecases.CreateBinary
@@ -28,7 +28,7 @@ type Application struct {
 	UpdateBinary usecases.UpdateBinary
 	// ShowBinary - Сценарий получения расшифрованных бинарных данных
 	ShowBinary usecases.ShowBinary
-	// SyncBinary - Перезапись текущих пользовательских бинарных данных
+	// SyncBinary - Сценарий перезаписи текущих пользовательских бинарных данных
 	SyncBinary usecases.SyncBinary
 	// CreateCredentials - Сценарий создания новой пары логин и пароль
 	CreateCredentials usecases.CreateCredentials
@@ -36,7 +36,7 @@ type Application struct {
 	UpdateCredentials usecases.UpdateCredentials
 	// ShowCredentials - Сценарий получения расшифрованных логинов и паролей пользователя
 	ShowCredentials usecases.ShowCredentials
-	// SyncCredentials - Перезапись текущих пользовательских логинов и паролей
+	// SyncCredentials - Сценарий перезаписи текущих пользовательских логинов и паролей
 	SyncCredentials usecases.SyncCredentials
 	// CreateBankCard - Сценарий создания новой банковской карты
 	CreateBankCard usecases.CreateBankCard
@@ -44,9 +44,9 @@ type Application struct {
 	UpdateBankCard usecases.UpdateBankCard
 	// ShowBankCards - Сценарий получения расшифрованных банковских карт
 	ShowBankCards usecases.ShowBankCards
-	// SyncBankCards - Перезапись текущих пользовательских банковских карт
+	// SyncBankCards - Сценарий перезаписи текущих пользовательских банковских карт
 	SyncBankCards usecases.SyncBankCards
-	// SyncAll -
+	// SyncAll - Сценарий перезаписи всех существующих пользовательских данных
 	SyncAll usecases.SyncAll
 }
 

@@ -19,6 +19,8 @@ import (
 	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/text_repository"
 )
 
+// UnitOfWork - Интерфейс Unit Of Work для инкапсулирования транзакционной целостности
+// По завершению работы транзакцию обязательно нужно коммитить или откатывать
 type UnitOfWork struct {
 	db                    *bolt.DB
 	textRepository        txtrepo.TextRepository
@@ -29,6 +31,7 @@ type UnitOfWork struct {
 	log                   *logrus.Logger
 }
 
+// Begin - Начало работы, создает транзакцию
 func (uow *UnitOfWork) Begin() error {
 	tx, err := uow.db.Begin(true)
 	if err != nil {
@@ -48,6 +51,7 @@ func (uow *UnitOfWork) setTx(tx *bolt.Tx) {
 	uow.bankCardRepository.Tx = tx
 }
 
+// Commit - Выполняет коммит транзакции
 func (uow *UnitOfWork) Commit() error {
 	if uow.tx == nil {
 		return bolt.ErrTxClosed
@@ -63,6 +67,7 @@ func (uow *UnitOfWork) Commit() error {
 	return nil
 }
 
+// Rollback - Выполняет откат транзакции
 func (uow *UnitOfWork) Rollback() error {
 	if uow.tx == nil {
 		return nil
@@ -78,18 +83,22 @@ func (uow *UnitOfWork) Rollback() error {
 	return nil
 }
 
+// TextRepository - Возвращает TextRepository для работы в пределах транзакции
 func (uow *UnitOfWork) TextRepository() domain.TextRepositoryInterface {
 	return uow.textRepository
 }
 
+// BinaryRepository - Возвращает BinaryRepository для работы в пределах транзакции
 func (uow *UnitOfWork) BinaryRepository() domain.BinaryRepositoryInterface {
 	return uow.binaryRepository
 }
 
+// CredentialsRepository - Возвращает CredentialsRepository для работы в пределах транзакции
 func (uow *UnitOfWork) CredentialsRepository() domain.CredentialsRepositoryInterface {
 	return uow.credentialsRepository
 }
 
+// BankCardRepository - Возвращает BankCardRepository для работы в пределах транзакции
 func (uow *UnitOfWork) BankCardRepository() domain.BankCardRepositoryInterface {
 	return uow.bankCardRepository
 }

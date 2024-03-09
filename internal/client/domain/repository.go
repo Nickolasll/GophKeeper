@@ -81,12 +81,21 @@ type BankCardRepositoryInterface interface {
 	ReplaceAll(userID uuid.UUID, creds []BankCard) error
 }
 
+// UnitOfWorkInterface - Интерфейс Unit Of Work для инкапсулирования транзакционной целостности
+// По завершению работы транзакцию обязательно нужно коммитить или откатывать
 type UnitOfWorkInterface interface {
+	// Begin - Начало работы, создает транзакцию
 	Begin() error
+	// Commit - Выполняет коммит транзакции
 	Commit() error
+	// Rollback - Выполняет откат транзакции
 	Rollback() error
+	// TextRepository - Возвращает TextRepository для работы в пределах транзакции
 	TextRepository() TextRepositoryInterface
+	// BinaryRepository - Возвращает BinaryRepository для работы в пределах транзакции
 	BinaryRepository() BinaryRepositoryInterface
+	// CredentialsRepository - Возвращает CredentialsRepository для работы в пределах транзакции
 	CredentialsRepository() CredentialsRepositoryInterface
+	// BankCardRepository - Возвращает BankCardRepository для работы в пределах транзакции
 	BankCardRepository() BankCardRepositoryInterface
 }

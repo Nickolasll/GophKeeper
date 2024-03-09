@@ -98,7 +98,10 @@ func (c HTTPClient) Register(login, password string) (string, error) {
 	}
 }
 
-func (c HTTPClient) create(authToken, uri, contentType string, body any) (string, error) {
+func (c HTTPClient) create(
+	authToken, uri, contentType string,
+	body any,
+) (string, error) {
 	resp, err := c.client.R().
 		SetHeader("Content-Type", contentType).
 		SetHeader("Authorization", authToken).
@@ -116,7 +119,10 @@ func (c HTTPClient) create(authToken, uri, contentType string, body any) (string
 	return "", domain.ErrClientConnectionError
 }
 
-func (c HTTPClient) update(authToken, uri, contentType string, body any) error {
+func (c HTTPClient) update(
+	authToken, uri, contentType string,
+	body any,
+) error {
 	resp, err := c.client.R().
 		SetHeader("Content-Type", contentType).
 		SetHeader("Authorization", authToken).
@@ -143,7 +149,10 @@ func (c HTTPClient) update(authToken, uri, contentType string, body any) error {
 }
 
 // CreateText - Создает текст, возвращает идентификатор ресурса от сервера
-func (c HTTPClient) CreateText(session domain.Session, content string) (uuid.UUID, error) {
+func (c HTTPClient) CreateText(
+	session domain.Session,
+	content string,
+) (uuid.UUID, error) {
 	var uid uuid.UUID
 	id, err := c.create(session.Token, "text/create", "plain/text", content)
 
@@ -160,7 +169,10 @@ func (c HTTPClient) CreateText(session domain.Session, content string) (uuid.UUI
 }
 
 // UpdateText - Обновляет существующий текст
-func (c HTTPClient) UpdateText(session domain.Session, text domain.Text) error {
+func (c HTTPClient) UpdateText(
+	session domain.Session,
+	text domain.Text,
+) error {
 	err := c.update(session.Token, "text/"+text.ID.String(), "plain/text", text.Content)
 
 	if err != nil {
@@ -188,7 +200,10 @@ func (c HTTPClient) GetCerts() ([]byte, error) {
 }
 
 // CreateBinary - Создает бинарные данные, возвращает идентификатор ресурса от сервера
-func (c HTTPClient) CreateBinary(session domain.Session, content []byte) (uuid.UUID, error) {
+func (c HTTPClient) CreateBinary(
+	session domain.Session,
+	content []byte,
+) (uuid.UUID, error) {
 	var uid uuid.UUID
 	id, err := c.create(session.Token, "binary/create", "multipart/form-data", content)
 
@@ -205,7 +220,10 @@ func (c HTTPClient) CreateBinary(session domain.Session, content []byte) (uuid.U
 }
 
 // UpdateBinary - Обновляет существующие бинарные данные
-func (c HTTPClient) UpdateBinary(session domain.Session, bin domain.Binary) error {
+func (c HTTPClient) UpdateBinary(
+	session domain.Session,
+	bin domain.Binary,
+) error {
 	err := c.update(session.Token, "binary/"+bin.ID.String(), "multipart/form-data", bin.Content)
 
 	if err != nil {
@@ -225,7 +243,10 @@ func (c HTTPClient) parseID(id string) (uuid.UUID, error) {
 }
 
 // CreateCredentials - Создает пару логин и парль, возвращает идентификатор ресурса от сервера
-func (c HTTPClient) CreateCredentials(session domain.Session, name, login, password string) (uuid.UUID, error) {
+func (c HTTPClient) CreateCredentials(
+	session domain.Session,
+	name, login, password string,
+) (uuid.UUID, error) {
 	var uid uuid.UUID
 	payload, err := credentialsToJSON(name, login, password)
 	if err != nil {
@@ -246,7 +267,10 @@ func (c HTTPClient) CreateCredentials(session domain.Session, name, login, passw
 }
 
 // UpdateCredentials - Обновляет существующие логин и пароль
-func (c HTTPClient) UpdateCredentials(session domain.Session, cred domain.Credentials) error {
+func (c HTTPClient) UpdateCredentials(
+	session domain.Session,
+	cred domain.Credentials,
+) error {
 	payload, err := credentialsToJSON(cred.Name, cred.Login, cred.Password)
 	if err != nil {
 		return err
@@ -261,7 +285,10 @@ func (c HTTPClient) UpdateCredentials(session domain.Session, cred domain.Creden
 }
 
 // CreateBankCard - Создает банковскую карту, возвращает идентификатор ресурса от сервера
-func (c HTTPClient) CreateBankCard(session domain.Session, number, validThru, cvv, cardHolder string) (uuid.UUID, error) {
+func (c HTTPClient) CreateBankCard(
+	session domain.Session,
+	number, validThru, cvv, cardHolder string,
+) (uuid.UUID, error) {
 	var uid uuid.UUID
 	payload, err := bankCardToJSON(number, validThru, cvv, cardHolder)
 	if err != nil {
@@ -282,7 +309,10 @@ func (c HTTPClient) CreateBankCard(session domain.Session, number, validThru, cv
 }
 
 // UpdateBankCard - Обновляет существующую банковскую карту
-func (c HTTPClient) UpdateBankCard(session domain.Session, card *domain.BankCard) error {
+func (c HTTPClient) UpdateBankCard(
+	session domain.Session,
+	card *domain.BankCard,
+) error {
 	payload, err := bankCardToJSON(card.Number, card.ValidThru, card.CVV, card.CardHolder)
 	if err != nil {
 		return err

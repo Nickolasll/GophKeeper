@@ -1,4 +1,3 @@
-// Package presentation содержит фабрику cli приложения и имплементацию команд
 package presentation
 
 import (
@@ -244,7 +243,7 @@ func createBinary() cli.Command {
 	return cli.Command{
 		Name:      "binary",
 		Usage:     "create new binary content",
-		ArgsUsage: "[content]",
+		ArgsUsage: "[path-to-file]",
 		Aliases:   []string{"b"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
@@ -285,7 +284,7 @@ func updateBinary() cli.Command {
 	return cli.Command{
 		Name:      "binary",
 		Usage:     "update existing binary via id and data",
-		ArgsUsage: "[id] [content]",
+		ArgsUsage: "[id] [path-to-file]",
 		Aliases:   []string{"b"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
@@ -592,7 +591,7 @@ func createBankCard() cli.Command {
 	return cli.Command{
 		Name:      "bank-card",
 		Usage:     "create new bank-card",
-		ArgsUsage: "[number] [valid-thru] [cvv] [card-holder]",
+		ArgsUsage: "[number] [valid-thru] [cvv] [(optional) card-holder]",
 		Aliases:   []string{"bc"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
@@ -679,7 +678,7 @@ func updateBankCard() cli.Command {
 			},
 			&cli.StringFlag{
 				Name:        "card-holder",
-				Usage:       "card-holder value to update",
+				Usage:       "(optional) card-holder value to update",
 				DefaultText: "",
 				Destination: &cardHolder,
 			},

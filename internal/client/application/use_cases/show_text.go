@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -7,11 +6,11 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
-// ShowText - Сценарий получения расшифрованных текстовых данных
+// ShowText - Сценарий получения всех локальных расшифрованных текстовых данных
 type ShowText struct {
 	// CheckToken - Сценарий проверки JWT, возвращает UserID в формате строки
 	CheckToken *CheckToken
-	// TextRepository - Реализация интерфейса TextRepository
+	// TextRepository - Реализация интерфейса TextRepositoryInterface
 	TextRepository domain.TextRepositoryInterface
 	// Log - логгер
 	Log *logrus.Logger

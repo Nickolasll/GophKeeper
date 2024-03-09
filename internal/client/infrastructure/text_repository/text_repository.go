@@ -26,7 +26,10 @@ type TextRepository struct {
 }
 
 // Create - Сохраняет новые текстовые данные
-func (r TextRepository) Create(userID uuid.UUID, text domain.Text) error {
+func (r TextRepository) Create(
+	userID uuid.UUID,
+	text domain.Text,
+) error {
 	buf, err := json.Marshal(text)
 	if err != nil {
 		return err
@@ -69,7 +72,10 @@ func (r TextRepository) Create(userID uuid.UUID, text domain.Text) error {
 }
 
 // Update - Сохраняет существующие текстовые данные
-func (r TextRepository) Update(userID uuid.UUID, text domain.Text) error {
+func (r TextRepository) Update(
+	userID uuid.UUID,
+	text domain.Text,
+) error {
 	buf, err := json.Marshal(text)
 	if err != nil {
 		return err
@@ -189,7 +195,11 @@ func (r TextRepository) GetAll(userID uuid.UUID) ([]domain.Text, error) {
 }
 
 // ReplaceAll - Заменяет все локальные текстовые данные пользователя на новые
-func (r TextRepository) ReplaceAll(userID uuid.UUID, texts []domain.Text) (err error) {
+// Реализована работа в пределах одной транзакции в Unit Of Work
+func (r TextRepository) ReplaceAll(
+	userID uuid.UUID,
+	texts []domain.Text,
+) (err error) {
 	managed := false
 	var tx *bolt.Tx
 	if r.Tx == nil {

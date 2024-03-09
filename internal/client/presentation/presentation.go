@@ -1,4 +1,3 @@
-// Package presentation содержит фабрику cli приложения и имплементацию команд
 package presentation
 
 import (
@@ -14,6 +13,7 @@ var currentSession *domain.Session
 var sessionRepository domain.SessionRepositoryInterface
 var log *logrus.Logger
 
+// New - Фабрика CLI приложения
 func New(
 	version string,
 	buildDate string,

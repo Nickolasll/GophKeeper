@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -7,7 +6,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
-// ShowCredentials - Сценарий получения расшифрованных логина и пароля
+// ShowCredentials - Сценарий получения всех локальных расшифрованных логина и пароля
 type ShowCredentials struct {
 	// CheckToken - Сценарий проверки JWT, возвращает UserID в формате строки
 	CheckToken *CheckToken

@@ -50,7 +50,26 @@
 
 #### Список доступных команд
 
-TODO
+* `gophkeeper register [username] [password]` - регистрация нового пользователя по логину и паролю;
+* `gophkeeper login [username] [password]` - авторизация пользователя по логину и паролю;
+* `gophkeeper create text [content]` - создать новые текстовые данные;
+* `gophkeeper create binary [path-to-file]` - создать новые бинарные данные из файла;
+* `gophkeeper create credentials [name] [login] [password]` - создать новый логин и пароль;
+* `gophkeeper create bank-card [number] [valid-thru] [cvv] [(optional) card-holder]` - создать новую банковскую карту;
+* `gophkeeper update text [id] [content]` - обновить существующие текстовые данные;
+* `gophkeeper update binary [id] [path-to-file]` - обновить существующие бинарные данные;
+* `gophkeeper update credentials --name --login --password [id]` - обновить существующие логин и пароль;
+* `gophkeeper update bank-card --number --valid-thru --cvv --card-holder [id]` - обновить существующую банковскую карту;
+* `gophkeeper show texts` - показать локальные текстовые данные;
+* `gophkeeper show binaries` - показать локальные бинарные данные;
+* `gophkeeper show credentials` - показать локальные логины и пароли;
+* `gophkeeper show bank-cards` - показать локальные банковские карты;
+* `gophkeeper sync texts` - синхронизировать (перезаписать) локальные текстовые данные;
+* `gophkeeper sync binaries` - синхронизировать (перезаписать) локальные бинарные данные;
+* `gophkeeper sync credentials` - синхронизировать (перезаписать) локальные логины и пароли;
+* `gophkeeper sync bank-cards` - синхронизировать (перезаписать) локальные банковские карты;
+* `gophkeeper sync all` - синхронизировать (перезаписать) все локальные данные;
+* `gophkeeper help` - показать список всех команд или помощь для одной команды;
 
 ## Разработка
 
@@ -62,13 +81,19 @@ TODO
 
 ### Команды
 
-* `make setup` - установка виртуального окружения и всех зависимостей;
+* `make all (default)` - последовательные запуск форматтеров, линтеров и тестов;
+* `make build-client` - сборка бинарных файлов для cli приложения;
 * `make format` - форматирование исходного кода;
-* `make lint` - запуск статического анализа (линтеров);
-* `make test` - запуск юнит-тестов;
-* `make client-build` - сборка исполняемых файлов клиента;
-* `make generate-spec` - кодогенерация по openapi-спецификации;
+* `make generate-spec` - генерация swagger spec;
+* `make godoc-get` - Получить документацию в формате html;
+* `make godoc-run` - Запустить сервер документации;
 * `make help` - вывод всех доступных команд;
+* `make lint` - запуск статического анализа (линтеров);
+* `make migration-down` - откат миграций бд сервера;
+* `make migration-fix` - Фиксация миграций бд сервера (в случае неудачной установки/отката);
+* `make migration-up` - Установка миграций бд сервера;
+* `make setup` - установка виртуального окружения и всех зависимостей;
+* `make test` - запуск юнит-тестов;
 
 Список всех команд (Makefile targets) смотрите в [Makefile](Makefile).
 

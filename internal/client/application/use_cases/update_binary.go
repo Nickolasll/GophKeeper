@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -19,7 +18,11 @@ type UpdateBinary struct {
 }
 
 // Do - Вызов логики сценария использования
-func (u UpdateBinary) Do(session domain.Session, binID uuid.UUID, content []byte) error {
+func (u UpdateBinary) Do(
+	session domain.Session,
+	binID uuid.UUID,
+	content []byte,
+) error {
 	bin, err := u.BinaryRepository.Get(session.UserID, binID)
 	if err != nil {
 		return err

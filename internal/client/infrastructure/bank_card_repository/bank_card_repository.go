@@ -26,7 +26,10 @@ type BankCardRepository struct {
 }
 
 // Create - Сохраняет новую банковскую карту
-func (r BankCardRepository) Create(userID uuid.UUID, card *domain.BankCard) error {
+func (r BankCardRepository) Create(
+	userID uuid.UUID,
+	card *domain.BankCard,
+) error {
 	buf, err := json.Marshal(card)
 	if err != nil {
 		return err
@@ -69,7 +72,10 @@ func (r BankCardRepository) Create(userID uuid.UUID, card *domain.BankCard) erro
 }
 
 // Update - Сохраняет существующую банковскую карту
-func (r BankCardRepository) Update(userID uuid.UUID, card *domain.BankCard) error {
+func (r BankCardRepository) Update(
+	userID uuid.UUID,
+	card *domain.BankCard,
+) error {
 	buf, err := json.Marshal(card)
 	if err != nil {
 		return err
@@ -189,7 +195,11 @@ func (r BankCardRepository) GetAll(userID uuid.UUID) ([]domain.BankCard, error) 
 }
 
 // ReplaceAll - Заменяет все локальные банковские карты пользователя на новые
-func (r BankCardRepository) ReplaceAll(userID uuid.UUID, cards []domain.BankCard) (err error) {
+// Реализована работа в пределах одной транзакции в Unit Of Work
+func (r BankCardRepository) ReplaceAll(
+	userID uuid.UUID,
+	cards []domain.BankCard,
+) (err error) {
 	managed := false
 	var tx *bolt.Tx
 	if r.Tx == nil {

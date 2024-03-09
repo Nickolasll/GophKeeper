@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -7,7 +6,7 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/client/domain"
 )
 
-// ShowBinary - Сценарий получения расшифрованных бинарных данных
+// ShowBinary - Сценарий получения всех локальных расшифрованных бинарных данных
 type ShowBinary struct {
 	// CheckToken - Сценарий проверки JWT, возвращает UserID в формате строки
 	CheckToken *CheckToken

@@ -26,7 +26,10 @@ type CredentialsRepository struct {
 }
 
 // Create - Сохраняет новую пару логина и пароля
-func (r CredentialsRepository) Create(userID uuid.UUID, cred domain.Credentials) error {
+func (r CredentialsRepository) Create(
+	userID uuid.UUID,
+	cred domain.Credentials,
+) error {
 	buf, err := json.Marshal(cred)
 	if err != nil {
 		return err
@@ -69,7 +72,10 @@ func (r CredentialsRepository) Create(userID uuid.UUID, cred domain.Credentials)
 }
 
 // Update - Сохраняет существующую пару логина и пароля
-func (r CredentialsRepository) Update(userID uuid.UUID, cred domain.Credentials) error {
+func (r CredentialsRepository) Update(
+	userID uuid.UUID,
+	cred domain.Credentials,
+) error {
 	buf, err := json.Marshal(cred)
 	if err != nil {
 		return err
@@ -189,7 +195,11 @@ func (r CredentialsRepository) GetAll(userID uuid.UUID) ([]domain.Credentials, e
 }
 
 // ReplaceAll - Заменяет все локальные логины и пароли пользователя на новые
-func (r CredentialsRepository) ReplaceAll(userID uuid.UUID, creds []domain.Credentials) (err error) {
+// Реализована работа в пределах одной транзакции в Unit Of Work
+func (r CredentialsRepository) ReplaceAll(
+	userID uuid.UUID,
+	creds []domain.Credentials,
+) (err error) {
 	managed := false
 	var tx *bolt.Tx
 	if r.Tx == nil {
