@@ -21,6 +21,7 @@ type TextRepository struct {
 	DB *bolt.DB
 	// Crypto - Инстанс сервиса шифрования
 	Crypto domain.CryptoServiceInterface
+	Tx     *bolt.Tx
 	log    *logrus.Logger
 }
 
@@ -188,14 +189,19 @@ func (r TextRepository) GetAll(userID uuid.UUID) ([]domain.Text, error) {
 }
 
 // ReplaceAll - Заменяет все локальные текстовые данные пользователя на новые
-func (r TextRepository) ReplaceAll(userID uuid.UUID, texts []domain.Text) error {
-	tx, err := r.DB.Begin(true)
-	if err != nil {
-		return err
+func (r TextRepository) ReplaceAll(userID uuid.UUID, texts []domain.Text) (err error) {
+	managed := false
+	var tx *bolt.Tx
+	if r.Tx == nil {
+		tx, err = r.DB.Begin(true)
+		if err != nil {
+			return err
+		}
+		defer tx.Rollback() // nolint: errcheck
+	} else {
+		tx = r.Tx
+		managed = true
 	}
-	defer func() {
-		err = tx.Rollback()
-	}()
 
 	root := tx.Bucket([]byte(userID.String()))
 	if root == nil {
@@ -229,9 +235,11 @@ func (r TextRepository) ReplaceAll(userID uuid.UUID, texts []domain.Text) error 
 		}
 	}
 
-	err = tx.Commit()
-	if err != nil {
-		return err
+	if !managed {
+		err = tx.Commit()
+		if err != nil {
+			return err
+		}
 	}
 
 	return err

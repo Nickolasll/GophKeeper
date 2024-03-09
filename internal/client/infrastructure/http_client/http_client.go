@@ -66,6 +66,8 @@ func (c HTTPClient) Login(login, password string) (string, error) {
 	case http.StatusOK:
 		return resp.Header().Get("Authorization"), nil
 	default:
+		c.log.Error(resp.RawResponse)
+
 		return "", domain.ErrClientConnectionError
 	}
 }
@@ -90,6 +92,8 @@ func (c HTTPClient) Register(login, password string) (string, error) {
 	case http.StatusOK:
 		return resp.Header().Get("Authorization"), nil
 	default:
+		c.log.Error(resp.RawResponse)
+
 		return "", domain.ErrClientConnectionError
 	}
 }
@@ -132,6 +136,8 @@ func (c HTTPClient) update(authToken, uri, contentType string, body any) error {
 	case http.StatusOK:
 		return nil
 	default:
+		c.log.Error(resp.RawResponse)
+
 		return domain.ErrClientConnectionError
 	}
 }
@@ -175,6 +181,8 @@ func (c HTTPClient) GetCerts() ([]byte, error) {
 	if resp.StatusCode() == http.StatusOK {
 		return resp.Body(), nil
 	}
+
+	c.log.Error(resp.RawResponse)
 
 	return []byte{}, domain.ErrClientConnectionError
 }
@@ -326,6 +334,8 @@ func (c HTTPClient) GetAllTexts(session domain.Session) ([]domain.Text, error) {
 		return respData.Data.Texts, nil
 	}
 
+	c.log.Error(resp.RawResponse)
+
 	return []domain.Text{}, domain.ErrClientConnectionError
 }
 
@@ -356,6 +366,8 @@ func (c HTTPClient) GetAllBinaries(session domain.Session) ([]domain.Binary, err
 
 		return respData.Data.Binaries, nil
 	}
+
+	c.log.Error(resp.RawResponse)
 
 	return []domain.Binary{}, domain.ErrClientConnectionError
 }
@@ -388,6 +400,8 @@ func (c HTTPClient) GetAllCredentials(session domain.Session) (creds []domain.Cr
 		return respData.Data.Credentials, nil
 	}
 
+	c.log.Error(resp.RawResponse)
+
 	return creds, domain.ErrClientConnectionError
 }
 
@@ -419,5 +433,48 @@ func (c HTTPClient) GetAllBankCards(session domain.Session) (cards []domain.Bank
 		return respData.Data.BankCards, nil
 	}
 
+	c.log.Error(resp.RawResponse)
+
 	return cards, domain.ErrClientConnectionError
+}
+
+// GetAll - Получает все расшифрованные данные пользователя
+func (c HTTPClient) GetAll(session domain.Session) (
+	texts []domain.Text,
+	bankCards []domain.BankCard,
+	binaries []domain.Binary,
+	credentials []domain.Credentials,
+	err error,
+) {
+	resp, err := c.client.R().
+		SetHeader("Authorization", session.Token).
+		Get("all")
+
+	if err != nil {
+		return texts, bankCards, binaries, credentials, err
+	}
+
+	statusCode := resp.StatusCode()
+
+	if statusCode == http.StatusInternalServerError {
+		err = c.parseErrorResponse(resp.Body())
+
+		return texts, bankCards, binaries, credentials, err
+	}
+
+	if statusCode == http.StatusOK {
+		respData := getAllResponse{}
+		err = json.Unmarshal(resp.Body(), &respData)
+		if err != nil {
+			return texts, bankCards, binaries, credentials, err
+		}
+
+		data := respData.Data
+
+		return data.Texts, data.BankCards, data.Binaries, data.Credentials, nil
+	}
+
+	c.log.Error(resp.RawResponse)
+
+	return texts, bankCards, binaries, credentials, domain.ErrClientConnectionError
 }

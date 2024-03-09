@@ -34,4 +34,6 @@ type GophKeeperClientInterface interface {
 	UpdateBankCard(session Session, card *BankCard) error
 	// GetAllBankCards - Получает все расшифрованные банковские карты пользователя
 	GetAllBankCards(session Session) ([]BankCard, error)
+	// GetAll - Получает все расшифрованные данные пользователя
+	GetAll(session Session) ([]Text, []BankCard, []Binary, []Credentials, error)
 }

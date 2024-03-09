@@ -75,3 +75,12 @@ type getAllBankCardsResponse struct {
 		BankCards []domain.BankCard `json:"bank_cards"`
 	} `json:"data"`
 }
+
+type getAllResponse struct {
+	Data struct {
+		Texts       []domain.Text        `json:"texts"`
+		Binaries    []domain.Binary      `json:"binaries"`
+		Credentials []domain.Credentials `json:"credentials"`
+		BankCards   []domain.BankCard    `json:"bank_cards"`
+	} `json:"data"`
+}

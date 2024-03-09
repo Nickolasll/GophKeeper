@@ -22,6 +22,7 @@ import (
 	jwkrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/jwk_repository"
 	sessrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/session_repository"
 	txtrepo "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/text_repository"
+	unitofwork "github.com/Nickolasll/goph-keeper/internal/client/infrastructure/unit_of_work"
 	"github.com/Nickolasll/goph-keeper/internal/client/logger"
 	"github.com/Nickolasll/goph-keeper/internal/client/presentation"
 	"github.com/Nickolasll/goph-keeper/internal/crypto"
@@ -45,7 +46,7 @@ func getJWKs() (jwk.Key, error) {
 	return jwks, nil
 }
 
-func setup(client FakeHTTPClient) (*cli.Command, error) {
+func setup(client FakeHTTPClient) (*cli.Command, error) { // nolint: gocritic
 	var cmd *cli.Command
 	var err error
 
@@ -90,6 +91,15 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 	credentialsRepository = credrepo.New(db, cryptoService, log)
 	bankCardRepository = cardrepo.New(db, cryptoService, log)
 
+	unitOfWork := unitofwork.New(
+		db,
+		log,
+		*textRepository,
+		*binaryRepository,
+		*credentialsRepository,
+		*bankCardRepository,
+	)
+
 	app := application.New(
 		log,
 		client,
@@ -99,6 +109,7 @@ func setup(client FakeHTTPClient) (*cli.Command, error) {
 		binaryRepository,
 		credentialsRepository,
 		bankCardRepository,
+		unitOfWork,
 	)
 
 	cmd = presentation.New("v0.0.1", "01.01.1999", app, log, sessionRepository)

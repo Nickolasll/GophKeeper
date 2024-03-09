@@ -74,6 +74,14 @@ func login() cli.Command {
 			currentSession = &session
 			fmt.Println("login successful")
 
+			err = app.SyncAll.Do(session)
+			if err != nil {
+				log.Error(err)
+
+				return cli.Exit(err, 1)
+			}
+			fmt.Println("All data was syncronized")
+
 			return nil
 		},
 	}
@@ -798,6 +806,38 @@ func syncBankCards() cli.Command {
 				}
 			}
 			fmt.Println("Bank cards syncronized successfully")
+
+			return nil
+		},
+	}
+}
+
+func syncAll() cli.Command {
+	return cli.Command{
+		Name:    "sync",
+		Usage:   "override all user data from remote",
+		Aliases: []string{"s"},
+		Action: func(_ context.Context, _ *cli.Command) error {
+			if currentSession == nil {
+				fmt.Println("unauthorized")
+
+				return nil
+			}
+
+			err := app.SyncAll.Do(*currentSession)
+
+			if err != nil {
+				if errors.Is(err, domain.ErrInvalidToken) {
+					fmt.Println("unauthorized")
+
+					return nil
+				} else {
+					log.Error(err)
+
+					return cli.Exit(err, 1)
+				}
+			}
+			fmt.Println("All syncronized successfully")
 
 			return nil
 		},

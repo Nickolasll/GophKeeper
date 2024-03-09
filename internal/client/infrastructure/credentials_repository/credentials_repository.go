@@ -21,6 +21,7 @@ type CredentialsRepository struct {
 	DB *bolt.DB
 	// Crypto - Инстанс сервиса шифрования
 	Crypto domain.CryptoServiceInterface
+	Tx     *bolt.Tx
 	log    *logrus.Logger
 }
 
@@ -188,14 +189,19 @@ func (r CredentialsRepository) GetAll(userID uuid.UUID) ([]domain.Credentials, e
 }
 
 // ReplaceAll - Заменяет все локальные логины и пароли пользователя на новые
-func (r CredentialsRepository) ReplaceAll(userID uuid.UUID, creds []domain.Credentials) error {
-	tx, err := r.DB.Begin(true)
-	if err != nil {
-		return err
+func (r CredentialsRepository) ReplaceAll(userID uuid.UUID, creds []domain.Credentials) (err error) {
+	managed := false
+	var tx *bolt.Tx
+	if r.Tx == nil {
+		tx, err = r.DB.Begin(true)
+		if err != nil {
+			return err
+		}
+		defer tx.Rollback() // nolint: errcheck
+	} else {
+		tx = r.Tx
+		managed = true
 	}
-	defer func() {
-		err = tx.Rollback()
-	}()
 
 	root := tx.Bucket([]byte(userID.String()))
 	if root == nil {
@@ -229,9 +235,11 @@ func (r CredentialsRepository) ReplaceAll(userID uuid.UUID, creds []domain.Crede
 		}
 	}
 
-	err = tx.Commit()
-	if err != nil {
-		return err
+	if !managed {
+		err = tx.Commit()
+		if err != nil {
+			return err
+		}
 	}
 
 	return err

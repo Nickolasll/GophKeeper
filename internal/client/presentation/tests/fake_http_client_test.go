@@ -1,3 +1,4 @@
+// nolint: gocritic
 package tests
 
 import (
@@ -13,6 +14,15 @@ type FakeHTTPClient struct {
 	Response any
 	// Err - Возвращаемая ошибка
 	Err error
+	// SyncAllData - Данные, возвращаемые при синхронизации
+	SyncAllData getAllResponse
+}
+
+type getAllResponse struct {
+	Texts       []domain.Text
+	Binaries    []domain.Binary
+	Credentials []domain.Credentials
+	BankCards   []domain.BankCard
 }
 
 // Login - Вход по логину и паролю, возвращает токен авторизации
@@ -128,4 +138,21 @@ func (c FakeHTTPClient) GetAllBankCards(_ domain.Session) ([]domain.BankCard, er
 	}
 
 	return c.Response.([]domain.BankCard), nil
+}
+
+// GetAll - Получает все расшифрованные данные пользователя
+func (c FakeHTTPClient) GetAll(_ domain.Session) (
+	texts []domain.Text,
+	bankCards []domain.BankCard,
+	binaries []domain.Binary,
+	credentials []domain.Credentials,
+	err error,
+) {
+	if c.Err != nil {
+		return texts, bankCards, binaries, credentials, c.Err
+	}
+
+	data := c.SyncAllData
+
+	return data.Texts, data.BankCards, data.Binaries, data.Credentials, nil
 }

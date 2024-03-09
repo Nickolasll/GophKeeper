@@ -80,3 +80,13 @@ type BankCardRepositoryInterface interface {
 	// ReplaceAll - Заменяет все локальные банковские пользователя на новые
 	ReplaceAll(userID uuid.UUID, creds []BankCard) error
 }
+
+type UnitOfWorkInterface interface {
+	Begin() error
+	Commit() error
+	Rollback() error
+	TextRepository() TextRepositoryInterface
+	BinaryRepository() BinaryRepositoryInterface
+	CredentialsRepository() CredentialsRepositoryInterface
+	BankCardRepository() BankCardRepositoryInterface
+}

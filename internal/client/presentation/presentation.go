@@ -56,6 +56,8 @@ func New(
 	cmdShowBankCard := showBankCards()
 	cmdSyncBankCards := syncBankCards()
 
+	cmdSyncAll := syncAll()
+
 	cmd := cli.Command{
 		Name:                  "gophkeeper",
 		Version:               version + ", build at: " + buildDate,
@@ -102,6 +104,13 @@ func New(
 					&cmdUpdateBankCard,
 					&cmdShowBankCard,
 					&cmdSyncBankCards,
+				},
+			},
+			{
+				Name:  "all",
+				Usage: "options for all",
+				Commands: []*cli.Command{
+					&cmdSyncAll,
 				},
 			},
 		},

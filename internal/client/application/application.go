@@ -46,6 +46,8 @@ type Application struct {
 	ShowBankCards usecases.ShowBankCards
 	// SyncBankCards - Перезапись текущих пользовательских банковских карт
 	SyncBankCards usecases.SyncBankCards
+	// SyncAll -
+	SyncAll usecases.SyncAll
 }
 
 // New - Фабрика приложения
@@ -58,6 +60,7 @@ func New(
 	binaryRepository domain.BinaryRepositoryInterface,
 	credentialsRepository domain.CredentialsRepositoryInterface,
 	bankCardRepository domain.BankCardRepositoryInterface,
+	unitOfWork domain.UnitOfWorkInterface,
 ) *Application {
 	jwk, err := jwkRepository.Get()
 
@@ -169,6 +172,12 @@ func New(
 		Log:                log,
 	}
 
+	syncAll := usecases.SyncAll{
+		Client:     client,
+		UnitOfWork: unitOfWork,
+		Log:        log,
+	}
+
 	return &Application{
 		Registration:      registration,
 		Login:             login,
@@ -188,5 +197,6 @@ func New(
 		UpdateBankCard:    updateBankCard,
 		ShowBankCards:     showBankCards,
 		SyncBankCards:     syncBankCards,
+		SyncAll:           syncAll,
 	}
 }
