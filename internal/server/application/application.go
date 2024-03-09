@@ -39,6 +39,7 @@ type Application struct {
 	UpdateBankCard usecases.UpdateBankCard
 	// GetAllBankCards - Получение всех расшифрованных банковских карт
 	GetAllBankCards usecases.GetAllBankCards
+	GetAll          usecases.GetAll
 }
 
 // New - Фабрика приложения
@@ -128,6 +129,14 @@ func New(
 		Log:                log,
 	}
 
+	getAll := usecases.GetAll{
+		GetAllTexts:       getAllTexts,
+		GetAllBankCards:   getAllBankCards,
+		GetAllBinaries:    getAllBinaries,
+		GetAllCredentials: getAllCredentials,
+		Log:               log,
+	}
+
 	return &Application{
 		Registration:      registration,
 		Login:             login,
@@ -143,5 +152,6 @@ func New(
 		CreateBankCard:    createBankCard,
 		UpdateBankCard:    updateBankCard,
 		GetAllBankCards:   getAllBankCards,
+		GetAll:            getAll,
 	}
 }

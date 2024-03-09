@@ -534,3 +534,75 @@ func getAllBankCardsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.
 		return
 	}
 }
+
+func getAllHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
+	credResponse := []credentialsResponse{}
+	bankCardsResponse := []bankCardResponse{}
+	textsResponse := []textResponse{}
+	binariesResponse := []binaryResponse{}
+	w.Header().Set(contentTypeHeader, jsonType)
+	texts, bankCards, binaries, credentials, err := app.GetAll.Do(userID)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+
+	for _, v := range bankCards {
+		respItem := bankCardResponse{
+			ID:         v.ID.String(),
+			Number:     string(v.Number),
+			ValidThru:  string(v.ValidThru),
+			CVV:        string(v.CVV),
+			CardHolder: string(v.CardHolder),
+		}
+		bankCardsResponse = append(bankCardsResponse, respItem)
+	}
+	for _, v := range credentials {
+		respItem := credentialsResponse{
+			ID:       v.ID.String(),
+			Name:     string(v.Name),
+			Login:    string(v.Login),
+			Password: string(v.Password),
+		}
+		credResponse = append(credResponse, respItem)
+	}
+	for _, v := range texts {
+		respItem := textResponse{
+			ID:      v.ID.String(),
+			Content: string(v.Content),
+		}
+		textsResponse = append(textsResponse, respItem)
+	}
+	for _, v := range binaries {
+		respItem := binaryResponse{
+			ID:      v.ID.String(),
+			Content: v.Content,
+		}
+		binariesResponse = append(binariesResponse, respItem)
+	}
+
+	response := GetAllResponse{
+		Status: true,
+	}
+	response.Data.BankCards = bankCardsResponse
+	response.Data.Credentials = credResponse
+	response.Data.Texts = textsResponse
+	response.Data.Binaries = binariesResponse
+
+	err = makeResponse(w, http.StatusOK, response)
+	if err != nil {
+		log.Error(err)
+		err = responseError(w, err.Error())
+
+		if err != nil {
+			log.Error(err)
+		}
+
+		return
+	}
+}

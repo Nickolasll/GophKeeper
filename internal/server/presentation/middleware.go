@@ -3,6 +3,7 @@ package presentation
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -57,5 +58,44 @@ func auth(handlerFn authenticatedHandler) http.HandlerFunc {
 		}
 
 		handlerFn(w, r, UserID)
+	})
+}
+
+func compress(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, reader *http.Request) {
+		originalWriter := writer
+
+		acceptEncoding := reader.Header.Get("Accept-Encoding")
+		supportsGzip := strings.Contains(acceptEncoding, "gzip")
+		if supportsGzip {
+			compressWriter := newCompressWriter(writer)
+			originalWriter = compressWriter
+			defer func() {
+				err := compressWriter.Close()
+				if err != nil {
+					log.Error(err)
+				}
+			}()
+		}
+
+		contentEncoding := reader.Header.Get("Content-Encoding")
+		sendsGzip := strings.Contains(contentEncoding, "gzip")
+		if sendsGzip {
+			cr, err := newCompressReader(reader.Body)
+			if err != nil {
+				writer.WriteHeader(http.StatusInternalServerError)
+
+				return
+			}
+			reader.Body = cr
+			defer func() {
+				err := cr.Close()
+				if err != nil {
+					log.Error(err)
+				}
+			}()
+		}
+
+		handler.ServeHTTP(originalWriter, reader)
 	})
 }

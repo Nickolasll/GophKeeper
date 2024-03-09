@@ -29,6 +29,7 @@ func TestAuthorizationInvalidTokenValue(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/v1/text/create", http.NoBody)
 	req.Header.Add("Authorization", "invalid token value")
+	req.Header.Add("Accept-Encoding", "gzip")
 	responseRecorder := httptest.NewRecorder()
 	router.ServeHTTP(responseRecorder, req)
 	assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code)
@@ -47,6 +48,7 @@ func TestAuthorizationExpiredToken(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/v1/text/create", http.NoBody)
 	req.Header.Add("Authorization", string(expiredToken))
+	req.Header.Add("Accept-Encoding", "gzip")
 	responseRecorder := httptest.NewRecorder()
 	router.ServeHTTP(responseRecorder, req)
 	assert.Equal(t, http.StatusUnauthorized, responseRecorder.Code)

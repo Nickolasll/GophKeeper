@@ -35,6 +35,7 @@ func New(
 
 	router = chi.NewRouter()
 	router.Use(logging)
+	router.Use(compress)
 
 	router.Get("/api/v1/health", getHealthHandler)
 
@@ -57,6 +58,8 @@ func New(
 	router.Post("/api/v1/bank_card/create", auth(createBankCardHandler))
 	router.Post("/api/v1/bank_card/{cardID}", auth(updateBankCardHandler))
 	router.Get("/api/v1/bank_card/all", auth(getAllBankCardsHandler))
+
+	router.Get("/api/v1/all", auth(getAllHandler))
 
 	return router
 }

@@ -137,6 +137,17 @@ type GetAllBankCardsResponse struct {
 	} `json:"data"`
 }
 
+type GetAllResponse struct {
+	Status  bool   `json:"status"`
+	Message string `json:"message"`
+	Data    struct {
+		Texts       []textResponse        `json:"texts"`
+		Binaries    []binaryResponse      `json:"binaries"`
+		Credentials []credentialsResponse `json:"credentials"`
+		BankCards   []bankCardResponse    `json:"bank_cards"`
+	} `json:"data"`
+}
+
 type ErrorResponse struct {
 	Status  bool     `json:"status"`
 	Message string   `json:"message"`

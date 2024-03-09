@@ -17,7 +17,7 @@ import (
 
 const getAllCredentialsURL = "/api/v1/credentials/all" // nolint: gosec
 
-func createCredentials(userID uuid.UUID, name, login, password string) (string, error) {
+func createCredentials(userID uuid.UUID, name, login, password string) (string, error) { // nolint: unparam
 	credID := uuid.New()
 	encryptedName, err := cryptoService.Encrypt([]byte(name))
 	if err != nil {

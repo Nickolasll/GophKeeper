@@ -17,7 +17,7 @@ import (
 
 const getAllBankCardsURL = "/api/v1/bank_card/all"
 
-func createBankCard(userID uuid.UUID, number, validThru, cvv, cardHolder string) (string, error) {
+func createBankCard(userID uuid.UUID, number, validThru, cvv, cardHolder string) (string, error) { // nolint: unparam
 	cardID := uuid.New()
 	encryptedNumber, err := cryptoService.Encrypt([]byte(number))
 	if err != nil {
