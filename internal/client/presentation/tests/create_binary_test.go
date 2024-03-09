@@ -30,8 +30,8 @@ func TestCreateBinarySuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"create",
+		"binary",
 		"./binary_file_for_test",
 	}
 
@@ -62,8 +62,8 @@ func TestCreateBinaryBadRequest(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"create",
+		"binary",
 		"./binary_file_for_test",
 	}
 
@@ -83,8 +83,8 @@ func TestCreateBinaryUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"create",
+		"binary",
 		"./binary_file_for_test",
 	}
 
@@ -107,8 +107,8 @@ func TestCreateBinaryNoFile(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"create",
+		"binary",
 		"invalid",
 	}
 

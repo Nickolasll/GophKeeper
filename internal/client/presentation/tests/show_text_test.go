@@ -38,8 +38,8 @@ func TestShowTextSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"show",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -61,8 +61,8 @@ func TestShowTextNoContentSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"show",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -81,8 +81,8 @@ func TestShowTextNoToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"show",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -104,8 +104,8 @@ func TestShowTextExpiredToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"show",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)

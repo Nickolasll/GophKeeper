@@ -39,8 +39,8 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"update",
+		"credentials",
 		"--name",
 		name,
 		"--password",
@@ -75,8 +75,8 @@ func TestUpdateCredentialsBadRequest(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"update",
+		"credentials",
 		uuid.NewString(),
 	}
 	err = cmd.Run(context.Background(), args)
@@ -95,8 +95,8 @@ func TestUpdateCredentialsUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"update",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -120,8 +120,8 @@ func TestUpdateCredentialsNotFound(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"update",
+		"credentials",
 		"--name",
 		"name",
 		uuid.NewString(),
@@ -148,8 +148,8 @@ func TestUpdateCredentialsInvalidValue(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"update",
+		"credentials",
 		"--name",
 		"name",
 		"invalid value",

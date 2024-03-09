@@ -25,9 +25,10 @@ func parseID(id string) (uuid.UUID, error) {
 
 func registration() cli.Command {
 	return cli.Command{
-		Name:    "register",
-		Usage:   "register new user via username and password",
-		Aliases: []string{"r"},
+		Name:      "register",
+		Usage:     "register new user via username and password",
+		ArgsUsage: "[username] [password]",
+		Aliases:   []string{"r"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			login := cmd.Args().Get(0)
 			password := cmd.Args().Get(1)
@@ -53,9 +54,10 @@ func registration() cli.Command {
 
 func login() cli.Command {
 	return cli.Command{
-		Name:    "login",
-		Usage:   "sign in via username and password",
-		Aliases: []string{"l"},
+		Name:      "login",
+		Usage:     "sign in via username and password",
+		ArgsUsage: "[username] [password]",
+		Aliases:   []string{"l"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			login := cmd.Args().Get(0)
 			password := cmd.Args().Get(1)
@@ -80,7 +82,7 @@ func login() cli.Command {
 
 				return cli.Exit(err, 1)
 			}
-			fmt.Println("All data was syncronized")
+			fmt.Println("all data was syncronized successfully")
 
 			return nil
 		},
@@ -89,9 +91,10 @@ func login() cli.Command {
 
 func createText() cli.Command {
 	return cli.Command{
-		Name:    "create",
-		Usage:   "create new text content",
-		Aliases: []string{"c"},
+		Name:      "text",
+		Usage:     "create new text content",
+		ArgsUsage: "[content]",
+		Aliases:   []string{"t"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -113,7 +116,7 @@ func createText() cli.Command {
 				}
 			}
 
-			fmt.Println("Text created successfully")
+			fmt.Println("text created successfully")
 
 			return nil
 		},
@@ -122,9 +125,10 @@ func createText() cli.Command {
 
 func updateText() cli.Command {
 	return cli.Command{
-		Name:    "update",
-		Usage:   "update existing text via id and new content string",
-		Aliases: []string{"c"},
+		Name:      "text",
+		Usage:     "update existing text via id and new content string",
+		ArgsUsage: "[id] [content]",
+		Aliases:   []string{"t"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -145,7 +149,7 @@ func updateText() cli.Command {
 			err = app.UpdateText.Do(*currentSession, textID, content)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
-					fmt.Println("Text not found, id: ", textID)
+					fmt.Println("text not found, id: ", textID)
 
 					return nil
 				} else if errors.Is(err, domain.ErrBadRequest) {
@@ -158,7 +162,7 @@ func updateText() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Text updated successfully")
+			fmt.Println("text updated successfully")
 
 			return nil
 		},
@@ -167,9 +171,9 @@ func updateText() cli.Command {
 
 func showText() cli.Command {
 	return cli.Command{
-		Name:    "show",
+		Name:    "texts",
 		Usage:   "shows current user text data",
-		Aliases: []string{"c"},
+		Aliases: []string{"t"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -206,9 +210,9 @@ func showText() cli.Command {
 
 func syncText() cli.Command {
 	return cli.Command{
-		Name:    "sync",
+		Name:    "texts",
 		Usage:   "override current user text data from remote",
-		Aliases: []string{"s"},
+		Aliases: []string{"t"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -229,7 +233,7 @@ func syncText() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Text syncronized successfully")
+			fmt.Println("text syncronized successfully")
 
 			return nil
 		},
@@ -238,9 +242,10 @@ func syncText() cli.Command {
 
 func createBinary() cli.Command {
 	return cli.Command{
-		Name:    "create",
-		Usage:   "create new binary content",
-		Aliases: []string{"c"},
+		Name:      "binary",
+		Usage:     "create new binary content",
+		ArgsUsage: "[content]",
+		Aliases:   []string{"b"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -269,7 +274,7 @@ func createBinary() cli.Command {
 				}
 			}
 
-			fmt.Println("Binary created successfully")
+			fmt.Println("binary created successfully")
 
 			return nil
 		},
@@ -278,9 +283,10 @@ func createBinary() cli.Command {
 
 func updateBinary() cli.Command {
 	return cli.Command{
-		Name:    "update",
-		Usage:   "update existing binary via id and data",
-		Aliases: []string{"c"},
+		Name:      "binary",
+		Usage:     "update existing binary via id and data",
+		ArgsUsage: "[id] [content]",
+		Aliases:   []string{"b"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -308,7 +314,7 @@ func updateBinary() cli.Command {
 			err = app.UpdateBinary.Do(*currentSession, binID, content)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
-					fmt.Println("Binary not found, id: ", binID)
+					fmt.Println("binary not found, id: ", binID)
 
 					return nil
 				} else if errors.Is(err, domain.ErrBadRequest) {
@@ -321,7 +327,7 @@ func updateBinary() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Binary updated successfully")
+			fmt.Println("binary updated successfully")
 
 			return nil
 		},
@@ -330,9 +336,9 @@ func updateBinary() cli.Command {
 
 func showBinary() cli.Command {
 	return cli.Command{
-		Name:    "show",
+		Name:    "binaries",
 		Usage:   "shows current user binary data",
-		Aliases: []string{"c"},
+		Aliases: []string{"b"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -369,9 +375,9 @@ func showBinary() cli.Command {
 
 func syncBinary() cli.Command {
 	return cli.Command{
-		Name:    "sync",
+		Name:    "binaries",
 		Usage:   "override current user binary data from remote",
-		Aliases: []string{"s"},
+		Aliases: []string{"b"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -392,7 +398,7 @@ func syncBinary() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Binary syncronized successfully")
+			fmt.Println("binary syncronized successfully")
 
 			return nil
 		},
@@ -401,9 +407,10 @@ func syncBinary() cli.Command {
 
 func createCredentials() cli.Command {
 	return cli.Command{
-		Name:    "create",
-		Usage:   "create new credentials",
-		Aliases: []string{"c"},
+		Name:      "credentials",
+		Usage:     "create new credentials",
+		ArgsUsage: "[name] [login] [password]",
+		Aliases:   []string{"c"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -428,7 +435,7 @@ func createCredentials() cli.Command {
 				}
 			}
 
-			fmt.Println("Credentials created successfully")
+			fmt.Println("credentials created successfully")
 
 			return nil
 		},
@@ -436,28 +443,34 @@ func createCredentials() cli.Command {
 }
 
 func updateCredentials() cli.Command {
+	var name, login, password string
+
 	return cli.Command{
-		Name:    "update",
-		Usage:   "update existing credentials via id and flags",
-		Aliases: []string{"c"},
+		Name:      "credentials",
+		Usage:     "update existing credentials via id and flags",
+		ArgsUsage: "[id]",
+		Aliases:   []string{"c"},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "name",
 				Aliases:     []string{"n"},
-				Usage:       "name to update",
+				Usage:       "name value to update",
 				DefaultText: "",
+				Destination: &name,
 			},
 			&cli.StringFlag{
 				Name:        "login",
 				Aliases:     []string{"l"},
-				Usage:       "login to update",
+				Usage:       "login value to update",
 				DefaultText: "",
+				Destination: &login,
 			},
 			&cli.StringFlag{
 				Name:        "password",
 				Aliases:     []string{"p"},
-				Usage:       "password to update",
+				Usage:       "password value to update",
 				DefaultText: "",
+				Destination: &password,
 			},
 		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
@@ -481,14 +494,10 @@ func updateCredentials() cli.Command {
 				return nil
 			}
 
-			name := cmd.String("name")
-			login := cmd.String("login")
-			password := cmd.String("password")
-
 			err = app.UpdateCredentials.Do(*currentSession, credID, name, login, password)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
-					fmt.Println("Credentials not found, id: ", credID)
+					fmt.Println("credentials not found, id: ", credID)
 
 					return nil
 				} else if errors.Is(err, domain.ErrBadRequest) {
@@ -501,7 +510,7 @@ func updateCredentials() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Credentials updated successfully")
+			fmt.Println("credentials updated successfully")
 
 			return nil
 		},
@@ -510,7 +519,7 @@ func updateCredentials() cli.Command {
 
 func showCredentials() cli.Command {
 	return cli.Command{
-		Name:    "show",
+		Name:    "credentials",
 		Usage:   "shows current user credentials data",
 		Aliases: []string{"c"},
 		Action: func(_ context.Context, _ *cli.Command) error {
@@ -549,9 +558,9 @@ func showCredentials() cli.Command {
 
 func syncCredentials() cli.Command {
 	return cli.Command{
-		Name:    "sync",
+		Name:    "credentials",
 		Usage:   "override current user credentials from remote",
-		Aliases: []string{"s"},
+		Aliases: []string{"c"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -572,7 +581,7 @@ func syncCredentials() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Credentials syncronized successfully")
+			fmt.Println("credentials syncronized successfully")
 
 			return nil
 		},
@@ -581,9 +590,10 @@ func syncCredentials() cli.Command {
 
 func createBankCard() cli.Command {
 	return cli.Command{
-		Name:    "create",
-		Usage:   "create new bank card",
-		Aliases: []string{"b"},
+		Name:      "bank-card",
+		Usage:     "create new bank-card",
+		ArgsUsage: "[number] [valid-thru] [cvv] [card-holder]",
+		Aliases:   []string{"bc"},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -600,12 +610,12 @@ func createBankCard() cli.Command {
 			}
 
 			if !validCardNumber.MatchString(number) {
-				fmt.Println("invalid card number: ", number)
+				fmt.Println("invalid card-number: ", number)
 
 				return nil
 			}
 			if !validValidThru.MatchString(validThru) {
-				fmt.Println("invalid valid thru value: ", validThru)
+				fmt.Println("invalid valid-thru value: ", validThru)
 
 				return nil
 			}
@@ -615,7 +625,7 @@ func createBankCard() cli.Command {
 				return nil
 			}
 			if !validCardHolder.MatchString(cardHolder) {
-				fmt.Println("invalid card holder value: ", cardHolder)
+				fmt.Println("invalid card-holder value: ", cardHolder)
 
 				return nil
 			}
@@ -633,7 +643,7 @@ func createBankCard() cli.Command {
 				}
 			}
 
-			fmt.Println("Bank card created successfully")
+			fmt.Println("bank-card created successfully")
 
 			return nil
 		},
@@ -641,34 +651,37 @@ func createBankCard() cli.Command {
 }
 
 func updateBankCard() cli.Command {
+	var number, validThru, cvv, cardHolder string
+
 	return cli.Command{
-		Name:    "update",
-		Usage:   "update existing bank card via id and flags",
-		Aliases: []string{"c"},
+		Name:      "bank-card",
+		Usage:     "update existing bank-card via id and flags",
+		ArgsUsage: "[id]",
+		Aliases:   []string{"bc"},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "number",
-				Aliases:     []string{"n"},
-				Usage:       "number to update",
+				Usage:       "number value to update",
 				DefaultText: "",
+				Destination: &number,
 			},
 			&cli.StringFlag{
-				Name:        "valid_thru",
-				Aliases:     []string{"vt"},
-				Usage:       "valid thru value to update",
+				Name:        "valid-thru",
+				Usage:       "valid-thru value to update",
 				DefaultText: "",
+				Destination: &validThru,
 			},
 			&cli.StringFlag{
 				Name:        "cvv",
-				Aliases:     []string{"c"},
 				Usage:       "cvv value to update",
 				DefaultText: "",
+				Destination: &cvv,
 			},
 			&cli.StringFlag{
-				Name:        "card_holder",
-				Aliases:     []string{"ch"},
-				Usage:       "card holder value to update",
+				Name:        "card-holder",
+				Usage:       "card-holder value to update",
 				DefaultText: "",
+				Destination: &cardHolder,
 			},
 		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
@@ -681,29 +694,24 @@ func updateBankCard() cli.Command {
 
 			cardID, err := parseID(id)
 			if err != nil {
-				fmt.Println(err, "invalid bank card id: ", id)
+				fmt.Println(err, "invalid bank-card id: ", id)
 
 				return nil
 			}
 
 			if cmd.NumFlags() == 0 {
-				fmt.Println("invalid input: please pass at least one attribute (number, valid_thru, cvv, card_holder) to update")
+				fmt.Println("invalid input: please pass at least one attribute (number, valid-thru, cvv, card-holder) to update")
 
 				return nil
 			}
 
-			number := cmd.String("number")
-			validThru := cmd.String("valid_thru")
-			cvv := cmd.String("cvv")
-			cardHolder := cmd.String("card_holder")
-
 			if number != "" && !validCardNumber.MatchString(number) {
-				fmt.Println("invalid card number: ", number)
+				fmt.Println("invalid card-number: ", number)
 
 				return nil
 			}
 			if validThru != "" && !validValidThru.MatchString(validThru) {
-				fmt.Println("invalid valid thru value: ", validThru)
+				fmt.Println("invalid valid-thru value: ", validThru)
 
 				return nil
 			}
@@ -713,7 +721,7 @@ func updateBankCard() cli.Command {
 				return nil
 			}
 			if cardHolder != "" && !validCardHolder.MatchString(cardHolder) {
-				fmt.Println("invalid card holder value: ", cardHolder)
+				fmt.Println("invalid card-holder value: ", cardHolder)
 
 				return nil
 			}
@@ -721,7 +729,7 @@ func updateBankCard() cli.Command {
 			err = app.UpdateBankCard.Do(*currentSession, cardID, number, validThru, cvv, cardHolder)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
-					fmt.Println("Bank card not found, id: ", cardID)
+					fmt.Println("bank-card not found, id: ", cardID)
 
 					return nil
 				} else if errors.Is(err, domain.ErrBadRequest) {
@@ -734,7 +742,7 @@ func updateBankCard() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Credentials updated successfully")
+			fmt.Println("bank-card updated successfully")
 
 			return nil
 		},
@@ -743,9 +751,9 @@ func updateBankCard() cli.Command {
 
 func showBankCards() cli.Command {
 	return cli.Command{
-		Name:    "show",
-		Usage:   "shows current user bank cards",
-		Aliases: []string{"c"},
+		Name:    "bank-cards",
+		Usage:   "shows current user bank-cards",
+		Aliases: []string{"bc"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -782,9 +790,9 @@ func showBankCards() cli.Command {
 
 func syncBankCards() cli.Command {
 	return cli.Command{
-		Name:    "sync",
-		Usage:   "override current user bank cards from remote",
-		Aliases: []string{"s"},
+		Name:    "bank-cards",
+		Usage:   "override current user bank-cards from remote",
+		Aliases: []string{"bc"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -805,7 +813,7 @@ func syncBankCards() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("Bank cards syncronized successfully")
+			fmt.Println("bank-cards syncronized successfully")
 
 			return nil
 		},
@@ -814,9 +822,9 @@ func syncBankCards() cli.Command {
 
 func syncAll() cli.Command {
 	return cli.Command{
-		Name:    "sync",
+		Name:    "all",
 		Usage:   "override all user data from remote",
-		Aliases: []string{"s"},
+		Aliases: []string{"a"},
 		Action: func(_ context.Context, _ *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -837,7 +845,7 @@ func syncAll() cli.Command {
 					return cli.Exit(err, 1)
 				}
 			}
-			fmt.Println("All syncronized successfully")
+			fmt.Println("all data was syncronized successfully")
 
 			return nil
 		},

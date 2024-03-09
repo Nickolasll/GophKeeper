@@ -35,8 +35,8 @@ func TestUpdateTextSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"update",
+		"text",
 		textID.String(),
 		content,
 	}
@@ -75,8 +75,8 @@ func TestUpdateTextBadRequest(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"update",
+		"text",
 		textID.String(),
 		"",
 	}
@@ -101,8 +101,8 @@ func TestUpdateTextUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"update",
+		"text",
 		"text_id",
 		"content",
 	}
@@ -128,8 +128,8 @@ func TestUpdateTextNotFound(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"update",
+		"text",
 		uuid.NewString(),
 		"",
 	}
@@ -155,8 +155,8 @@ func TestUpdateTextInvalidValue(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"update",
+		"text",
 		"invalid value",
 		"",
 	}

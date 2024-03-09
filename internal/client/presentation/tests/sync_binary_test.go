@@ -46,8 +46,8 @@ func TestSyncBinaryOverrideSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"sync",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -88,8 +88,8 @@ func TestSyncBinarySuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"sync",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -117,8 +117,8 @@ func TestSyncBinaryServerError(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"sync",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -137,8 +137,8 @@ func TestSyncBinaryUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"sync",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)

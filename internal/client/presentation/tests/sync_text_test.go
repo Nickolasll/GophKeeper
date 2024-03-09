@@ -46,8 +46,8 @@ func TestSyncTextOverrideSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"sync",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -88,8 +88,8 @@ func TestSyncTextSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"sync",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -117,8 +117,8 @@ func TestSyncTextServerError(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"sync",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -137,8 +137,8 @@ func TestSyncTextUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"sync",
+		"texts",
 	}
 
 	err = cmd.Run(context.Background(), args)

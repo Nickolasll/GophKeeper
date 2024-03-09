@@ -53,8 +53,8 @@ func TestSyncBankCardsOverrideSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"sync",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -104,8 +104,8 @@ func TestSyncBankCardsSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"sync",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -133,8 +133,8 @@ func TestSyncBankCardsServerError(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"sync",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -153,8 +153,8 @@ func TestSyncBankCardsUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"sync",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)

@@ -43,15 +43,15 @@ func TestUpdateBankCardFullDataSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"update",
+		"bank-card",
 		"--number",
 		number,
-		"--valid_thru",
+		"--valid-thru",
 		validThru,
 		"--cvv",
 		cvv,
-		"--card_holder",
+		"--card-holder",
 		cardHolder,
 		cardID.String(),
 	}
@@ -133,15 +133,15 @@ func TestUpdateBankCardInvalidInput(t *testing.T) {
 
 			args := []string{
 				"gophkeeper",
-				"bank_card",
 				"update",
+				"bank-card",
 				"--number",
 				tt.number,
-				"--valid_thru",
+				"--valid-thru",
 				tt.validThru,
 				"--cvv",
 				tt.cvv,
-				"--card_holder",
+				"--card-holder",
 				tt.cardHolder,
 				cardID.String(),
 			}
@@ -176,8 +176,8 @@ func TestUpdateBankCardNoFlags(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"update",
+		"bank-card",
 		uuid.NewString(),
 	}
 	err = cmd.Run(context.Background(), args)
@@ -212,8 +212,8 @@ func TestUpdateBankCardClientError(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"update",
+		"bank-card",
 		"--number",
 		"0000 0000 0000 0000",
 		cardID.String(),
@@ -235,8 +235,8 @@ func TestUpdateBankCardUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"update",
+		"bank-card",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -260,8 +260,8 @@ func TestUpdateBankCardNotFound(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"update",
+		"bank-card",
 		"--number",
 		"0000 0000 0000 0000",
 		uuid.NewString(),
@@ -283,8 +283,8 @@ func TestUpdateBankCardBadID(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"update",
+		"bank-card",
 		"--number",
 		"0000 0000 0000 0000",
 		"invalid",

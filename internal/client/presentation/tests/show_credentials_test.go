@@ -42,8 +42,8 @@ func TestShowCredentialsSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"show",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -65,8 +65,8 @@ func TestShowCredentialsNoContentSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"show",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -85,8 +85,8 @@ func TestShowCredentialNoToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"show",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -108,8 +108,8 @@ func TestShowCredentialsExpiredToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"show",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)

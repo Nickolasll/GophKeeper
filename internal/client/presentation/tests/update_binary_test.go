@@ -35,8 +35,8 @@ func TestUpdateBinarySuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"update",
+		"binary",
 		binID.String(),
 		"./binary_file_for_test",
 	}
@@ -77,8 +77,8 @@ func TestUpdateBinaryBadRequest(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"update",
+		"binary",
 		binID.String(),
 		"",
 	}
@@ -103,8 +103,8 @@ func TestUpdateBinaryUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"update",
+		"binary",
 		"text_id",
 		"content",
 	}
@@ -130,8 +130,8 @@ func TestUpdateBinaryNotFound(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"update",
+		"binary",
 		uuid.NewString(),
 		"",
 	}
@@ -157,8 +157,8 @@ func TestUpdateBinaryInvalidUUID(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"update",
+		"binary",
 		"invalid value",
 		"",
 	}

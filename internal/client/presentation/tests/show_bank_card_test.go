@@ -44,8 +44,8 @@ func TestShowBankCardsSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"show",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -67,8 +67,8 @@ func TestShowBankCardsNoContentSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"show",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -87,8 +87,8 @@ func TestShowBankCardsNoToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"show",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -110,8 +110,8 @@ func TestShowBankCardsExpiredToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"show",
+		"bank-cards",
 	}
 
 	err = cmd.Run(context.Background(), args)

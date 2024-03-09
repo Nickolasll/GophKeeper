@@ -30,8 +30,8 @@ func TestCreateTextSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"create",
+		"text",
 		content,
 	}
 
@@ -60,8 +60,8 @@ func TestCreateTextBadRequest(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"create",
+		"text",
 		"content",
 	}
 
@@ -81,8 +81,8 @@ func TestCreateTextUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"text",
 		"create",
+		"text",
 		"content",
 	}
 

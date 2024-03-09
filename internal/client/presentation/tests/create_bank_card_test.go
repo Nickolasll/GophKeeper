@@ -34,8 +34,8 @@ func TestCreateBankCardSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"create",
+		"bank-card",
 		number,
 		validThru,
 		cvv,
@@ -75,8 +75,8 @@ func TestCreateBankCardNoHolderSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"create",
+		"bank-card",
 		number,
 		validThru,
 		cvv,
@@ -110,8 +110,8 @@ func TestCreateBankCardBadRequest(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"create",
+		"bank-card",
 		"0000 0000 0000 0000",
 		"01/11",
 		"000",
@@ -133,8 +133,8 @@ func TestCreateBankCardUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"bank_card",
 		"create",
+		"bank-card",
 		"0000 0000 0000 0000",
 		"01/11",
 		"000",
@@ -200,8 +200,8 @@ func TestCreateBankCardInvalidInput(t *testing.T) {
 
 			args := []string{
 				"gophkeeper",
-				"bank_card",
 				"create",
+				"bank-card",
 				tt.number,
 				tt.validThru,
 				tt.cvv,

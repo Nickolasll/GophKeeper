@@ -33,8 +33,8 @@ func TestCreateCredentialsSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"create",
+		"credentials",
 		name,
 		login,
 		password,
@@ -67,8 +67,8 @@ func TestCreateCredentialsBadRequest(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"create",
+		"credentials",
 		"name",
 		"login",
 		"password",
@@ -90,8 +90,8 @@ func TestCreateCredentialsUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"create",
+		"credentials",
 		"name",
 		"login",
 		"password",

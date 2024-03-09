@@ -50,8 +50,8 @@ func TestSyncCredentialsOverrideSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"sync",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -98,8 +98,8 @@ func TestSyncCredentialsSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"sync",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -127,8 +127,8 @@ func TestSyncCredentialsServerError(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"sync",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -147,8 +147,8 @@ func TestSyncCredentialsUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"credentials",
 		"sync",
+		"credentials",
 	}
 
 	err = cmd.Run(context.Background(), args)

@@ -38,8 +38,8 @@ func TestShowBinarySuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"show",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -61,8 +61,8 @@ func TestShowBinaryNoContentSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"show",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -81,8 +81,8 @@ func TestShowBinaryNoToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"show",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -104,8 +104,8 @@ func TestShowBinaryExpiredToken(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"binary",
 		"show",
+		"binaries",
 	}
 
 	err = cmd.Run(context.Background(), args)

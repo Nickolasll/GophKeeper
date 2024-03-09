@@ -116,8 +116,8 @@ func TestSyncAllOverrideSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"all",
 		"sync",
+		"all",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -155,8 +155,8 @@ func TestSyncAllSuccess(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"all",
 		"sync",
+		"all",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -196,8 +196,8 @@ func TestSyncAllServerError(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"all",
 		"sync",
+		"all",
 	}
 
 	err = cmd.Run(context.Background(), args)
@@ -216,8 +216,8 @@ func TestSyncAllUnauthorized(t *testing.T) {
 
 	args := []string{
 		"gophkeeper",
-		"all",
 		"sync",
+		"all",
 	}
 
 	err = cmd.Run(context.Background(), args)
