@@ -33,25 +33,25 @@ import (
 // @Name Authorization
 
 // @Tag.name Status
-// @Tag.description "Группа запросов статуса сервера"
+// @Tag.description Группа запросов статуса сервера
 
 // @Tag.name Auth
-// @Tag.description "Группа запросов авторизации"
+// @Tag.description Группа запросов авторизации
 
 // @Tag.name Text
-// @Tag.description "Группа запросов для работы с текстовыми данными"
+// @Tag.description Группа запросов для работы с текстовыми данными
 
 // @Tag.name Binary
-// @Tag.description "Группа запросов для работы с бинарными данными"
+// @Tag.description Группа запросов для работы с бинарными данными
 
 // @Tag.name Credentials
-// @Tag.description "Группа запросов для работы с логинами и паролями"
+// @Tag.description Группа запросов для работы с логинами и паролями
 
 // @Tag.name BankCard
-// @Tag.description "Группа запросов для работы с банковскими картами"
+// @Tag.description Группа запросов для работы с банковскими картами
 
 // @Tag.name All
-// @Tag.description "Группа запросов для работы со всеми данными пользователя"
+// @Tag.description Группа запросов для работы со всеми данными пользователя
 
 func main() {
 	log := logger.New()
