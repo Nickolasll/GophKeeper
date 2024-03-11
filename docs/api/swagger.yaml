@@ -193,6 +193,19 @@ paths:
         "200":
           description: OK
           schema:
+            properties:
+              alg:
+                type: string
+              kid:
+                type: string
+              kty:
+                type: string
+              use:
+                type: string
+              x:
+                type: string
+              "y":
+                type: string
             type: object
       summary: Получение публичного ключа для валидации JWT на клиенте
       tags:

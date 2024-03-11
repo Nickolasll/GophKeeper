@@ -216,7 +216,7 @@ func getAllTextsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID
 // @Summary Получение публичного ключа для валидации JWT на клиенте
 // @ID auth-certs
 // @Tags Auth
-// @Success 200 {object} object{}
+// @Success 200 {object} object{kty=string,alg=string,x=string,y=string,use=string,kid=string}
 // @Router /auth/certs [get]
 func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
 	certs, err := joseService.GetCerts()

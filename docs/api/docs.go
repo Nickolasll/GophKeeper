@@ -51,7 +51,27 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object"
+                            "type": "object",
+                            "properties": {
+                                "alg": {
+                                    "type": "string"
+                                },
+                                "kid": {
+                                    "type": "string"
+                                },
+                                "kty": {
+                                    "type": "string"
+                                },
+                                "use": {
+                                    "type": "string"
+                                },
+                                "x": {
+                                    "type": "string"
+                                },
+                                "y": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }
