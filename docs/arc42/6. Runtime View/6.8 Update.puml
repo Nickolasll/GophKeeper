@@ -7,6 +7,7 @@ autonumber
 participant "Пользователь" as user
 box "Компьютер пользователя" #DEDEDE
     participant "CLI Клиент" as client
+    participant "Служба шифрования" as cli_crypto 
     database "Файловая система" as file
 end box
 
@@ -16,21 +17,25 @@ box "GophKeeper" #d3f3fa
     participant "Служба шифрования" as crypto
     database "postgres" as db
 end box
-
 user -> client ++ : Вводит команду на обновление данных
 note over user, client
     GophKeeper change-credentials site.com newsite.com newmylogin newmypassword
 end note
-
 client -> client: Валидация введенных данных
 
 opt Данные невалидны
     client -> user: Сообщение об ошибке
 end
 
+|||
+ref over user, file
+    6.5. Авторизация пользователя на стороне клиента
+end
+|||
+
 client -> handler ++ : Отправляет запрос на создание новых данных
 note over client, handler
-    POST /api/credentials/site.com HTTP/1.1
+    POST /api/credentials/site.com HTTP/2.0
     Content-Type: application/json
     Authorization: Bearer ...
     
@@ -40,17 +45,16 @@ note over client, handler
         "password": "newmypassword",
     }
 end note
-
-group middleware
-    note over user, handler: 6.4. Авторизация пользователя на стороне сервера
-end group
-
+|||
+ref over user, handler
+    6.4. Авторизация пользователя на стороне сервера
+end
+|||
 handler -> handler: Парсит JSON и валидирует формат входных данных из тела запроса
 opt Формат некорректен
     handler -> client: HTTP 400 Bad Request
     note over client, handler
-        400 Bad Request HTTP/1.1
-        Content-Type: application/json
+        400 Bad Request HTTP/2.0
     end note
     client --> user: Выводит сообщение об ошибке
 end
@@ -62,8 +66,7 @@ opt Данные не найдены
     usecase --> handler: Данные не найдены
     handler --> client: HTTP 404 Not Found
     note over client, handler
-        404 Not Found HTTP/1.1
-        Content-Type: application/json
+        404 Not Found HTTP/2.0
     end note
     client --> user: Выводит сообщение об ошибке
 end
@@ -78,11 +81,12 @@ deactivate db
 return Успешно сохранено
 return HTTP 200 Ok
 note over client, handler
-    200 Ok HTTP/1.1
-    Content-Type: application/json
+    200 Ok HTTP/2.0
 end note
 
-client -> file: Сохраняет данные в файл и шифрует его
+client -> cli_crypto ++ : Зашифровывает полученные данные
+return Зашифрованные данные
+client -> file: Сохраняет зашифрованные данные в файл
 activate file
 deactivate file 
 return Вывод сообщения об успехе исполнения команды

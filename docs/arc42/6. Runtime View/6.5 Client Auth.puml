@@ -15,7 +15,7 @@ end box
 
 user -> client ++ : Вводит команду, доступную только аутентифицированным пользователям
 note over user, client
-    GophKeeper command
+    GophKeeper create text ...
 end note
 
 client -> client: Валидирует JWT
@@ -31,41 +31,27 @@ opt Публичный ключ не установлен
     return публичный ключ
     
     opt Публичный ключ не найден в файле
+        |||
         ref over client, api
             6.1 Получение публичного ключа для верификации JWT
         end
+        |||
     end
+    |||
 end
 
 client -> client: Верифицирует JWT
 
 alt Не удалось верифицировать JWT
-    client -> api ++ : Отправляет запрос на получение публичного ключа
-    note over client, api
-        GET /api/certs HTTP/1.1
-        Content-Type: application/json
-    end note
-
-    return HTTP 200 Ok
-    note over client, api
-        200 OK HTTP/1.1
-        Content-Type: application/json
-
-        {"kty":"RSA","use":"sig","alg":"RS256","kid":"4Ecg...DE","n":"r3Yf...TQ","e":"AQAB"} 
-    end note
-    client -> client: Сравнивает полученный публичный ключ
-    alt Ключи совпали
-        client -> user: Выводит сообщение об ошибке
-    else Ключи не совпали
-        client -> client: Кэширует новый публичный ключ
-        client -> file: Сохраняет публичный ключ в файл и шифрует его
-        activate file
-        deactivate file
-        client -> client: Верифицирует JWT
-        opt Не удалось верифицировать JWT
-            client -> user: Выводит сообщение об ошибке
-        end
+    |||
+    ref over client, api
+        6.1 Получение публичного ключа для верификации JWT
     end
+    client -> client: Верифицирует JWT
+    opt Не удалось верифицировать JWT
+        client -> user: Выводит сообщение об ошибке
+    end
+    |||
 end
 client -> api ++ : Исполняет команду
 @enduml

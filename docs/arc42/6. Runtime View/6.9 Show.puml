@@ -16,22 +16,17 @@ end box
 
 user -> client ++ : Вводит команду на обновление данных
 note over user, client
-    GophKeeper show
+    gophkeeper show all
 end note
 
+|||
 ref over user, api
     6.5. Авторизация пользователя на стороне клиента
 end
+|||
 
 client -> file ++ : Расшифровка файла и чтение пользовательских данных
 return Пользовательские данные
-
-client -> client: Проверка наличия прочитанных данных
-opt Данные отсутствуют
-    ref over client, api
-        6.6. Синхронизация данных клиента и сервера
-    end
-end
 
 return: Вывод локальных данных пользователю
 

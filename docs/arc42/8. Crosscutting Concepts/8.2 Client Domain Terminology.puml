@@ -12,35 +12,33 @@ namespace client {
 }
 
 class client.domain.entities.Session {
-    + UserID: String,
-    + Token: String,
+    + UserID: UUID
+    + Token: String
 }
 
 class client.domain.entities.Credentials {
-    + ID : String
+    + ID : UUID
     + Name : String
     + Login : String
     + Password : String
 }
 
 class client.domain.entities.Text {
-    + ID : String
+    + ID : UUID
     + Content : String
 }
 
 class client.domain.entities.Binary {
-    + ID : String
-    + Name : String
-    + Data : String
+    + ID : UUID
+    + Content : []byte
 }
 
 class client.domain.entities.BankCard {
-    + ID : String
-    + Name : String
+    + ID : UUID
     + Number : String
-    + ExpirationDate: DateTime
-    + CardHolder: String
+    + ExpirationDate: String
     + CVV: String
+    + CardHolder: String
 }
 
 class client.domain.repositories.SessionRepositoryInterface {
@@ -93,6 +91,16 @@ class client.domain.repositories.BankCardRepositoryInterface {
     + void ReplaceAll(userID: UUID, List[BankCard]): null
 }
 
+class client.domain.repositories.UnitOfWorkInterface {
+    + void Begin() error
+    + void Commit() error
+    + void Rollback() error
+    + void TextRepository() TextRepositoryInterface
+    + void BinaryRepository() BinaryRepositoryInterface
+    + void CredentialsRepository() CredentialsRepositoryInterface
+    + void BankCardRepository() BankCardRepositoryInterface
+}
+
 class client.domain.client.GophKeeperInterface {
     + X509Cert : []byte
     + Timeout : time.Duration
@@ -100,7 +108,6 @@ class client.domain.client.GophKeeperInterface {
     + void Login(Login : String, Password : String) : String, error
     + void Register(Login : String, Password : String) : String, error
     + void Certs() : []byte, error
-    + void Sync(UserID : String) : object
     + void CreateText(session: Session, content: String) : String, error
     + void UpdateText(session: Session, object: Text) : error
     + void CreateCredentials(session: Session, object: Credentials) : String, error
@@ -109,6 +116,11 @@ class client.domain.client.GophKeeperInterface {
     + void UpdateBinary(session: Session, object: Binary) : error
     + void CreateBankCard(session: Session, object: BankCard) : String, error
     + void UpdateBankCard(session: Session, object: BankCard) : error
+    + void GetAllTexts(session: Session) : List[Text], error
+    + void GetAllBinaries(session: Session) : List[Binary], error
+    + void GetAllCredentials(session: Session) : List[Credentials], error
+    + void GetAllBankCard(session: Session) : List[BankCard], error
+    + void GetAll(session: Session) : List[Text], List[BankCard], List[Binary], List[Credentials], error
 }
 
 
@@ -118,5 +130,8 @@ class client.domain.services.CryptoServiceInterface {
     + void Dencode(data : []byte) : []byte
 }
 
-
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.TextRepositoryInterface
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.CredentialsRepositoryInterface
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.BinaryRepositoryInterface
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.BankCardRepositoryInterface
 @enduml

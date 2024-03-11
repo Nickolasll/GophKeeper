@@ -7,6 +7,7 @@ autonumber
 participant "Пользователь" as user
 box "Компьютер пользователя" #DEDEDE
     participant "CLI Клиент" as client
+    participant "Сервис шифрования" as cli_crypto
     database "Файловая система" as file
 end box
 
@@ -30,16 +31,16 @@ end
 
 client -> handler ++ : Отправляет запрос на регистрацию по логину и паролю
 note over client, handler
-    POST /api/user/register HTTP/1.1
+    POST /api/v1/user/register HTTP/2.0
     Content-Type: application/json
 
-    login: login
+    login: my@login.com
     password: password   
 end note
 
 handler -> handler : Парсит JSON и валидирует формат входных данных из тела запроса
 opt Формат некорректен
-    handler --> client: HTTP 400 bad request
+    handler --> client: HTTP 400 Bad request
     client --> user: Вывод сообщения об ошибке
 end
 
@@ -66,10 +67,12 @@ return JWT
 handler -> handler: Устанавливает JWT в HTTP-заголовок Authorization
 return HTTP 200 Ok
 note over client, handler
-    200 OK HTTP/1.1
+    200 OK HTTP/2.0
     Authorization: Bearer ...  
 end note
-client -> file: Сохраняет JWT в файл и шифрует его
+client -> cli_crypto ++ : Зашифровывает токен
+return Зашифрованные данные
+client -> file: Сохраняет зашифрованный JWT в файл
 activate file
 deactivate file 
 return Вывод сообщения об успехе исполнения команды

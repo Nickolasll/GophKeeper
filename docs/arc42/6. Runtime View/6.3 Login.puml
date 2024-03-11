@@ -7,6 +7,7 @@ autonumber
 participant "Пользователь" as user
 box "Компьютер пользователя" #DEDEDE
     participant "CLI Клиент" as client
+    participant "Сервис шифрования" as cli_crypto
     database "Файловая система" as file
 end box
 
@@ -30,10 +31,10 @@ end
 
 client -> handler ++ : Отправляет запрос на вход по логину и паролю
 note over client, handler
-    POST /api/user/login HTTP/1.1
+    POST /api/user/login HTTP/2.0
     Content-Type: application/json
 
-    login: login
+    login: my@login.com
     password: password   
 end note
 
@@ -68,11 +69,16 @@ return JWT
 handler -> handler: Устанавливает JWT в HTTP-заголовок Authorization
 return HTTP 200 Ok
 note over client, handler
-    200 OK HTTP/1.1
+    200 OK HTTP/2.0
     Authorization: Bearer ...  
 end note
-client -> file: Сохраняет JWT в файл и шифрует его
+client -> cli_crypto ++ : Зашифровывает токен
+return Зашифрованные данные
+client -> file: Сохраняет зашифрованный JWT в файл
 activate file
 deactivate file 
 return Вывод сообщения об успехе исполнения команды
+ref over client, db
+    6.6. Синхронизация данных клиента и сервера
+end
 @enduml

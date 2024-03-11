@@ -7,6 +7,7 @@ autonumber
 participant "Пользователь" as user
 box "Компьютер пользователя" #DEDEDE
     participant "CLI Клиент" as client
+    participant "Сервис шифрования" as cli_crypto
     database "Файловая система" as file
 end box
 
@@ -17,27 +18,28 @@ box "GophKeeper" #d3f3fa
     database "postgres" as db
 end box
 
-user -> client ++ : Вводит команду на синхронизацию данных
-note over user, client
-    GophKeeper sync
-end note
+user -> client ++ : Вызов команды авторизации или принудительной синхронизации
 
-ref over user, handler
+|||
+ref over user, file
     6.5. Авторизация пользователя на стороне клиента
 end
+|||
 
 client -> handler ++ : Отправляет запрос на синхронизацию данных
 note over client, handler
-    GET /api/sync HTTP/1.1
-    Content-Type: application/json
+    GET /api/v1/all HTTP/2.0
+
     Authorization: Bearer ...
 end note
 
-group middleware
-    note over user, handler: 6.4. Авторизация пользователя на стороне сервера
-end group
+|||
+ref over user, handler
+    6.4. Авторизация пользователя на стороне сервера
+end
+|||
 
-handler -> usecase ++ : Вызывает поведение по синхронизации по идентификатору пользователя
+handler -> usecase ++ : Вызывает поведение по получению всех данных по идентификатору пользователя
 usecase -> db ++ : Запрашивает данные пользователя
 return Пользовательские данные
 loop Итерируется по пользовательским данным
@@ -47,22 +49,32 @@ end
 return Пользовательские данные
 return 200 OK
 note over client, handler
-    200 OK HTTP/1.1
+    200 OK HTTP/2.0
     Content-Type: application/json
     
     
     {
-        "passwords": [
+        "credentials": [
              {
-                 ...
+                 "id": "uuid",
+                 "name": "name",
+                 "login": "login",
+                 "password": "password
+             }
+        ],
+        "texts": [
+             {
+                 "id": "uuid",
+                 "content": "text"
              },
-             ...
         ],
         ...
     }
 end note
 
-client -> file: Сохраняет данные в файл и шифрует его
+client -> cli_crypto ++ : Шифрует публичный ключ
+return зашифрованные данные
+client -> file: Сохраняет зашифрованные данные в файл
 activate file
 deactivate file 
 return Вывод сообщения об успехе исполнения команды
