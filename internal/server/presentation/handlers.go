@@ -101,7 +101,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) { //nolint: dupl
 // @Param data body string true "Текст для сохранения"
 // @Success 201
 // @Failure 400 "Некорректный формат данных"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
 // @Router /text/create [post]
 // @Security ApiKeyAuth
@@ -132,7 +132,7 @@ func createTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 // @Param data body string true "Текст для сохранения"
 // @Success 200
 // @Failure 400 "Некорректный формат данных или идентификатора"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Failure 404 "Не найдено"
 // @Router /text/{text_id} [post]
 // @Security ApiKeyAuth
@@ -170,7 +170,7 @@ func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 // @ID text-all
 // @Tags Text
 // @Success 200 {object} GetAllTextsResponse
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Router /text/all [get]
 // @Security ApiKeyAuth
 func getAllTextsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
@@ -259,7 +259,7 @@ func getHealthHandler(w http.ResponseWriter, _ *http.Request) {
 // @Param data body []byte true "Содержимое файла"
 // @Success 201
 // @Failure 400 "Некорректный формат данных"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
 // @Router /binary/create [post]
 // @Security ApiKeyAuth
@@ -296,7 +296,7 @@ func createBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUI
 // @Param data body []byte true "Содержимое файла"
 // @Success 200
 // @Failure 400 "Некорректный формат данных или идентификатора"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Failure 404 "Не найдено"
 // @Router /binary/{binary_id} [post]
 // @Security ApiKeyAuth
@@ -339,7 +339,7 @@ func updateBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUI
 // @ID binary-all
 // @Tags Binary
 // @Success 200 {object} GetAllBinariesResponse
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Router /binary/all [get]
 // @Security ApiKeyAuth
 func getAllBinariesHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
@@ -389,7 +389,7 @@ func getAllBinariesHandler(w http.ResponseWriter, _ *http.Request, userID uuid.U
 // @Param data body credentialsPayload true "Наименование, логин и пароль"
 // @Success 201
 // @Failure 400 "Некорректный формат данных"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
 // @Router /credentials/create [post]
 // @Security ApiKeyAuth
@@ -433,7 +433,7 @@ func createCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 // @Param data body credentialsPayload true "Наименование, логин и пароль"
 // @Success 200
 // @Failure 400 "Некорректный формат данных или идентификатора"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Failure 404 "Не найдено"
 // @Router /credentials/{credentials_id} [post]
 // @Security ApiKeyAuth
@@ -484,7 +484,7 @@ func updateCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 // @ID credentials-all
 // @Tags Credentials
 // @Success 200 {object} GetAllCredentialsResponse
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Router /credentials/all [get]
 // @Security ApiKeyAuth
 func getAllCredentialsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
@@ -536,7 +536,7 @@ func getAllCredentialsHandler(w http.ResponseWriter, _ *http.Request, userID uui
 // @Param data body bankCardPayload true "Номер, срок действия, cvv код, ФИО держателя карты"
 // @Success 201
 // @Failure 400 "Некорректный формат данных"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
 // @Router /bank_card/create [post]
 // @Security ApiKeyAuth
@@ -581,7 +581,7 @@ func createBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 // @Param data body bankCardPayload true "Номер, срок действия, cvv код, ФИО держателя карты"
 // @Success 200
 // @Failure 400 "Некорректный формат данных или идентификатора"
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Failure 404 "Не найдено"
 // @Router /bank_card/{bank_card_id} [post]
 // @Security ApiKeyAuth
@@ -633,7 +633,7 @@ func updateBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 // @ID bank-card-all
 // @Tags BankCard
 // @Success 200 {object} GetAllBankCardsResponse
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Router /bank_card/all [get]
 // @Security ApiKeyAuth
 func getAllBankCardsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
@@ -683,7 +683,7 @@ func getAllBankCardsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.
 // @ID all
 // @Tags All
 // @Success 200 {object} GetAllResponse
-// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 401 "Нет токена авторизации или токен невалиден"
 // @Router /all [get]
 // @Security ApiKeyAuth
 func getAllHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {

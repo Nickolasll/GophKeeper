@@ -180,7 +180,7 @@ paths:
           schema:
             $ref: '#/definitions/presentation.GetAllResponse'
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Получить все расшифрованные данные пользователя
@@ -285,7 +285,7 @@ paths:
         "400":
           description: Некорректный формат данных или идентификатора
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
         "404":
           description: Не найдено
       security:
@@ -302,7 +302,7 @@ paths:
           schema:
             $ref: '#/definitions/presentation.GetAllBankCardsResponse'
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Получить все расшифрованные банковские карты
@@ -330,7 +330,7 @@ paths:
         "400":
           description: Некорректный формат данных
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Создать и зашифровать банковскую карту
@@ -361,7 +361,7 @@ paths:
         "400":
           description: Некорректный формат данных или идентификатора
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
         "404":
           description: Не найдено
       security:
@@ -378,7 +378,7 @@ paths:
           schema:
             $ref: '#/definitions/presentation.GetAllBinariesResponse'
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Получить все расшифрованные бинарные данные
@@ -408,7 +408,7 @@ paths:
         "400":
           description: Некорректный формат данных
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Создать и зашифровать бинарные данные
@@ -437,7 +437,7 @@ paths:
         "400":
           description: Некорректный формат данных или идентификатора
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
         "404":
           description: Не найдено
       security:
@@ -454,7 +454,7 @@ paths:
           schema:
             $ref: '#/definitions/presentation.GetAllCredentialsResponse'
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Получить все расшифрованные логины и пароли
@@ -482,7 +482,7 @@ paths:
         "400":
           description: Некорректный формат данных
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Создать и зашифровать логин и пароль
@@ -522,7 +522,7 @@ paths:
         "400":
           description: Некорректный формат данных или идентификатора
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
         "404":
           description: Не найдено
       security:
@@ -539,7 +539,7 @@ paths:
           schema:
             $ref: '#/definitions/presentation.GetAllTextsResponse'
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Получить все расшифрованные текстовые данные
@@ -567,7 +567,7 @@ paths:
         "400":
           description: Некорректный формат данных
         "401":
-          description: Нет токена авторизации, либо токен невалиден
+          description: Нет токена авторизации или токен невалиден
       security:
       - ApiKeyAuth: []
       summary: Создать и зашифровать текстовые данные
