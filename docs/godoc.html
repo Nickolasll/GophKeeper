@@ -186,7 +186,7 @@
 					</td>
 				
 					<td class="pkg-synopsis">
-						Package application содержит фабрику приложения и имплементацию CryptoService
+						Package application по сути является фасадом для перечисления всех доступных сценариев использования
 					</td>
 				</tr>
 			
@@ -197,7 +197,7 @@
 					</td>
 				
 					<td class="pkg-synopsis">
-						Package usecases содержит имплементацию бизнес логики приложения
+						Package usecases содержит имплементацию всех сценариев использования бизнес логики приложения
 					</td>
 				</tr>
 			
@@ -219,7 +219,7 @@
 					</td>
 				
 					<td class="pkg-synopsis">
-						Package domain содержит сущности и интерфейсы к репозиториям и клиенту
+						Package domain содержит сущности и интерфейсы к репозиториям и клиенту Также здесь перечислены возможные ошибки в логике предметной области
 					</td>
 				</tr>
 			
@@ -231,6 +231,17 @@
 				
 					<td class="pkg-synopsis">
 						
+					</td>
+				</tr>
+			
+				<tr>
+				
+					<td class="pkg-name" style="padding-left: 60px;">
+						<a href="internal/client/infrastructure/bank_card_repository/?m=all">bank_card_repository</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						Package bankcardrepository содержит имплементацию интерфейса BankCardRepositoryInterface
 					</td>
 				</tr>
 			
@@ -302,6 +313,17 @@
 			
 				<tr>
 				
+					<td class="pkg-name" style="padding-left: 60px;">
+						<a href="internal/client/infrastructure/unit_of_work/?m=all">unit_of_work</a>
+					</td>
+				
+					<td class="pkg-synopsis">
+						Package unitofwork обеспечивает транзакционность базы данных, изолируя слои и инкапсулируя всю логику работы с транзакциями На данный момент он работает только для транзакционного обновления всех пользовательских данных при синхронизации.
+					</td>
+				</tr>
+			
+				<tr>
+				
 					<td class="pkg-name" style="padding-left: 40px;">
 						<a href="internal/client/logger/?m=all">logger</a>
 					</td>
@@ -351,7 +373,7 @@
 					</td>
 				
 					<td class="pkg-synopsis">
-						Package application содержит фабрику приложения
+						Package application по сути является фасадом для перечисления всех доступных сценариев использования
 					</td>
 				</tr>
 			
@@ -395,7 +417,7 @@
 					</td>
 				
 					<td class="pkg-synopsis">
-						Package domain содержит сущности и интерфейсы к репозиториям и клиенту
+						Package domain содержит сущности и интерфейсы к репозиториям и сервисам
 					</td>
 				</tr>
 			

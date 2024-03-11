@@ -1,4 +1,3 @@
-// Package domain содержит в себе описание сущностей и интерфейсов.
 package domain
 
 import (

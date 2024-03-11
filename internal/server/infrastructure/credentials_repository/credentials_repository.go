@@ -151,7 +151,13 @@ func (r CredentialsRepository) GetAll(userID uuid.UUID) ([]domain.Credentials, e
 	defer rows.Close()
 	for rows.Next() {
 		var cred domain.Credentials
-		err = rows.Scan(&cred.ID, &cred.UserID, &cred.Name, &cred.Login, &cred.Password)
+		err = rows.Scan(
+			&cred.ID,
+			&cred.UserID,
+			&cred.Name,
+			&cred.Login,
+			&cred.Password,
+		)
 		if err == nil {
 			result = append(result, cred)
 		}

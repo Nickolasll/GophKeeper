@@ -68,7 +68,9 @@ func (r UserRepository) GetByLogin(login string) (*domain.User, error) {
 	args := pgx.NamedArgs{
 		"login": login,
 	}
-	err := r.DBPool.QueryRow(ctx, sql, args).Scan(&user.ID, &user.Login, &user.Password)
+	err := r.DBPool.
+		QueryRow(ctx, sql, args).
+		Scan(&user.ID, &user.Login, &user.Password)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, domain.ErrEntityNotFound

@@ -116,7 +116,14 @@ func (r BankCardRepository) Get(userID, cardID uuid.UUID) (*domain.BankCard, err
 	}
 	err := r.DBPool.
 		QueryRow(ctx, sql, args).
-		Scan(&card.ID, &card.UserID, &card.Number, &card.ValidThru, &card.CVV, &card.CardHolder)
+		Scan(
+			&card.ID,
+			&card.UserID,
+			&card.Number,
+			&card.ValidThru,
+			&card.CVV,
+			&card.CardHolder,
+		)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -158,7 +165,14 @@ func (r BankCardRepository) GetAll(userID uuid.UUID) ([]*domain.BankCard, error)
 	defer rows.Close()
 	for rows.Next() {
 		var card domain.BankCard
-		err = rows.Scan(&card.ID, &card.UserID, &card.Number, &card.ValidThru, &card.CVV, &card.CardHolder)
+		err = rows.Scan(
+			&card.ID,
+			&card.UserID,
+			&card.Number,
+			&card.ValidThru,
+			&card.CVV,
+			&card.CardHolder,
+		)
 		if err == nil {
 			result = append(result, &card)
 		}

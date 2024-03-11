@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -19,7 +18,10 @@ type UpdateBankCard struct {
 }
 
 // Do - Вызов исполнения сценария использования
-func (u UpdateBankCard) Do(userID, id uuid.UUID, number, validThru, cvv, cardHolder string) error {
+func (u UpdateBankCard) Do(
+	userID, id uuid.UUID,
+	number, validThru, cvv, cardHolder string,
+) error {
 	card, err := u.BankCardRepository.Get(userID, id)
 	if err != nil {
 		return err

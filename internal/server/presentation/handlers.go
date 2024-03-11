@@ -1,4 +1,3 @@
-// Package presentation содержит фабрику роутера, обработчики и схемы валидации
 package presentation
 
 import (
@@ -11,6 +10,16 @@ import (
 	"github.com/Nickolasll/goph-keeper/internal/server/domain"
 )
 
+// @Summary Регистрация нового пользователя по логину и паролю
+// @ID auth-register
+// @Tags Auth
+// @Accept json
+// @Param payload body registrationPayload true "Логин и Пароль"
+// @Success 200
+// @Failure 400 "Некорректный формат данных"
+// @Failure 409 "Логин уже занят"
+// @Header 200 {string} Authorization eyJhbGciOiJI...qIScZUU8P0Zhck "JWT"
+// @Router /auth/register [post]
 func registrationHandler(w http.ResponseWriter, r *http.Request) { //nolint: dupl
 	var payload registrationPayload
 	body, err := parseBody(jsonType, r)
@@ -43,6 +52,16 @@ func registrationHandler(w http.ResponseWriter, r *http.Request) { //nolint: dup
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Авторизация пользователя по логину и паролю
+// @ID auth-login
+// @Tags Auth
+// @Accept json
+// @Param payload body registrationPayload true "Логин и Пароль"
+// @Success 200
+// @Failure 400 "Некорректный формат данных"
+// @Failure 401 "Неправильный логин или пароль"
+// @Header 200 {string} Authorization eyJhbGciOiJI...qIScZUU8P0Zhck "JWT"
+// @Router /auth/login [post]
 func loginHandler(w http.ResponseWriter, r *http.Request) { //nolint: dupl
 	var payload registrationPayload
 	body, err := parseBody(jsonType, r)
@@ -75,6 +94,17 @@ func loginHandler(w http.ResponseWriter, r *http.Request) { //nolint: dupl
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Создать и зашифровать текстовые данные
+// @ID text-create
+// @Tags Text
+// @Accept plain
+// @Param data body string true "Текст для сохранения"
+// @Success 201
+// @Failure 400 "Некорректный формат данных"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
+// @Router /text/create [post]
+// @Security ApiKeyAuth
 func createTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	body, err := parseBody(textType, r)
 	if err != nil || len(body) == 0 {
@@ -94,6 +124,18 @@ func createTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Обновить и зашифровать существующие текстовые данные
+// @ID text-update
+// @Tags Text
+// @Accept plain
+// @Param text_id path string true "Text ID"
+// @Param data body string true "Текст для сохранения"
+// @Success 200
+// @Failure 400 "Некорректный формат данных или идентификатора"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 404 "Не найдено"
+// @Router /text/{text_id} [post]
+// @Security ApiKeyAuth
 func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	id, err := getRouteID(r, "textID")
 	if err != nil {
@@ -124,6 +166,13 @@ func updateTextHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID)
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Получить все расшифрованные текстовые данные
+// @ID text-all
+// @Tags Text
+// @Success 200 {object} GetAllTextsResponse
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Router /text/all [get]
+// @Security ApiKeyAuth
 func getAllTextsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
 	textsResponse := []textResponse{}
 	w.Header().Set(contentTypeHeader, jsonType)
@@ -164,6 +213,11 @@ func getAllTextsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID
 	}
 }
 
+// @Summary Получение публичного ключа для валидации JWT на клиенте
+// @ID auth-certs
+// @Tags Auth
+// @Success 200 {object} object{}
+// @Router /auth/certs [get]
 func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
 	certs, err := joseService.GetCerts()
 	if err != nil {
@@ -188,8 +242,8 @@ func getCertsHandler(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-// Health godoc
 // @Summary Запрос состояния сервиса
+// @Tags Status
 // @ID health
 // @Success 200
 // @Failure 500
@@ -198,6 +252,17 @@ func getHealthHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Создать и зашифровать бинарные данные
+// @ID binary-create
+// @Tags Binary
+// @Accept mpfd
+// @Param data body []byte true "Содержимое файла"
+// @Success 201
+// @Failure 400 "Некорректный формат данных"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
+// @Router /binary/create [post]
+// @Security ApiKeyAuth
 func createBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	body, err := parseBody(binaryType, r)
 	if err != nil {
@@ -223,6 +288,18 @@ func createBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUI
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Обновить и зашифровать существующие бинарные данные
+// @ID binary-update
+// @Tags Binary
+// @Accept mpfd
+// @Param binary_id path string true "Binary ID"
+// @Param data body []byte true "Содержимое файла"
+// @Success 200
+// @Failure 400 "Некорректный формат данных или идентификатора"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 404 "Не найдено"
+// @Router /binary/{binary_id} [post]
+// @Security ApiKeyAuth
 func updateBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	id, err := getRouteID(r, "binaryID")
 	if err != nil {
@@ -258,6 +335,13 @@ func updateBinaryHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUI
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Получить все расшифрованные бинарные данные
+// @ID binary-all
+// @Tags Binary
+// @Success 200 {object} GetAllBinariesResponse
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Router /binary/all [get]
+// @Security ApiKeyAuth
 func getAllBinariesHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
 	binariesResponse := []binaryResponse{}
 	w.Header().Set(contentTypeHeader, jsonType)
@@ -298,6 +382,17 @@ func getAllBinariesHandler(w http.ResponseWriter, _ *http.Request, userID uuid.U
 	}
 }
 
+// @Summary Создать и зашифровать логин и пароль
+// @ID credentials-create
+// @Tags Credentials
+// @Accept json
+// @Param data body credentialsPayload true "Наименование, логин и пароль"
+// @Success 201
+// @Failure 400 "Некорректный формат данных"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
+// @Router /credentials/create [post]
+// @Security ApiKeyAuth
 func createCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	var payload credentialsPayload
 	body, err := parseBody(jsonType, r)
@@ -330,6 +425,18 @@ func createCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Обновить и зашифровать существующий логин и пароль
+// @ID credentials-update
+// @Tags Credentials
+// @Accept json
+// @Param credentials_id path string true "Credentials ID"
+// @Param data body credentialsPayload true "Наименование, логин и пароль"
+// @Success 200
+// @Failure 400 "Некорректный формат данных или идентификатора"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 404 "Не найдено"
+// @Router /credentials/{credentials_id} [post]
+// @Security ApiKeyAuth
 func updateCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	var payload credentialsPayload
 	id, err := getRouteID(r, "credID")
@@ -373,6 +480,13 @@ func updateCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Получить все расшифрованные логины и пароли
+// @ID credentials-all
+// @Tags Credentials
+// @Success 200 {object} GetAllCredentialsResponse
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Router /credentials/all [get]
+// @Security ApiKeyAuth
 func getAllCredentialsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
 	credResponse := []credentialsResponse{}
 	w.Header().Set(contentTypeHeader, jsonType)
@@ -415,6 +529,17 @@ func getAllCredentialsHandler(w http.ResponseWriter, _ *http.Request, userID uui
 	}
 }
 
+// @Summary Создать и зашифровать банковскую карту
+// @ID bank-card-create
+// @Tags BankCard
+// @Accept json
+// @Param data body bankCardPayload true "Номер, срок действия, cvv код, ФИО держателя карты"
+// @Success 201
+// @Failure 400 "Некорректный формат данных"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Header 201 {string} Location 020cb30c-c495-4a18-ac09-fd68c6f7c941 "UUID ресурса"
+// @Router /bank_card/create [post]
+// @Security ApiKeyAuth
 func createBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	var payload bankCardPayload
 	body, err := parseBody(jsonType, r)
@@ -448,6 +573,18 @@ func createBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 	w.WriteHeader(http.StatusCreated)
 }
 
+// @Summary Обновить и зашифровать существующую банковскую карту
+// @ID bank-card-update
+// @Tags BankCard
+// @Accept json
+// @Param bank_card_id path string true "Bank Card ID"
+// @Param data body bankCardPayload true "Номер, срок действия, cvv код, ФИО держателя карты"
+// @Success 200
+// @Failure 400 "Некорректный формат данных или идентификатора"
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Failure 404 "Не найдено"
+// @Router /bank_card/{bank_card_id} [post]
+// @Security ApiKeyAuth
 func updateBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	var payload bankCardPayload
 	id, err := getRouteID(r, "cardID")
@@ -492,6 +629,13 @@ func updateBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 	w.WriteHeader(http.StatusOK)
 }
 
+// @Summary Получить все расшифрованные банковские карты
+// @ID bank-card-all
+// @Tags BankCard
+// @Success 200 {object} GetAllBankCardsResponse
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Router /bank_card/all [get]
+// @Security ApiKeyAuth
 func getAllBankCardsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
 	bankCardsResponse := []bankCardResponse{}
 	w.Header().Set(contentTypeHeader, jsonType)
@@ -535,6 +679,13 @@ func getAllBankCardsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.
 	}
 }
 
+// @Summary Получить все расшифрованные данные пользователя
+// @ID all
+// @Tags All
+// @Success 200 {object} GetAllResponse
+// @Failure 401 "Нет токена авторизации, либо токен невалиден"
+// @Router /all [get]
+// @Security ApiKeyAuth
 func getAllHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
 	credResponse := []credentialsResponse{}
 	bankCardsResponse := []bankCardResponse{}

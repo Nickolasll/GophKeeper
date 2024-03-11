@@ -19,7 +19,10 @@ type CreateCredentials struct {
 }
 
 // Do - Вызов исполнения сценария использования, возвращает идентификатор ресурса
-func (u *CreateCredentials) Do(userID uuid.UUID, name, login, password string) (uuid.UUID, error) {
+func (u *CreateCredentials) Do(
+	userID uuid.UUID,
+	name, login, password string,
+) (uuid.UUID, error) {
 	credID := uuid.New()
 	encryptedName, err := u.Crypto.Encrypt([]byte(name))
 	if err != nil {

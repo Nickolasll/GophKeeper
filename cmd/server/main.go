@@ -24,12 +24,34 @@ import (
 // @Title GophKeeper API
 // @Description Сервис хранения логинов, паролей, бинарных данных и прочей приватной информации.
 
+// @version 0.0.1
 // @BasePath /api/v1
 // @Host 0.0.0.0:8080
 
 // @SecurityDefinitions.apikey ApiKeyAuth
 // @In header
 // @Name Authorization
+
+// @Tag.name Status
+// @Tag.description "Группа запросов статуса сервера"
+
+// @Tag.name Auth
+// @Tag.description "Группа запросов авторизации"
+
+// @Tag.name Text
+// @Tag.description "Группа запросов для работы с текстовыми данными"
+
+// @Tag.name Binary
+// @Tag.description "Группа запросов для работы с бинарными данными"
+
+// @Tag.name Credentials
+// @Tag.description "Группа запросов для работы с логинами и паролями"
+
+// @Tag.name BankCard
+// @Tag.description "Группа запросов для работы с банковскими картами"
+
+// @Tag.name All
+// @Tag.description "Группа запросов для работы со всеми данными пользователя"
 
 func main() {
 	log := logger.New()

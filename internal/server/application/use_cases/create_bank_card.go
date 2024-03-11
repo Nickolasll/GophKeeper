@@ -1,4 +1,3 @@
-// Package usecases содержит имплементацию бизнес логики приложения
 package usecases
 
 import (
@@ -19,7 +18,10 @@ type CreateBankCard struct {
 }
 
 // Do - Вызов исполнения сценария использования, возвращает идентификатор ресурса
-func (u *CreateBankCard) Do(userID uuid.UUID, number, validThru, cvv, cardHolder string) (uuid.UUID, error) {
+func (u *CreateBankCard) Do(
+	userID uuid.UUID,
+	number, validThru, cvv, cardHolder string,
+) (uuid.UUID, error) {
 	cardID := uuid.New()
 	encryptedNumber, err := u.Crypto.Encrypt([]byte(number))
 	if err != nil {

@@ -96,7 +96,9 @@ func (r TextRepository) Get(userID, textID uuid.UUID) (*domain.Text, error) {
 		"textID": textID,
 		"userID": userID,
 	}
-	err := r.DBPool.QueryRow(ctx, sql, args).Scan(&text.ID, &text.UserID, &text.Content)
+	err := r.DBPool.
+		QueryRow(ctx, sql, args).
+		Scan(&text.ID, &text.UserID, &text.Content)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

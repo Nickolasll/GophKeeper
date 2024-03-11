@@ -1,4 +1,4 @@
-// Package application содержит фабрику приложения
+// Package application по сути является фасадом для перечисления всех доступных сценариев использования
 package application
 
 import (
