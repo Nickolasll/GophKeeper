@@ -20,7 +20,7 @@ type UpdateBankCard struct {
 // Do - Вызов исполнения сценария использования
 func (u UpdateBankCard) Do(
 	userID, id uuid.UUID,
-	number, validThru, cvv, cardHolder string,
+	number, validThru, cvv, cardHolder, meta string,
 ) error {
 	card, err := u.BankCardRepository.Get(userID, id)
 	if err != nil {
@@ -46,11 +46,16 @@ func (u UpdateBankCard) Do(
 	if err != nil {
 		return err
 	}
+	encryptedMeta, err := u.Crypto.Encrypt([]byte(meta))
+	if err != nil {
+		return err
+	}
 
 	card.Number = encryptedNumber
 	card.ValidThru = encryptedValidThru
 	card.CVV = encryptedCVV
 	card.CardHolder = encryptedCardHolder
+	card.Meta = encryptedMeta
 
 	err = u.BankCardRepository.Update(card)
 

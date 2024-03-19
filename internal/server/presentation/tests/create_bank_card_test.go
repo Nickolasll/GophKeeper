@@ -107,12 +107,14 @@ func TestCreateBankCardSuccess(t *testing.T) {
 	validThru := "01/30"
 	cvv := "123"
 	cardHolder := "Card Holder"
+	meta := "my card meta"
 
 	bodyReader := bytes.NewReader([]byte(`{
 		"number": "` + number + `", ` +
 		`"valid_thru": "` + validThru + `", ` +
 		`"cvv": "` + cvv + `", ` +
-		`"card_holder": "` + cardHolder + `"` +
+		`"card_holder": "` + cardHolder + `",` +
+		`"meta": "` + meta + `"` +
 		`}`))
 	req := httptest.NewRequest("POST", "/api/v1/bank_card/create", bodyReader)
 	req.Header.Add("Content-Type", "application/json")
@@ -148,9 +150,13 @@ func TestCreateBankCardSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, cardHolder, string(decrCardHolder))
+
+	decrMeta, err := cryptoService.Decrypt(card.Meta)
+	require.NoError(t, err)
+	assert.Equal(t, meta, string(decrMeta))
 }
 
-func TestCreateBankCardNoHolderSuccess(t *testing.T) {
+func TestCreateBankCardNoHolderNoMetaSuccess(t *testing.T) {
 	router, err := setup()
 	require.NoError(t, err)
 	defer teardown()
@@ -204,4 +210,8 @@ func TestCreateBankCardNoHolderSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, "", string(decrCardHolder))
+
+	decrMeta, err := cryptoService.Decrypt(card.Meta)
+	require.NoError(t, err)
+	assert.Equal(t, "", string(decrMeta))
 }

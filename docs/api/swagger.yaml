@@ -88,6 +88,8 @@ definitions:
         type: string
       cvv:
         type: string
+      meta:
+        type: string
       number:
         type: string
       valid_thru:
@@ -104,6 +106,8 @@ definitions:
       cvv:
         type: string
       id:
+        type: string
+      meta:
         type: string
       number:
         type: string
@@ -124,6 +128,8 @@ definitions:
       login:
         minLength: 1
         type: string
+      meta:
+        type: string
       name:
         minLength: 1
         type: string
@@ -140,6 +146,8 @@ definitions:
       id:
         type: string
       login:
+        type: string
+      meta:
         type: string
       name:
         type: string

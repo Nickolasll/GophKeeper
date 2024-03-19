@@ -20,7 +20,7 @@ type UpdateCredentials struct {
 // Do - Вызов исполнения сценария использования
 func (u UpdateCredentials) Do(
 	userID, id uuid.UUID,
-	name, login, password string,
+	name, login, password, meta string,
 ) error {
 	cred, err := u.CredentialsRepository.Get(userID, id)
 	if err != nil {
@@ -42,9 +42,14 @@ func (u UpdateCredentials) Do(
 	if err != nil {
 		return err
 	}
+	encryptedMeta, err := u.Crypto.Encrypt([]byte(meta))
+	if err != nil {
+		return err
+	}
 	cred.Name = encryptedName
 	cred.Login = encryptedLogin
 	cred.Password = encryptedPassword
+	cred.Meta = encryptedMeta
 	err = u.CredentialsRepository.Update(cred)
 
 	return err

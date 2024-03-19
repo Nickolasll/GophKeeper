@@ -800,6 +800,9 @@ const docTemplate = `{
                 "cvv": {
                     "type": "string"
                 },
+                "meta": {
+                    "type": "string"
+                },
                 "number": {
                     "type": "string"
                 },
@@ -818,6 +821,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "meta": {
                     "type": "string"
                 },
                 "number": {
@@ -854,6 +860,9 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 1
                 },
+                "meta": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string",
                     "minLength": 1
@@ -871,6 +880,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "login": {
+                    "type": "string"
+                },
+                "meta": {
                     "type": "string"
                 },
                 "name": {

@@ -29,6 +29,7 @@ type credentialsPayload struct {
 	Name     string `json:"name" validate:"required,min=1"`
 	Login    string `json:"login" validate:"required,min=1"`
 	Password string `json:"password" validate:"required,min=1"`
+	Meta     string `json:"meta"`
 }
 
 func (credentialsPayload) Load(data []byte) (credentialsPayload, error) {
@@ -47,6 +48,7 @@ type bankCardPayload struct {
 	ValidThru  string `json:"valid_thru" validate:"required,is-valid-thru"`
 	CVV        string `json:"cvv" validate:"required,is-valid-cvv"`
 	CardHolder string `json:"card_holder" validate:"is-valid-card-holder"`
+	Meta       string `json:"meta"`
 }
 
 func (bankCardPayload) Load(data []byte) (bankCardPayload, error) {
@@ -107,6 +109,7 @@ type credentialsResponse struct {
 	Name     string `json:"name"`
 	Login    string `json:"login"`
 	Password string `json:"password"`
+	Meta     string `json:"meta"`
 }
 
 type GetAllCredentialsResponse struct {
@@ -123,6 +126,7 @@ type bankCardResponse struct {
 	ValidThru  string `json:"valid_thru"`
 	CVV        string `json:"cvv"`
 	CardHolder string `json:"card_holder"`
+	Meta       string `json:"meta"`
 }
 
 type GetAllBankCardsResponse struct {

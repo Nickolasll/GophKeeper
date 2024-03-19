@@ -36,6 +36,8 @@ type Credentials struct {
 	Login string
 	// Password - пароль
 	Password string
+	// Meta - Зашифрованные произвольные текстовые метаданные
+	Meta string
 }
 
 // BankCard - Сущность типа хранимой информации "Банковкая карта"
@@ -50,4 +52,6 @@ type BankCard struct {
 	CVV string
 	// CardHolder - Зашифрованные имя и фамилия держателя карты
 	CardHolder string
+	// Meta - Зашифрованные произвольные текстовые метаданные
+	Meta string
 }

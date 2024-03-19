@@ -27,7 +27,7 @@ func (u *GetAll) Do(userID uuid.UUID) (
 	texts []domain.Text,
 	bankCards []*domain.BankCard,
 	binaries []domain.Binary,
-	credentials []domain.Credentials,
+	credentials []*domain.Credentials,
 	err error,
 ) {
 	g := errgroup.Group{}
@@ -69,7 +69,7 @@ func (u *GetAll) Do(userID uuid.UUID) (
 	})
 	err = g.Wait()
 	if err != nil {
-		return []domain.Text{}, []*domain.BankCard{}, []domain.Binary{}, []domain.Credentials{}, err
+		return []domain.Text{}, []*domain.BankCard{}, []domain.Binary{}, []*domain.Credentials{}, err
 	}
 
 	return texts, bankCards, binaries, credentials, nil

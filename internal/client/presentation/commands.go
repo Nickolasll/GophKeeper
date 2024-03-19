@@ -405,11 +405,22 @@ func syncBinary() cli.Command {
 }
 
 func createCredentials() cli.Command {
+	var meta string
+
 	return cli.Command{
 		Name:      "credentials",
 		Usage:     "create new credentials",
 		ArgsUsage: "[name] [login] [password]",
 		Aliases:   []string{"c"},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "meta",
+				Aliases:     []string{"m"},
+				Usage:       "meta value to update",
+				DefaultText: "",
+				Destination: &meta,
+			},
+		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -421,7 +432,7 @@ func createCredentials() cli.Command {
 			login := cmd.Args().Get(1)
 			password := cmd.Args().Get(2)
 
-			err := app.CreateCredentials.Do(*currentSession, name, login, password)
+			err := app.CreateCredentials.Do(*currentSession, name, login, password, meta)
 			if err != nil {
 				if errors.Is(err, domain.ErrBadRequest) {
 					fmt.Println(err)
@@ -442,7 +453,7 @@ func createCredentials() cli.Command {
 }
 
 func updateCredentials() cli.Command {
-	var name, login, password string
+	var name, login, password, meta string
 
 	return cli.Command{
 		Name:      "credentials",
@@ -471,6 +482,13 @@ func updateCredentials() cli.Command {
 				DefaultText: "",
 				Destination: &password,
 			},
+			&cli.StringFlag{
+				Name:        "meta",
+				Aliases:     []string{"m"},
+				Usage:       "meta value to update",
+				DefaultText: "",
+				Destination: &meta,
+			},
 		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
@@ -493,7 +511,7 @@ func updateCredentials() cli.Command {
 				return nil
 			}
 
-			err = app.UpdateCredentials.Do(*currentSession, credID, name, login, password)
+			err = app.UpdateCredentials.Do(*currentSession, credID, name, login, password, meta)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
 					fmt.Println("credentials not found, id: ", credID)
@@ -588,11 +606,22 @@ func syncCredentials() cli.Command {
 }
 
 func createBankCard() cli.Command {
+	var meta string
+
 	return cli.Command{
 		Name:      "bank-card",
 		Usage:     "create new bank-card",
 		ArgsUsage: "[number] [valid-thru] [cvv] [(optional) card-holder]",
 		Aliases:   []string{"bc"},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "meta",
+				Aliases:     []string{"m"},
+				Usage:       "meta value to update",
+				DefaultText: "",
+				Destination: &meta,
+			},
+		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
 			if currentSession == nil {
 				fmt.Println("unauthorized")
@@ -629,7 +658,7 @@ func createBankCard() cli.Command {
 				return nil
 			}
 
-			err := app.CreateBankCard.Do(*currentSession, number, validThru, cvv, cardHolder)
+			err := app.CreateBankCard.Do(*currentSession, number, validThru, cvv, cardHolder, meta)
 			if err != nil {
 				if errors.Is(err, domain.ErrBadRequest) {
 					fmt.Println(err)
@@ -650,7 +679,7 @@ func createBankCard() cli.Command {
 }
 
 func updateBankCard() cli.Command {
-	var number, validThru, cvv, cardHolder string
+	var number, validThru, cvv, cardHolder, meta string
 
 	return cli.Command{
 		Name:      "bank-card",
@@ -681,6 +710,13 @@ func updateBankCard() cli.Command {
 				Usage:       "(optional) card-holder value to update",
 				DefaultText: "",
 				Destination: &cardHolder,
+			},
+			&cli.StringFlag{
+				Name:        "meta",
+				Aliases:     []string{"m"},
+				Usage:       "meta value to update",
+				DefaultText: "",
+				Destination: &meta,
 			},
 		},
 		Action: func(_ context.Context, cmd *cli.Command) error {
@@ -725,7 +761,7 @@ func updateBankCard() cli.Command {
 				return nil
 			}
 
-			err = app.UpdateBankCard.Do(*currentSession, cardID, number, validThru, cvv, cardHolder)
+			err = app.UpdateBankCard.Do(*currentSession, cardID, number, validThru, cvv, cardHolder, meta)
 			if err != nil {
 				if errors.Is(err, domain.ErrEntityNotFound) {
 					fmt.Println("bank-card not found, id: ", cardID)

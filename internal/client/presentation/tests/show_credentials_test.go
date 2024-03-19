@@ -29,7 +29,7 @@ func TestShowCredentialsSuccess(t *testing.T) {
 		Login:    "login",
 		Password: "password",
 	}
-	err = credentialsRepository.Create(userID, cred)
+	err = credentialsRepository.Create(userID, &cred)
 	require.NoError(t, err)
 	secondCred := domain.Credentials{
 		ID:       uuid.New(),
@@ -37,7 +37,7 @@ func TestShowCredentialsSuccess(t *testing.T) {
 		Login:    "login2",
 		Password: "password2",
 	}
-	err = credentialsRepository.Create(userID, secondCred)
+	err = credentialsRepository.Create(userID, &secondCred)
 	require.NoError(t, err)
 
 	args := []string{

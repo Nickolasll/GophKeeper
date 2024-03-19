@@ -45,7 +45,7 @@ type CredentialsRepositoryInterface interface {
 	// Get - Возвращает пару логин и пароль по идентификатору пользователя и данных, если они существуют
 	Get(userID uuid.UUID, credID uuid.UUID) (*Credentials, error)
 	// GetAll - Возвращает список логинов и паролей, принадлежащих пользователю
-	GetAll(userID uuid.UUID) ([]Credentials, error)
+	GetAll(userID uuid.UUID) ([]*Credentials, error)
 }
 
 // BankCardRepositoryInterface - Интерфейс репозитория для банковских карт

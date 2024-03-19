@@ -26,6 +26,7 @@ class server.domain.entities.Credentials {
     + Name : []byte
     + Login : []byte
     + Password : []byte
+    + Meta: []byte
 }
 
 class server.domain.entities.Text {
@@ -47,6 +48,7 @@ class server.domain.entities.BankCard {
     + ExpirationDate: []byte
     + CVV: []byte
     + CardHolder: []byte
+    + Meta: []byte
 }
 
 class server.domain.repositories.UserRepositoryInterface {
@@ -103,5 +105,4 @@ server.domain.entities.User "1" <-- "*" server.domain.entities.Credentials
 server.domain.entities.User "1" <-- "*" server.domain.entities.Text
 server.domain.entities.User "1" <-- "*" server.domain.entities.Binary
 server.domain.entities.User "1" <-- "*" server.domain.entities.BankCard
-
 @enduml

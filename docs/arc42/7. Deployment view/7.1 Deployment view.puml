@@ -10,6 +10,11 @@ end title
 
 Boundary(pc, "Компьютер пользователя") {
     System(client, "Клиент менеджера паролей «GophKeeper»", "Клиентская часть системы безопасного хранения паролей")
+    file "Настройки" as settings
+    file "База данных" as cli_db
+
+    Rel_Right(client, cli_db, "Чтение и запись данных", "io.ReadWriter")
+    Rel_Left(client, settings, "Чтение и настроек", "io.Reader")
 }
 
 System_Boundary(server, "Менеджер паролей «GophKeeper»", "Серверная часть системы безопасного хранения паролей") {

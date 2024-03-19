@@ -17,8 +17,11 @@ type CreateBankCard struct {
 }
 
 // Do - Вызов логики сценария использования
-func (u CreateBankCard) Do(session domain.Session, number, validThru, cvv, cardHolder string) error {
-	cardID, err := u.Client.CreateBankCard(session, number, validThru, cvv, cardHolder)
+func (u CreateBankCard) Do(
+	session domain.Session,
+	number, validThru, cvv, cardHolder, meta string,
+) error {
+	cardID, err := u.Client.CreateBankCard(session, number, validThru, cvv, cardHolder, meta)
 	if err != nil {
 		return err
 	}
@@ -29,6 +32,7 @@ func (u CreateBankCard) Do(session domain.Session, number, validThru, cvv, cardH
 		ValidThru:  validThru,
 		CVV:        cvv,
 		CardHolder: cardHolder,
+		Meta:       meta,
 	}
 
 	if err := u.BankCardRepository.Create(session.UserID, &card); err != nil {

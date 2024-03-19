@@ -21,7 +21,7 @@ type UpdateBankCard struct {
 func (u UpdateBankCard) Do(
 	session domain.Session,
 	cardID uuid.UUID,
-	number, validThru, cvv, cardHolder string,
+	number, validThru, cvv, cardHolder, meta string,
 ) error {
 	card, err := u.BankCardRepository.Get(session.UserID, cardID)
 	if err != nil {
@@ -39,6 +39,9 @@ func (u UpdateBankCard) Do(
 	}
 	if cardHolder != "" {
 		card.CardHolder = cardHolder
+	}
+	if meta != "" {
+		card.Meta = meta
 	}
 
 	if err := u.Client.UpdateBankCard(session, &card); err != nil {

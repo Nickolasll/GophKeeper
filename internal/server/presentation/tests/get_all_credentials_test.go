@@ -17,7 +17,7 @@ import (
 
 const getAllCredentialsURL = "/api/v1/credentials/all" // nolint: gosec
 
-func createCredentials(userID uuid.UUID, name, login, password string) (string, error) { // nolint: unparam
+func createCredentials(userID uuid.UUID, name, login, password, meta string) (string, error) { // nolint: unparam
 	credID := uuid.New()
 	encryptedName, err := cryptoService.Encrypt([]byte(name))
 	if err != nil {
@@ -31,12 +31,17 @@ func createCredentials(userID uuid.UUID, name, login, password string) (string, 
 	if err != nil {
 		return "", err
 	}
+	encryptedMeta, err := cryptoService.Encrypt([]byte(meta))
+	if err != nil {
+		return "", err
+	}
 	cred := domain.Credentials{
 		ID:       credID,
 		UserID:   userID,
 		Name:     encryptedName,
 		Login:    encryptedLogin,
 		Password: encryptedPassword,
+		Meta:     encryptedMeta,
 	}
 	err = credentialsRepository.Create(&cred)
 
@@ -57,11 +62,12 @@ func TestGetAllCredentialsSuccess(t *testing.T) {
 	name := "my credentials name"
 	login := "login"
 	password := "password"
+	meta := "my meta"
 
-	firstID, err := createCredentials(userID, name, login, password)
+	firstID, err := createCredentials(userID, name, login, password, meta)
 	require.NoError(t, err)
 
-	secondID, err := createCredentials(userID, name, login, password)
+	secondID, err := createCredentials(userID, name, login, password, meta)
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader(nil)
@@ -80,11 +86,13 @@ func TestGetAllCredentialsSuccess(t *testing.T) {
 	assert.Equal(t, responseData.Data.Credentials[0].Name, name)
 	assert.Equal(t, responseData.Data.Credentials[0].Login, login)
 	assert.Equal(t, responseData.Data.Credentials[0].Password, password)
+	assert.Equal(t, responseData.Data.Credentials[0].Meta, meta)
 
 	assert.Equal(t, responseData.Data.Credentials[1].ID, secondID)
 	assert.Equal(t, responseData.Data.Credentials[1].Name, name)
 	assert.Equal(t, responseData.Data.Credentials[1].Login, login)
 	assert.Equal(t, responseData.Data.Credentials[1].Password, password)
+	assert.Equal(t, responseData.Data.Credentials[1].Meta, meta)
 }
 
 func TestGetAllCredentialsInternalServerError(t *testing.T) { // nolint: dupl
@@ -104,6 +112,7 @@ func TestGetAllCredentialsInternalServerError(t *testing.T) { // nolint: dupl
 		Name:     []byte("not encrypted"),
 		Login:    []byte("not encrypted"),
 		Password: []byte("not encrypted"),
+		Meta:     []byte("not encrypted"),
 	}
 	err = credentialsRepository.Create(&cred)
 	require.NoError(t, err)

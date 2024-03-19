@@ -23,13 +23,13 @@ type GophKeeperClientInterface interface {
 	// GetAllBinaries - Получает все расшифрованные бинарные данные пользователя
 	GetAllBinaries(session Session) ([]Binary, error)
 	// CreateCredentials - Создает пару логин и пароль, возвращает идентификатор ресурса от сервера
-	CreateCredentials(session Session, name, login, password string) (uuid.UUID, error)
+	CreateCredentials(session Session, name, login, password, meta string) (uuid.UUID, error)
 	// UpdateCredentials - Обновляет существующую пару логина и пароля
-	UpdateCredentials(session Session, cred Credentials) error
+	UpdateCredentials(session Session, cred *Credentials) error
 	// GetAllCredentials - Получает все расшифрованные логины и пароли пользователя
 	GetAllCredentials(session Session) ([]Credentials, error)
 	// CreateBankCard - Создает банковскую карту, возвращает идентификатор ресурса от сервера
-	CreateBankCard(session Session, number, validThru, cvv, cardHolder string) (uuid.UUID, error)
+	CreateBankCard(session Session, number, validThru, cvv, cardHolder, meta string) (uuid.UUID, error)
 	// UpdateBankCard - Обновляет существующую банковскую карту
 	UpdateBankCard(session Session, card *BankCard) error
 	// GetAllBankCards - Получает все расшифрованные банковские карты пользователя

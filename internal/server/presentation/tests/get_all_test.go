@@ -38,11 +38,12 @@ func TestGetAllSuccess(t *testing.T) { // nolint: funlen
 	name := "my credentials name"
 	login := "login"
 	password := "password"
+	credMeta := "my credentials meta"
 
-	firstCredID, err := createCredentials(userID, name, login, password)
+	firstCredID, err := createCredentials(userID, name, login, password, credMeta)
 	require.NoError(t, err)
 
-	secondCredID, err := createCredentials(userID, name, login, password)
+	secondCredID, err := createCredentials(userID, name, login, password, credMeta)
 	require.NoError(t, err)
 
 	binaryContent := []byte("my beautiful binary")
@@ -56,11 +57,12 @@ func TestGetAllSuccess(t *testing.T) { // nolint: funlen
 	validThru := "01/11"
 	cvv := "000"
 	cardHolder := "name name"
+	cardMeta := "my card meta"
 
-	firstCardID, err := createBankCard(userID, number, validThru, cvv, cardHolder)
+	firstCardID, err := createBankCard(userID, number, validThru, cvv, cardHolder, cardMeta)
 	require.NoError(t, err)
 
-	secondCardID, err := createBankCard(userID, number, validThru, cvv, cardHolder)
+	secondCardID, err := createBankCard(userID, number, validThru, cvv, cardHolder, cardMeta)
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader(nil)
@@ -85,11 +87,13 @@ func TestGetAllSuccess(t *testing.T) { // nolint: funlen
 	assert.Equal(t, responseData.Data.Credentials[0].Name, name)
 	assert.Equal(t, responseData.Data.Credentials[0].Login, login)
 	assert.Equal(t, responseData.Data.Credentials[0].Password, password)
+	assert.Equal(t, responseData.Data.Credentials[0].Meta, credMeta)
 
 	assert.Equal(t, responseData.Data.Credentials[1].ID, secondCredID)
 	assert.Equal(t, responseData.Data.Credentials[1].Name, name)
 	assert.Equal(t, responseData.Data.Credentials[1].Login, login)
 	assert.Equal(t, responseData.Data.Credentials[1].Password, password)
+	assert.Equal(t, responseData.Data.Credentials[1].Meta, credMeta)
 
 	assert.Equal(t, responseData.Data.Binaries[0].ID, firstBinaryID)
 	assert.Equal(t, responseData.Data.Binaries[0].Content, binaryContent)
@@ -102,12 +106,13 @@ func TestGetAllSuccess(t *testing.T) { // nolint: funlen
 	assert.Equal(t, responseData.Data.BankCards[0].ValidThru, validThru)
 	assert.Equal(t, responseData.Data.BankCards[0].CVV, cvv)
 	assert.Equal(t, responseData.Data.BankCards[0].CardHolder, cardHolder)
+	assert.Equal(t, responseData.Data.BankCards[0].Meta, cardMeta)
 
 	assert.Equal(t, responseData.Data.BankCards[1].ID, secondCardID)
 	assert.Equal(t, responseData.Data.BankCards[1].Number, number)
 	assert.Equal(t, responseData.Data.BankCards[1].ValidThru, validThru)
 	assert.Equal(t, responseData.Data.BankCards[1].CVV, cvv)
-	assert.Equal(t, responseData.Data.BankCards[1].CardHolder, cardHolder)
+	assert.Equal(t, responseData.Data.BankCards[1].Meta, cardMeta)
 }
 
 func TestGetAllInternalServerError(t *testing.T) { // nolint: dupl

@@ -245,10 +245,10 @@ func (c HTTPClient) parseID(id string) (uuid.UUID, error) {
 // CreateCredentials - Создает пару логин и парль, возвращает идентификатор ресурса от сервера
 func (c HTTPClient) CreateCredentials(
 	session domain.Session,
-	name, login, password string,
+	name, login, password, meta string,
 ) (uuid.UUID, error) {
 	var uid uuid.UUID
-	payload, err := credentialsToJSON(name, login, password)
+	payload, err := credentialsToJSON(name, login, password, meta)
 	if err != nil {
 		return uid, err
 	}
@@ -269,9 +269,9 @@ func (c HTTPClient) CreateCredentials(
 // UpdateCredentials - Обновляет существующие логин и пароль
 func (c HTTPClient) UpdateCredentials(
 	session domain.Session,
-	cred domain.Credentials,
+	cred *domain.Credentials,
 ) error {
-	payload, err := credentialsToJSON(cred.Name, cred.Login, cred.Password)
+	payload, err := credentialsToJSON(cred.Name, cred.Login, cred.Password, cred.Meta)
 	if err != nil {
 		return err
 	}
@@ -287,10 +287,10 @@ func (c HTTPClient) UpdateCredentials(
 // CreateBankCard - Создает банковскую карту, возвращает идентификатор ресурса от сервера
 func (c HTTPClient) CreateBankCard(
 	session domain.Session,
-	number, validThru, cvv, cardHolder string,
+	number, validThru, cvv, cardHolder, meta string,
 ) (uuid.UUID, error) {
 	var uid uuid.UUID
-	payload, err := bankCardToJSON(number, validThru, cvv, cardHolder)
+	payload, err := bankCardToJSON(number, validThru, cvv, cardHolder, meta)
 	if err != nil {
 		return uid, err
 	}
@@ -313,7 +313,13 @@ func (c HTTPClient) UpdateBankCard(
 	session domain.Session,
 	card *domain.BankCard,
 ) error {
-	payload, err := bankCardToJSON(card.Number, card.ValidThru, card.CVV, card.CardHolder)
+	payload, err := bankCardToJSON(
+		card.Number,
+		card.ValidThru,
+		card.CVV,
+		card.CardHolder,
+		card.Meta,
+	)
 	if err != nil {
 		return err
 	}

@@ -40,10 +40,15 @@ func (u GetAllBankCards) Do(userID uuid.UUID) ([]*domain.BankCard, error) {
 		if err != nil {
 			return []*domain.BankCard{}, err
 		}
+		decryptedMeta, err := u.Crypto.Decrypt(v.Meta)
+		if err != nil {
+			return []*domain.BankCard{}, err
+		}
 		v.Number = decryptedNumber
 		v.ValidThru = decryptedValidThru
 		v.CVV = decryptedCVV
 		v.CardHolder = decryptedCardHolder
+		v.Meta = decryptedMeta
 		cards[i] = v
 	}
 

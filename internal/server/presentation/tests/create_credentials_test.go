@@ -121,4 +121,65 @@ func TestCreateCredentialsSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, password, string(decrPassword))
+
+	decrMeta, err := cryptoService.Decrypt(cred.Meta)
+	require.NoError(t, err)
+	assert.Equal(t, "", string(decrMeta))
+}
+
+func TestCreateCredentialsWithMetaSuccess(t *testing.T) {
+	router, err := setup()
+	require.NoError(t, err)
+	defer teardown()
+
+	userID := uuid.New()
+	err = createUser(userID)
+	require.NoError(t, err)
+	token, err := joseService.IssueToken(userID)
+	require.NoError(t, err)
+
+	name := "my cred name"
+	login := "login"
+	password := "password"
+	meta := "my metadata"
+
+	bodyReader := bytes.NewReader([]byte(`{
+		"name": "` + name + `", ` +
+		`"login": "` + login + `", ` +
+		`"password": "` + password + `",` +
+		`"meta": "` + meta + `"` +
+		`}`))
+	req := httptest.NewRequest("POST", "/api/v1/credentials/create", bodyReader)
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", string(token))
+	responseRecorder := httptest.NewRecorder()
+	router.ServeHTTP(responseRecorder, req)
+	assert.Equal(t, http.StatusCreated, responseRecorder.Code)
+
+	require.NotEmpty(t, responseRecorder.Header().Get("Location"))
+	id := responseRecorder.Header().Get("Location")
+	credID, err := uuid.Parse(id)
+	require.NoError(t, err)
+
+	cred, err := credentialsRepository.Get(userID, credID)
+	require.NoError(t, err)
+
+	decrName, err := cryptoService.Decrypt(cred.Name)
+	require.NoError(t, err)
+
+	assert.Equal(t, name, string(decrName))
+
+	decrLogin, err := cryptoService.Decrypt(cred.Login)
+	require.NoError(t, err)
+
+	assert.Equal(t, login, string(decrLogin))
+
+	decrPassword, err := cryptoService.Decrypt(cred.Password)
+	require.NoError(t, err)
+
+	assert.Equal(t, password, string(decrPassword))
+
+	decrMeta, err := cryptoService.Decrypt(cred.Meta)
+	require.NoError(t, err)
+	assert.Equal(t, meta, string(decrMeta))
 }

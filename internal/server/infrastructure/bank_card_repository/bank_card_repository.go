@@ -37,6 +37,7 @@ func (r BankCardRepository) Create(card *domain.BankCard) error {
 			, valid_thru
 			, cvv
 			, card_holder
+			, meta
 		)
 		VALUES
 		(
@@ -46,6 +47,7 @@ func (r BankCardRepository) Create(card *domain.BankCard) error {
 			, @valid_thru
 			, @cvv
 			, @card_holder
+			, @meta
 		)
 		;`
 	args := pgx.NamedArgs{
@@ -55,6 +57,7 @@ func (r BankCardRepository) Create(card *domain.BankCard) error {
 		"valid_thru":  card.ValidThru,
 		"cvv":         card.CVV,
 		"card_holder": card.CardHolder,
+		"meta":        card.Meta,
 	}
 	_, err := r.DBPool.Exec(ctx, sql, args)
 
@@ -72,6 +75,7 @@ func (r BankCardRepository) Update(card *domain.BankCard) error {
 			, valid_thru = @valid_thru
 			, cvv = @cvv
 			, card_holder = @card_holder
+			, meta = @meta
 		WHERE
 			bank_card_data.id = @id
 		    AND bank_card_data.user_id = @userID
@@ -84,6 +88,7 @@ func (r BankCardRepository) Update(card *domain.BankCard) error {
 		"valid_thru":  card.ValidThru,
 		"cvv":         card.CVV,
 		"card_holder": card.CardHolder,
+		"meta":        card.Meta,
 	}
 	_, err := r.DBPool.Exec(ctx, sql, args)
 
@@ -104,6 +109,7 @@ func (r BankCardRepository) Get(userID, cardID uuid.UUID) (*domain.BankCard, err
 			, bank_card_data.valid_thru
 			, bank_card_data.cvv
 			, bank_card_data.card_holder
+			, bank_card_data.meta
 		FROM
 			bank_card_data
 		WHERE
@@ -123,6 +129,7 @@ func (r BankCardRepository) Get(userID, cardID uuid.UUID) (*domain.BankCard, err
 			&card.ValidThru,
 			&card.CVV,
 			&card.CardHolder,
+			&card.Meta,
 		)
 
 	if err != nil {
@@ -149,6 +156,7 @@ func (r BankCardRepository) GetAll(userID uuid.UUID) ([]*domain.BankCard, error)
 			, bank_card_data.valid_thru
 			, bank_card_data.cvv
 			, bank_card_data.card_holder
+			, bank_card_data.meta
 		FROM
 			bank_card_data
 		WHERE
@@ -172,6 +180,7 @@ func (r BankCardRepository) GetAll(userID uuid.UUID) ([]*domain.BankCard, error)
 			&card.ValidThru,
 			&card.CVV,
 			&card.CardHolder,
+			&card.Meta,
 		)
 		if err == nil {
 			result = append(result, &card)

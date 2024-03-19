@@ -16,6 +16,7 @@ func TestUpdateBankCardFullDataSuccess(t *testing.T) {
 	validThru := "01/11"
 	cvv := "000"
 	cardHolder := "name name"
+	meta := "meta"
 
 	cardID := uuid.New()
 	client := FakeHTTPClient{}
@@ -36,6 +37,7 @@ func TestUpdateBankCardFullDataSuccess(t *testing.T) {
 		ValidThru:  "valid/thru",
 		CVV:        "cvv",
 		CardHolder: "card holder",
+		Meta:       "",
 	}
 
 	err = bankCardRepository.Create(userID, &card)
@@ -45,6 +47,8 @@ func TestUpdateBankCardFullDataSuccess(t *testing.T) {
 		"gophkeeper",
 		"update",
 		"bank-card",
+		"--meta",
+		meta,
 		"--number",
 		number,
 		"--valid-thru",
@@ -65,6 +69,7 @@ func TestUpdateBankCardFullDataSuccess(t *testing.T) {
 	assert.Equal(t, cardObj.ValidThru, validThru)
 	assert.Equal(t, cardObj.CVV, cvv)
 	assert.Equal(t, cardObj.CardHolder, cardHolder)
+	assert.Equal(t, cardObj.Meta, meta)
 }
 
 func TestUpdateBankCardInvalidInput(t *testing.T) {

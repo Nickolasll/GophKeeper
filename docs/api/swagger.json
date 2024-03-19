@@ -794,6 +794,9 @@
                 "cvv": {
                     "type": "string"
                 },
+                "meta": {
+                    "type": "string"
+                },
                 "number": {
                     "type": "string"
                 },
@@ -812,6 +815,9 @@
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "meta": {
                     "type": "string"
                 },
                 "number": {
@@ -848,6 +854,9 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "meta": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string",
                     "minLength": 1
@@ -865,6 +874,9 @@
                     "type": "string"
                 },
                 "login": {
+                    "type": "string"
+                },
+                "meta": {
                     "type": "string"
                 },
                 "name": {

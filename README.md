@@ -54,12 +54,12 @@
 * `gophkeeper login [username] [password]` - авторизация пользователя по логину и паролю;
 * `gophkeeper create text [content]` - создать новые текстовые данные;
 * `gophkeeper create binary [path-to-file]` - создать новые бинарные данные из файла;
-* `gophkeeper create credentials [name] [login] [password]` - создать новый логин и пароль;
-* `gophkeeper create bank-card [number] [valid-thru] [cvv] [(optional) card-holder]` - создать новую банковскую карту;
+* `gophkeeper create credentials --meta=[value] [name] [login] [password]` - создать новый логин и пароль;
+* `gophkeeper create bank-card --meta=[value] [number] [valid-thru] [cvv] [(optional) card-holder]` - создать новую банковскую карту;
 * `gophkeeper update text [id] [content]` - обновить существующие текстовые данные;
 * `gophkeeper update binary [id] [path-to-file]` - обновить существующие бинарные данные;
-* `gophkeeper update credentials --name --login --password [id]` - обновить существующие логин и пароль;
-* `gophkeeper update bank-card --number --valid-thru --cvv --card-holder [id]` - обновить существующую банковскую карту;
+* `gophkeeper update credentials --name=[value] --login=[value] --password=[value] --meta=[value] [id]` - обновить существующие логин и пароль;
+* `gophkeeper update bank-card --number=[value] --valid-thru=[value] --cvv=[value] --card-holder=[value] --meta=[value] [id]` - обновить существующую банковскую карту;
 * `gophkeeper show texts` - показать локальные текстовые данные;
 * `gophkeeper show binaries` - показать локальные бинарные данные;
 * `gophkeeper show credentials` - показать локальные логины и пароли;
@@ -85,7 +85,6 @@
 * `make build-client` - сборка бинарных файлов для cli приложения;
 * `make clean` - очистка окружения;
 * `make format` - форматирование исходного кода;
-* `make generate-spec` - генерация swagger spec;
 * `make godoc-get` - Получить документацию в формате html;
 * `make godoc-run` - Запустить сервер документации;
 * `make help` - вывод всех доступных команд;
@@ -94,6 +93,7 @@
 * `make migration-fix` - Фиксация миграций бд сервера (в случае неудачной установки/отката);
 * `make migration-up` - Установка миграций бд сервера;
 * `make setup` - установка виртуального окружения и всех зависимостей;
+* `make swag` - генерация swagger spec;
 * `make test` - запуск юнит-тестов;
 
 Список всех команд (Makefile targets) смотрите в [Makefile](Makefile).

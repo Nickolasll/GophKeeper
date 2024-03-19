@@ -36,6 +36,7 @@ func (r CredentialsRepository) Create(cred *domain.Credentials) error {
 			, name
 			, login
 			, password
+			, meta
 		)
 		VALUES
 		(
@@ -44,6 +45,7 @@ func (r CredentialsRepository) Create(cred *domain.Credentials) error {
 			, @name
 			, @login
 			, @password
+			, @meta
 		)
 		;`
 	args := pgx.NamedArgs{
@@ -52,6 +54,7 @@ func (r CredentialsRepository) Create(cred *domain.Credentials) error {
 		"name":     cred.Name,
 		"login":    cred.Login,
 		"password": cred.Password,
+		"meta":     cred.Meta,
 	}
 	_, err := r.DBPool.Exec(ctx, sql, args)
 
@@ -68,6 +71,7 @@ func (r CredentialsRepository) Update(cred *domain.Credentials) error {
 			name = @name
 			, login = @login
 			, password = @password
+			, meta = @meta
 		WHERE
 			credentials_data.id = @id
 		    AND credentials_data.user_id = @userID
@@ -79,6 +83,7 @@ func (r CredentialsRepository) Update(cred *domain.Credentials) error {
 		"name":     cred.Name,
 		"login":    cred.Login,
 		"password": cred.Password,
+		"meta":     cred.Meta,
 	}
 	_, err := r.DBPool.Exec(ctx, sql, args)
 
@@ -98,6 +103,7 @@ func (r CredentialsRepository) Get(userID, credID uuid.UUID) (*domain.Credential
 			, credentials_data.name
 			, credentials_data.login
 			, credentials_data.password
+			, credentials_data.meta
 		FROM
 			credentials_data
 		WHERE
@@ -110,7 +116,14 @@ func (r CredentialsRepository) Get(userID, credID uuid.UUID) (*domain.Credential
 	}
 	err := r.DBPool.
 		QueryRow(ctx, sql, args).
-		Scan(&cred.ID, &cred.UserID, &cred.Name, &cred.Login, &cred.Password)
+		Scan(
+			&cred.ID,
+			&cred.UserID,
+			&cred.Name,
+			&cred.Login,
+			&cred.Password,
+			&cred.Meta,
+		)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -124,8 +137,8 @@ func (r CredentialsRepository) Get(userID, credID uuid.UUID) (*domain.Credential
 }
 
 // GetAll - Возвращает список пар логин и пароль, принадлежащих пользователю
-func (r CredentialsRepository) GetAll(userID uuid.UUID) ([]domain.Credentials, error) {
-	result := []domain.Credentials{}
+func (r CredentialsRepository) GetAll(userID uuid.UUID) ([]*domain.Credentials, error) {
+	result := []*domain.Credentials{}
 	ctx, cancel := context.WithTimeout(context.Background(), r.Timeout)
 	defer cancel()
 	sql := `
@@ -135,6 +148,7 @@ func (r CredentialsRepository) GetAll(userID uuid.UUID) ([]domain.Credentials, e
 			, credentials_data.name
 			, credentials_data.login
 			, credentials_data.password
+			, credentials_data.meta
 		FROM
 			credentials_data
 		WHERE
@@ -157,9 +171,10 @@ func (r CredentialsRepository) GetAll(userID uuid.UUID) ([]domain.Credentials, e
 			&cred.Name,
 			&cred.Login,
 			&cred.Password,
+			&cred.Meta,
 		)
 		if err == nil {
-			result = append(result, cred)
+			result = append(result, &cred)
 		}
 	}
 	if rows.Err() != nil {

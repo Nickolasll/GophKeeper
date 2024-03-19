@@ -30,6 +30,7 @@ CREATE TABLE credentials_data (
 	, name     bytea NOT NULL
 	, login    bytea NOT NULL
 	, password bytea NOT NULL
+	, meta     bytea NOT NULL
 );
 
 ALTER TABLE credentials_data
@@ -42,6 +43,7 @@ CREATE TABLE bank_card_data (
 	, valid_thru  bytea NOT NULL
 	, cvv         bytea NOT NULL
 	, card_holder bytea NOT NULL
+	, meta        bytea NOT NULL
 );
 
 ALTER TABLE bank_card_data

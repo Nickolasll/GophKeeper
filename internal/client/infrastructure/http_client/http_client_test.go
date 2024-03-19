@@ -331,7 +331,7 @@ func TestCreateCredentialsSuccess(t *testing.T) {
 	client := newClient(server.URL)
 	session := newSession()
 
-	uid, err := client.CreateCredentials(session, "name", "login", "password")
+	uid, err := client.CreateCredentials(session, "name", "login", "password", "meta")
 	require.NoError(t, err)
 	assert.Equal(t, uid, id)
 }
@@ -348,7 +348,7 @@ func TestCreateCredentialsInvalidLocation(t *testing.T) {
 	client := newClient(server.URL)
 	session := newSession()
 
-	_, err := client.CreateCredentials(session, "name", "login", "password")
+	_, err := client.CreateCredentials(session, "name", "login", "password", "meta")
 	require.Error(t, err)
 }
 
@@ -356,7 +356,7 @@ func TestCreateCredentialsWrongURL(t *testing.T) {
 	client := newClient("wrongurl.com")
 	session := newSession()
 
-	_, err := client.CreateCredentials(session, "name", "login", "password")
+	_, err := client.CreateCredentials(session, "name", "login", "password", "meta")
 	require.Error(t, err)
 }
 
@@ -373,7 +373,7 @@ func TestCreateBankCardSuccess(t *testing.T) {
 	client := newClient(server.URL)
 	session := newSession()
 
-	uid, err := client.CreateBankCard(session, "number", "valid_thru", "cvv", "card_holder")
+	uid, err := client.CreateBankCard(session, "number", "valid_thru", "cvv", "card_holder", "meta")
 	require.NoError(t, err)
 	assert.Equal(t, uid, id)
 }
@@ -390,7 +390,7 @@ func TestCreateBankCardInvalidLocation(t *testing.T) {
 	client := newClient(server.URL)
 	session := newSession()
 
-	_, err := client.CreateBankCard(session, "number", "valid_thru", "cvv", "card_holder")
+	_, err := client.CreateBankCard(session, "number", "valid_thru", "cvv", "card_holder", "meta")
 	require.Error(t, err)
 }
 
@@ -398,7 +398,7 @@ func TestCreateBankCardWrongURL(t *testing.T) {
 	client := newClient("wrongurl.com")
 	session := newSession()
 
-	_, err := client.CreateBankCard(session, "number", "valid_thru", "cvv", "card_holder")
+	_, err := client.CreateBankCard(session, "number", "valid_thru", "cvv", "card_holder", "meta")
 	require.Error(t, err)
 }
 
@@ -548,7 +548,7 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 		Password: "password",
 	}
 
-	err := client.UpdateCredentials(session, cred)
+	err := client.UpdateCredentials(session, &cred)
 	require.NoError(t, err)
 }
 
@@ -562,7 +562,7 @@ func TestUpdateCredentialsWrongURL(t *testing.T) {
 		Password: "password",
 	}
 
-	err := client.UpdateCredentials(session, cred)
+	err := client.UpdateCredentials(session, &cred)
 	require.Error(t, err)
 }
 

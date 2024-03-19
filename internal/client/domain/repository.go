@@ -56,9 +56,9 @@ type BinaryRepositoryInterface interface {
 // CredentialsRepositoryInterface - Интерфейс репозитория для логинов и паролей
 type CredentialsRepositoryInterface interface {
 	// Create - Сохраняет новую пару логина и пароля
-	Create(userID uuid.UUID, cred Credentials) error
+	Create(userID uuid.UUID, cred *Credentials) error
 	// Update - Сохраняет существующую пару логина и пароля
-	Update(userID uuid.UUID, cred Credentials) error
+	Update(userID uuid.UUID, cred *Credentials) error
 	// Get - Возвращает пару логин и парль по идентификатору данных и пользователя, если они существуют
 	Get(userID, credID uuid.UUID) (Credentials, error)
 	// GetAll - Возвращает все логины и пароли для пользователя

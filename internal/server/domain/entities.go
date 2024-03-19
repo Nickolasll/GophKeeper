@@ -46,6 +46,8 @@ type Credentials struct {
 	Login []byte
 	// Password - Зашифрованный пароль
 	Password []byte
+	// Meta - Зашифрованные произвольные текстовые метаданные
+	Meta []byte
 }
 
 // BankCard - Сущность типа хранимой информации "Банковкая карта"
@@ -62,4 +64,6 @@ type BankCard struct {
 	CVV []byte
 	// CardHolder - Зашифрованные имя и фамилия держателя карты
 	CardHolder []byte
+	// Meta - Зашифрованные произвольные текстовые метаданные
+	Meta []byte
 }

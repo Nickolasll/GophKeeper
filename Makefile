@@ -56,7 +56,7 @@ build-client:  ## Сборка бинарников клиента под раз
 	GOOS=darwin GOARCH=arm64 go build $(CLIENT_BUILD_FLAGS) -o $(CLIENT_BIN)/cli_darwin_arm64 $(CLIENT_DIR)/main.go
 	cp $(CLIENT_DIR)/config.json $(CLIENT_BIN)/config.json
 
-generate-spec:  ## Генерация swagger spec
+swag:  ## Генерация swagger spec
 	swag init --parseInternal --dir cmd/server/,internal/server/presentation/ -o ./docs/api
 
 godoc-run: ## Запустить сервер документации

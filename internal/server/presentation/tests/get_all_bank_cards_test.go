@@ -17,7 +17,7 @@ import (
 
 const getAllBankCardsURL = "/api/v1/bank_card/all"
 
-func createBankCard(userID uuid.UUID, number, validThru, cvv, cardHolder string) (string, error) { // nolint: unparam
+func createBankCard(userID uuid.UUID, number, validThru, cvv, cardHolder, meta string) (string, error) { // nolint: unparam
 	cardID := uuid.New()
 	encryptedNumber, err := cryptoService.Encrypt([]byte(number))
 	if err != nil {
@@ -35,6 +35,10 @@ func createBankCard(userID uuid.UUID, number, validThru, cvv, cardHolder string)
 	if err != nil {
 		return "", err
 	}
+	encryptedMeta, err := cryptoService.Encrypt([]byte(meta))
+	if err != nil {
+		return "", err
+	}
 	card := domain.BankCard{
 		ID:         cardID,
 		UserID:     userID,
@@ -42,6 +46,7 @@ func createBankCard(userID uuid.UUID, number, validThru, cvv, cardHolder string)
 		ValidThru:  encryptedValidThru,
 		CardHolder: encryptedCardHolder,
 		CVV:        encryptedCVV,
+		Meta:       encryptedMeta,
 	}
 	err = cardRepository.Create(&card)
 
@@ -63,11 +68,12 @@ func TestGetAllBankCardsSuccess(t *testing.T) {
 	validThru := "01/11"
 	cvv := "000"
 	cardHolder := "name name"
+	meta := "my meta data"
 
-	firstID, err := createBankCard(userID, number, validThru, cvv, cardHolder)
+	firstID, err := createBankCard(userID, number, validThru, cvv, cardHolder, meta)
 	require.NoError(t, err)
 
-	secondID, err := createBankCard(userID, number, validThru, cvv, cardHolder)
+	secondID, err := createBankCard(userID, number, validThru, cvv, cardHolder, meta)
 	require.NoError(t, err)
 
 	bodyReader := bytes.NewReader(nil)
@@ -87,12 +93,14 @@ func TestGetAllBankCardsSuccess(t *testing.T) {
 	assert.Equal(t, responseData.Data.BankCards[0].ValidThru, validThru)
 	assert.Equal(t, responseData.Data.BankCards[0].CVV, cvv)
 	assert.Equal(t, responseData.Data.BankCards[0].CardHolder, cardHolder)
+	assert.Equal(t, responseData.Data.BankCards[0].Meta, meta)
 
 	assert.Equal(t, responseData.Data.BankCards[1].ID, secondID)
 	assert.Equal(t, responseData.Data.BankCards[1].Number, number)
 	assert.Equal(t, responseData.Data.BankCards[1].ValidThru, validThru)
 	assert.Equal(t, responseData.Data.BankCards[1].CVV, cvv)
 	assert.Equal(t, responseData.Data.BankCards[1].CardHolder, cardHolder)
+	assert.Equal(t, responseData.Data.BankCards[1].Meta, meta)
 }
 
 func TestGetAllBankCardsInternalServerError(t *testing.T) { // nolint: dupl
@@ -114,6 +122,7 @@ func TestGetAllBankCardsInternalServerError(t *testing.T) { // nolint: dupl
 		ValidThru:  notEncrypted,
 		CardHolder: notEncrypted,
 		CVV:        notEncrypted,
+		Meta:       notEncrypted,
 	}
 
 	err = cardRepository.Create(&card)

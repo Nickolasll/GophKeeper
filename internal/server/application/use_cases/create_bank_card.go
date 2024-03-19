@@ -20,7 +20,7 @@ type CreateBankCard struct {
 // Do - Вызов исполнения сценария использования, возвращает идентификатор ресурса
 func (u *CreateBankCard) Do(
 	userID uuid.UUID,
-	number, validThru, cvv, cardHolder string,
+	number, validThru, cvv, cardHolder, meta string,
 ) (uuid.UUID, error) {
 	cardID := uuid.New()
 	encryptedNumber, err := u.Crypto.Encrypt([]byte(number))
@@ -39,6 +39,10 @@ func (u *CreateBankCard) Do(
 	if err != nil {
 		return cardID, err
 	}
+	encryptedMeta, err := u.Crypto.Encrypt([]byte(meta))
+	if err != nil {
+		return cardID, err
+	}
 	card := domain.BankCard{
 		ID:         cardID,
 		UserID:     userID,
@@ -46,6 +50,7 @@ func (u *CreateBankCard) Do(
 		ValidThru:  encryptedValidThru,
 		CVV:        encryptedCVV,
 		CardHolder: encryptedCardHolder,
+		Meta:       encryptedMeta,
 	}
 	err = u.BankCardRepository.Create(&card)
 

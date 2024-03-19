@@ -45,7 +45,7 @@ func TestSyncCredentialsOverrideSuccess(t *testing.T) {
 		Login:    "my old login",
 		Password: "my old password",
 	}
-	err = credentialsRepository.Create(userID, cred)
+	err = credentialsRepository.Create(userID, &cred)
 	require.NoError(t, err)
 
 	args := []string{

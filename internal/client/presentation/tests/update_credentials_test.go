@@ -14,6 +14,7 @@ import (
 func TestUpdateCredentialsSuccess(t *testing.T) {
 	name := "new name"
 	password := "new password"
+	meta := "my meta"
 
 	credID := uuid.New()
 	client := FakeHTTPClient{}
@@ -33,14 +34,17 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 		Name:     "old name",
 		Login:    "old login",
 		Password: "old password",
+		Meta:     "",
 	}
-	err = credentialsRepository.Create(userID, cred)
+	err = credentialsRepository.Create(userID, &cred)
 	require.NoError(t, err)
 
 	args := []string{
 		"gophkeeper",
 		"update",
 		"credentials",
+		"--meta",
+		meta,
 		"--name",
 		name,
 		"--password",
@@ -56,6 +60,7 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 	assert.Equal(t, credObj.Name, name)
 	assert.Equal(t, credObj.Login, "old login")
 	assert.Equal(t, credObj.Password, password)
+	assert.Equal(t, credObj.Meta, meta)
 }
 
 func TestUpdateCredentialsBadRequest(t *testing.T) {

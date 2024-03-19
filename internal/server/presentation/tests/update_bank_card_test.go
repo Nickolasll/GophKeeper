@@ -84,6 +84,7 @@ func TestUpdateBankCardSuccess(t *testing.T) {
 		CVV:        []byte("000"),
 		ValidThru:  []byte("01/11"),
 		CardHolder: []byte(""),
+		Meta:       []byte(""),
 	}
 	err = cardRepository.Create(&card)
 	require.NoError(t, err)
@@ -92,12 +93,14 @@ func TestUpdateBankCardSuccess(t *testing.T) {
 	validThru := "01/30"
 	cvv := "123"
 	cardHolder := "Card Holder"
+	meta := "meta to update"
 
 	bodyReader := bytes.NewReader([]byte(`{
 		"number": "` + number + `", ` +
 		`"valid_thru": "` + validThru + `", ` +
 		`"cvv": "` + cvv + `", ` +
-		`"card_holder": "` + cardHolder + `"` +
+		`"card_holder": "` + cardHolder + `",` +
+		`"meta": "` + meta + `"` +
 		`}`))
 	req := httptest.NewRequest("POST", cardURL+cardID.String(), bodyReader)
 	req.Header.Add("Content-Type", "application/json")
@@ -128,6 +131,11 @@ func TestUpdateBankCardSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, cardHolder, string(decrCardHolder))
+
+	decrMeta, err := cryptoService.Decrypt(cardObj.Meta)
+	require.NoError(t, err)
+
+	assert.Equal(t, meta, string(decrMeta))
 }
 
 func TestUpdateBankCardNotFound(t *testing.T) {

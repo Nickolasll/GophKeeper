@@ -10,13 +10,15 @@ type credentialsPayload struct {
 	Name     string `json:"name"`
 	Login    string `json:"login"`
 	Password string `json:"password"`
+	Meta     string `json:"meta"`
 }
 
-func credentialsToJSON(name, login, password string) ([]byte, error) {
+func credentialsToJSON(name, login, password, meta string) ([]byte, error) {
 	cred := credentialsPayload{
 		Name:     name,
 		Login:    login,
 		Password: password,
+		Meta:     meta,
 	}
 	data, err := json.Marshal(cred)
 	if err != nil {
@@ -31,14 +33,16 @@ type bankCardPayload struct {
 	ValidThru  string `json:"valid_thru"`
 	CVV        string `json:"cvv"`
 	CardHolder string `json:"card_holder"`
+	Meta       string `json:"meta"`
 }
 
-func bankCardToJSON(number, validThru, cvv, cardHolder string) ([]byte, error) {
+func bankCardToJSON(number, validThru, cvv, cardHolder, meta string) ([]byte, error) {
 	cred := bankCardPayload{
 		Number:     number,
 		ValidThru:  validThru,
 		CVV:        cvv,
 		CardHolder: cardHolder,
+		Meta:       meta,
 	}
 	data, err := json.Marshal(cred)
 	if err != nil {

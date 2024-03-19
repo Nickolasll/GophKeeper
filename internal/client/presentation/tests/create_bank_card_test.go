@@ -16,6 +16,7 @@ func TestCreateBankCardSuccess(t *testing.T) {
 	validThru := "01/11"            //nolint: goconst
 	cvv := "000"
 	cardHolder := "name name"
+	meta := "my meta value"
 
 	cardID := uuid.New()
 	client := FakeHTTPClient{
@@ -36,6 +37,8 @@ func TestCreateBankCardSuccess(t *testing.T) {
 		"gophkeeper",
 		"create",
 		"bank-card",
+		"--meta",
+		meta,
 		number,
 		validThru,
 		cvv,
@@ -51,9 +54,10 @@ func TestCreateBankCardSuccess(t *testing.T) {
 	assert.Equal(t, card.ValidThru, validThru)
 	assert.Equal(t, card.CVV, cvv)
 	assert.Equal(t, card.CardHolder, cardHolder)
+	assert.Equal(t, card.Meta, meta)
 }
 
-func TestCreateBankCardNoHolderSuccess(t *testing.T) {
+func TestCreateBankCardNoHolderNoMetaSuccess(t *testing.T) {
 	number := "0000 0000 0000 0000"
 	validThru := "01/11"
 	cvv := "000"

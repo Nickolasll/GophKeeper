@@ -82,6 +82,7 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 		Name:     []byte("name"),
 		Login:    []byte("login"),
 		Password: []byte("password"),
+		Meta:     []byte(""),
 	}
 	err = credentialsRepository.Create(&cred)
 	require.NoError(t, err)
@@ -89,11 +90,13 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 	name := "my name to update"
 	login := "my login to update"
 	password := "my password to update"
+	meta := "my meta to update"
 
 	bodyReader := bytes.NewReader([]byte(`{
 		"name": "` + name + `", ` +
 		`"login": "` + login + `", ` +
-		`"password": "` + password + `"` +
+		`"password": "` + password + `",` +
+		`"meta": "` + meta + `"` +
 		`}`))
 	req := httptest.NewRequest("POST", credURL+credID.String(), bodyReader)
 	req.Header.Add("Content-Type", "application/json")
@@ -119,6 +122,11 @@ func TestUpdateCredentialsSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, password, string(decrPassword))
+
+	decrMeta, err := cryptoService.Decrypt(credObj.Meta)
+	require.NoError(t, err)
+
+	assert.Equal(t, meta, string(decrMeta))
 }
 
 func TestUpdateCredentialsNotFound(t *testing.T) {

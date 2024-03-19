@@ -77,7 +77,7 @@ func (c FakeHTTPClient) UpdateBinary(_ domain.Session, _ domain.Binary) error {
 }
 
 // CreateCredentials - Создает пару логин и пароль, возвращает идентификатор ресурса от сервера
-func (c FakeHTTPClient) CreateCredentials(_ domain.Session, _, _, _ string) (uuid.UUID, error) {
+func (c FakeHTTPClient) CreateCredentials(_ domain.Session, _, _, _, _ string) (uuid.UUID, error) {
 	if c.Err != nil {
 		return uuid.New(), c.Err
 	}
@@ -86,12 +86,12 @@ func (c FakeHTTPClient) CreateCredentials(_ domain.Session, _, _, _ string) (uui
 }
 
 // UpdateCredentials - Обновляет существующий логин и пароль
-func (c FakeHTTPClient) UpdateCredentials(_ domain.Session, _ domain.Credentials) error {
+func (c FakeHTTPClient) UpdateCredentials(_ domain.Session, _ *domain.Credentials) error {
 	return c.Err
 }
 
 // CreateCredentials - Создает новую банковскую карту, возвращает идентификатор ресурса от сервера
-func (c FakeHTTPClient) CreateBankCard(_ domain.Session, _, _, _, _ string) (uuid.UUID, error) {
+func (c FakeHTTPClient) CreateBankCard(_ domain.Session, _, _, _, _, _ string) (uuid.UUID, error) {
 	if c.Err != nil {
 		return uuid.New(), c.Err
 	}

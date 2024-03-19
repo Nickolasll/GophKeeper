@@ -21,7 +21,7 @@ type UpdateCredentials struct {
 func (u UpdateCredentials) Do(
 	session domain.Session,
 	credID uuid.UUID,
-	name, login, password string,
+	name, login, password, meta string,
 ) error {
 	cred, err := u.CredentialsRepository.Get(session.UserID, credID)
 	if err != nil {
@@ -37,12 +37,15 @@ func (u UpdateCredentials) Do(
 	if password != "" {
 		cred.Password = password
 	}
+	if meta != "" {
+		cred.Meta = meta
+	}
 
-	if err := u.Client.UpdateCredentials(session, cred); err != nil {
+	if err := u.Client.UpdateCredentials(session, &cred); err != nil {
 		return err
 	}
 
-	if err := u.CredentialsRepository.Update(session.UserID, cred); err != nil {
+	if err := u.CredentialsRepository.Update(session.UserID, &cred); err != nil {
 		return err
 	}
 

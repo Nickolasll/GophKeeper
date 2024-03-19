@@ -21,7 +21,7 @@ type CreateCredentials struct {
 // Do - Вызов исполнения сценария использования, возвращает идентификатор ресурса
 func (u *CreateCredentials) Do(
 	userID uuid.UUID,
-	name, login, password string,
+	name, login, password, meta string,
 ) (uuid.UUID, error) {
 	credID := uuid.New()
 	encryptedName, err := u.Crypto.Encrypt([]byte(name))
@@ -36,12 +36,17 @@ func (u *CreateCredentials) Do(
 	if err != nil {
 		return credID, err
 	}
+	encryptedMeta, err := u.Crypto.Encrypt([]byte(meta))
+	if err != nil {
+		return credID, err
+	}
 	cred := domain.Credentials{
 		ID:       credID,
 		UserID:   userID,
 		Name:     encryptedName,
 		Login:    encryptedLogin,
 		Password: encryptedPassword,
+		Meta:     encryptedMeta,
 	}
 	err = u.CredentialsRepository.Create(&cred)
 

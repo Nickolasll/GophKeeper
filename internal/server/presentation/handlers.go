@@ -414,6 +414,7 @@ func createCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 		payload.Name,
 		payload.Login,
 		payload.Password,
+		payload.Meta,
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -466,6 +467,7 @@ func updateCredentialsHandler(w http.ResponseWriter, r *http.Request, userID uui
 		payload.Name,
 		payload.Login,
 		payload.Password,
+		payload.Meta,
 	)
 	if err != nil {
 		if errors.Is(err, domain.ErrEntityNotFound) {
@@ -507,6 +509,7 @@ func getAllCredentialsHandler(w http.ResponseWriter, _ *http.Request, userID uui
 			Name:     string(v.Name),
 			Login:    string(v.Login),
 			Password: string(v.Password),
+			Meta:     string(v.Meta),
 		}
 		credResponse = append(credResponse, respItem)
 	}
@@ -562,6 +565,7 @@ func createBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 		payload.ValidThru,
 		payload.CVV,
 		payload.CardHolder,
+		payload.Meta,
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -615,6 +619,7 @@ func updateBankCardHandler(w http.ResponseWriter, r *http.Request, userID uuid.U
 		payload.ValidThru,
 		payload.CVV,
 		payload.CardHolder,
+		payload.Meta,
 	)
 	if err != nil {
 		if errors.Is(err, domain.ErrEntityNotFound) {
@@ -657,6 +662,7 @@ func getAllBankCardsHandler(w http.ResponseWriter, _ *http.Request, userID uuid.
 			ValidThru:  string(v.ValidThru),
 			CVV:        string(v.CVV),
 			CardHolder: string(v.CardHolder),
+			Meta:       string(v.Meta),
 		}
 		bankCardsResponse = append(bankCardsResponse, respItem)
 	}
@@ -710,6 +716,7 @@ func getAllHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
 			ValidThru:  string(v.ValidThru),
 			CVV:        string(v.CVV),
 			CardHolder: string(v.CardHolder),
+			Meta:       string(v.Meta),
 		}
 		bankCardsResponse = append(bankCardsResponse, respItem)
 	}
@@ -719,6 +726,7 @@ func getAllHandler(w http.ResponseWriter, _ *http.Request, userID uuid.UUID) {
 			Name:     string(v.Name),
 			Login:    string(v.Login),
 			Password: string(v.Password),
+			Meta:     string(v.Meta),
 		}
 		credResponse = append(credResponse, respItem)
 	}

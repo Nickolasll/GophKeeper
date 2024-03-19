@@ -28,7 +28,7 @@ type CredentialsRepository struct {
 // Create - Сохраняет новую пару логина и пароля
 func (r CredentialsRepository) Create(
 	userID uuid.UUID,
-	cred domain.Credentials,
+	cred *domain.Credentials,
 ) error {
 	buf, err := json.Marshal(cred)
 	if err != nil {
@@ -74,7 +74,7 @@ func (r CredentialsRepository) Create(
 // Update - Сохраняет существующую пару логина и пароля
 func (r CredentialsRepository) Update(
 	userID uuid.UUID,
-	cred domain.Credentials,
+	cred *domain.Credentials,
 ) error {
 	buf, err := json.Marshal(cred)
 	if err != nil {
