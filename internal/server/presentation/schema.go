@@ -7,10 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-var validCardNumber *regexp.Regexp
-var validThru *regexp.Regexp
-var validCVV *regexp.Regexp
-var validCardHolder *regexp.Regexp
+var validCardNumber, validThru, validCVV, validCardHolder *regexp.Regexp
 
 type registrationPayload struct {
 	Login    string `json:"login" validate:"required"`

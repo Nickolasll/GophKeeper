@@ -14,7 +14,7 @@ $(CLIENT_BIN):
 
 setup: $(REPORTS) $(CLIENT_BIN) .tidy .install-tools  ## Установка окружения
 
-clean:  # Очистка окружения
+clean:  ## Очистка окружения
 	rm -rf $(REPORTS)
 	go clean -r -i -testcache -modcache
 

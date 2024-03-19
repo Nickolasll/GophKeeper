@@ -33,8 +33,9 @@ var cardRepository *bcardrepo.BankCardRepository
 
 func setup() (*chi.Mux, error) {
 	log := logger.New()
+	ctx := context.Background()
 
-	cfg, err := config.New()
+	cfg, err := config.New(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +45,7 @@ func setup() (*chi.Mux, error) {
 		return nil, err
 	}
 
-	pool, err = pgxpool.New(context.Background(), cfg.PostgresURL)
+	pool, err = pgxpool.New(ctx, cfg.PostgresURL)
 	if err != nil {
 		return nil, err
 	}

@@ -55,8 +55,9 @@ import (
 
 func main() {
 	log := logger.New()
+	ctx := context.Background()
 
-	cfg, err := config.New()
+	cfg, err := config.New(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,7 +72,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	pool, err := pgxpool.New(context.Background(), cfg.PostgresURL)
+	pool, err := pgxpool.New(ctx, cfg.PostgresURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -111,7 +112,7 @@ func main() {
 		TLSConfig:         tlsConfig,
 	}
 	defer func() {
-		err = server.Shutdown(context.Background())
+		err = server.Shutdown(ctx)
 		if err != nil {
 			log.Fatal(nil)
 		}

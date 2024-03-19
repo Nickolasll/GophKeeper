@@ -34,7 +34,7 @@ func logging(handler http.Handler) http.Handler {
 			"method":         method,
 			"duration_ms":    duration.Milliseconds(),
 			"status":         recorder.Status,
-			"content length": recorder.ContentLength,
+			"content_length": recorder.ContentLength,
 		}).Info("Request info")
 	}
 

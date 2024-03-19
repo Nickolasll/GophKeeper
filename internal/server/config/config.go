@@ -31,9 +31,8 @@ type Config struct {
 }
 
 // New - Возвращает инстанс конфигурации сервера из переменных окружения
-func New() (*Config, error) {
+func New(ctx context.Context) (*Config, error) {
 	var cfg Config
-	ctx := context.Background()
 	if err := envconfig.Process(ctx, &cfg); err != nil {
 		return &cfg, err
 	}

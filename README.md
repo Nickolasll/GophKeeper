@@ -12,7 +12,7 @@
 Пишутся в формате json. Пример лога http-запроса:
 
 ```json
-{"content length":0,"duration_ms":84,"level":"info","method":"POST","msg":"Request info","status":200,"time":"2024-03-05T17:50:57+03:00","uri":"/api/v1/auth/register"}
+{"content_length":0,"duration_ms":84,"level":"info","method":"POST","msg":"Request info","status":200,"time":"2024-03-05T17:50:57+03:00","uri":"/api/v1/auth/register"}
 ```
 
 #### Хелсчек
@@ -83,6 +83,7 @@
 
 * `make all (default)` - последовательные запуск форматтеров, линтеров и тестов;
 * `make build-client` - сборка бинарных файлов для cli приложения;
+* `make clean` - очистка окружения;
 * `make format` - форматирование исходного кода;
 * `make generate-spec` - генерация swagger spec;
 * `make godoc-get` - Получить документацию в формате html;

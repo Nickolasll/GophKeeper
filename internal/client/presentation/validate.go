@@ -2,10 +2,7 @@ package presentation
 
 import "regexp"
 
-var validCardNumber *regexp.Regexp
-var validValidThru *regexp.Regexp
-var validCVV *regexp.Regexp
-var validCardHolder *regexp.Regexp
+var validCardNumber, validValidThru, validCVV, validCardHolder *regexp.Regexp
 
 func regexpMustCompile() {
 	validCardNumber = regexp.MustCompile(`\b(\d{4}\s\d{4}\s\d{4}\s\d{4}$)\b`)
