@@ -1,0 +1,139 @@
+@startuml
+!theme vibrant
+title: 8.2 Диаграмма классов клиента
+
+namespace client {
+    namespace domain {
+        namespace entities {}
+        namespace repositories {}
+        namespace client {}
+        namespace services {}
+    }
+}
+
+class client.domain.entities.Session {
+    + UserID: UUID
+    + Token: String
+}
+
+class client.domain.entities.Credentials {
+    + ID : UUID
+    + Name : String
+    + Login : String
+    + Password : String
+    + Meta: String
+}
+
+class client.domain.entities.Text {
+    + ID : UUID
+    + Content : String
+}
+
+class client.domain.entities.Binary {
+    + ID : UUID
+    + Content : []byte
+}
+
+class client.domain.entities.BankCard {
+    + ID : UUID
+    + Number : String
+    + ExpirationDate: String
+    + CVV: String
+    + CardHolder: String
+    + Meta: String
+}
+
+class client.domain.repositories.SessionRepositoryInterface {
+    + crypto : CryptoServiceInterface
+    + void Save(object : Session) : null
+    + void Get() : Session | null
+    + void Delete(): null
+}
+
+class client.domain.repositories.JWKRepositoryInterface {
+    + crypto : CryptoServiceInterface
+    + void Save(key : jwk.Key) : null
+    + void Get() : jwk.Key | null
+    + void Delete(): null
+}
+
+class client.domain.repositories.CredentialsRepositoryInterface {
+    + crypto : CryptoServiceInterface
+    + void Create(userID String, object : Credentials) : Null
+    + void Update(userID String, object : Credentials) : null
+    + void Get(userID String, credentialsID: UUID) : Credentials | null
+    + void FindAll(userID: UUID) : List[Credentials]
+    + void ReplaceAll(userID: UUID, List[Credentials]): null
+}
+
+class client.domain.repositories.TextRepositoryInterface {
+    + crypto : CryptoServiceInterface
+    + void Create(userID String, object : Text) : Null
+    + void Update(userID String, object : Text) : null
+    + void Get(userID String, textID: UUID) : Text | null
+    + void FindAll(UserID: UUID) : List[Text]
+    + void ReplaceAll(userID: UUID, List[Text]): null
+}
+
+class client.domain.repositories.BinaryRepositoryInterface {
+    + crypto : CryptoServiceInterface
+    + void Create(userID String, object : Binary) : Null
+    + void Update(userID String, object : Binary) : null
+    + void Get(userID String binaryID: UUID) : Binary | null
+    + void FindAll(UserID: UUID) : List[Binary]
+    + void ReplaceAll(userID: UUID, List[Binary]): null
+}
+
+class client.domain.repositories.BankCardRepositoryInterface {
+    + crypto : CryptoServiceInterface
+    + void Create(userID String, object : BankCard) : Null
+    + void Update(userID String, object : BankCard) : null
+    + void Get(userID String, bankCardID: UUID) : BankCard | null
+    + void FindAll(userID: UUID) : List[BankCard]
+    + void ReplaceAll(userID: UUID, List[BankCard]): null
+}
+
+class client.domain.repositories.UnitOfWorkInterface {
+    + void Begin() error
+    + void Commit() error
+    + void Rollback() error
+    + void TextRepository() TextRepositoryInterface
+    + void BinaryRepository() BinaryRepositoryInterface
+    + void CredentialsRepository() CredentialsRepositoryInterface
+    + void BankCardRepository() BankCardRepositoryInterface
+}
+
+class client.domain.client.GophKeeperInterface {
+    + X509Cert : []byte
+    + Timeout : time.Duration
+    + BaseURL : String
+    + void Login(Login : String, Password : String) : String, error
+    + void Register(Login : String, Password : String) : String, error
+    + void Certs() : []byte, error
+    + void CreateText(session: Session, content: String) : String, error
+    + void UpdateText(session: Session, object: Text) : error
+    + void CreateCredentials(session: Session, object: Credentials) : String, error
+    + void UpdateCredentials(session: Session, object: Credentials) : error
+    + void CreateBinary(session: Session, object: Binary) : String, error
+    + void UpdateBinary(session: Session, object: Binary) : error
+    + void CreateBankCard(session: Session, object: BankCard) : String, error
+    + void UpdateBankCard(session: Session, object: BankCard) : error
+    + void GetAllTexts(session: Session) : List[Text], error
+    + void GetAllBinaries(session: Session) : List[Binary], error
+    + void GetAllCredentials(session: Session) : List[Credentials], error
+    + void GetAllBankCard(session: Session) : List[BankCard], error
+    + void GetAll(session: Session) : List[Text], List[BankCard], List[Binary], List[Credentials], error
+}
+
+
+class client.domain.services.CryptoServiceInterface {
+    + PrivateKey : []byte
+    + void Encode(data : []byte) : []byte
+    + void Dencode(data : []byte) : []byte
+}
+
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.TextRepositoryInterface
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.CredentialsRepositoryInterface
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.BinaryRepositoryInterface
+client.domain.repositories.UnitOfWorkInterface "1" -- "1" client.domain.repositories.BankCardRepositoryInterface
+@enduml

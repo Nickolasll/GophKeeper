@@ -1,0 +1,84 @@
+@startuml
+!theme vibrant
+title: 6.3. Вход по логину и паролю
+skinparam maxMessageSize 300
+autonumber
+
+participant "Пользователь" as user
+box "Компьютер пользователя" #DEDEDE
+    participant "CLI Клиент" as client
+    participant "Сервис шифрования" as cli_crypto
+    database "Файловая система" as file
+end box
+
+box "GophKeeper" #d3f3fa
+    participant "Обработчик запроса" as handler
+    participant "Юзкейз регистрации" as auth
+    participant "Служба JavaScript Object Signing and Encryption" as jose
+    database "postgres" as db
+end box
+
+user -> client ++ : Вводит команду на вход по логину и паролю
+note over user, client
+    GophKeeper login my@login.com password   
+end note
+
+client -> client: валидирует данные из команды
+
+opt Формат некорректен
+    client --> user: Вывод сообщения об ошибке
+end
+
+client -> handler ++ : Отправляет запрос на вход по логину и паролю
+note over client, handler
+    POST /api/user/login HTTP/2.0
+    Content-Type: application/json
+
+    login: my@login.com
+    password: password   
+end note
+
+handler -> handler : Парсит JSON и валидирует формат входных данных из тела запроса
+opt Формат некорректен
+    handler --> client: HTTP 400 bad request
+    client --> user: Вывод сообщения об ошибке
+end
+
+handler -> auth ++ : Вызывает поведение входа по логину и паролю
+auth -> db ++ : Поиск пользователя по логину
+return Результат запроса
+auth -> auth: Проверка результата запроса
+opt Результат запроса = null
+    auth --> handler: Пользователь не найден
+    handler --> client: HTTP 401 Unauthorized
+    client --> user: Вывод сообщения об ошибке
+end
+
+auth -> jose ++: Проверка пароля на соответствие
+return результат проверки
+opt Неправильный пароль
+    auth --> handler: Неправильный пароль
+    handler --> client: HTTP 401 Unauthorized
+    client --> user: Вывод сообщения об ошибке
+end
+    
+auth -> jose ++: Генерация JWT с уникальным идентификатором пользователя
+return JWT
+return JWT
+
+handler -> handler: Устанавливает JWT в HTTP-заголовок Authorization
+return HTTP 200 Ok
+note over client, handler
+    200 OK HTTP/2.0
+    Authorization: Bearer ...  
+end note
+client -> cli_crypto ++ : Зашифровывает токен
+return Зашифрованные данные
+client -> file: Сохраняет зашифрованный JWT в файл
+activate file
+deactivate file 
+return Вывод сообщения об успехе исполнения команды
+ref over client, db
+    6.6. Синхронизация данных клиента и сервера
+end
+@enduml

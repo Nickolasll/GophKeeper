@@ -1,0 +1,108 @@
+@startuml
+!theme vibrant
+title: 8.1 Диаграмма классов сервера
+
+namespace server {
+    namespace application {
+        namespace services {}
+    }
+
+    namespace domain {
+        namespace entities {}
+        namespace repositories {}
+    }
+}
+
+
+class server.domain.entities.User {
+    + ID : UUID
+    + Login : String
+    + Password : String
+}
+
+class server.domain.entities.Credentials {
+    + ID : UUID
+    + UserID : UUID
+    + Name : []byte
+    + Login : []byte
+    + Password : []byte
+    + Meta: []byte
+}
+
+class server.domain.entities.Text {
+    + ID : UUID
+    + UserID: UUID
+    + Content : []byte
+}
+
+class server.domain.entities.Binary {
+    + ID : UUID
+    + UserID: UUID
+    + Content : []byte
+}
+
+class server.domain.entities.BankCard {
+    + ID : UUID
+    + UserID: UUID
+    + Number : []byte
+    + ExpirationDate: []byte
+    + CVV: []byte
+    + CardHolder: []byte
+    + Meta: []byte
+}
+
+class server.domain.repositories.UserRepositoryInterface {
+    + void Create(login : String, password : String) : null
+    + void GetByLogin(login: String) : User | null
+}
+
+class server.domain.repositories.CredentialsRepositoryInterface {
+    + void Create(object : Credentials) : null
+    + void Save(object : Credentials) : null
+    + void Get(ID: UUID) : Credentials | null
+    + void GetAll(UserID: UUID) : List[Credentials]
+}
+
+class server.domain.repositories.TextRepositoryInterface {
+    + void Create(object : Text) : null
+    + void Save(object : Text) : null
+    + void Get(userID UUID, textID: UUID) : Text | null
+    + void GetAll(UserID: UUID) : List[Text]
+}
+
+class server.domain.repositories.BinaryRepositoryInterface {
+    + void Create(object : Binary) : null
+    + void Save(object : Binary) : null
+    + void Get(userID UUID, binaryID: UUID) : Binary | null
+    + void GetAll(UserID: UUID) : List[Binary]
+}
+
+class server.domain.repositories.BankCardRepositoryInterface {
+    + void Create(object : BankCard) : null
+    + void Save(object : BankCard) : null
+    + void Get(userID UUID, bankCardID: UUID) : BankCard | null
+    + void GetAll(UserID: UUID) : List[BankCard]
+}
+
+
+class server.application.services.JOSEService {
+    + TokenExp : time.Duration
+    + JWKs : jwk.Key
+    + void IssueToken(userId : UUID) : []byte
+    + void ParseUserID(token: String) : UUID
+    + void Hash(password: String) : String
+    + void VerifyPassword(hashedPassword: String, currPassword: String) : Bool
+}
+
+class server.application.services.CryptoService {
+    + SecretKey : []byte
+    + void Encode(Data : []byte) : []byte
+    + void Dencode(Data : []byte) : []byte
+}
+
+
+server.domain.entities.User "1" <-- "*" server.domain.entities.Credentials
+server.domain.entities.User "1" <-- "*" server.domain.entities.Text
+server.domain.entities.User "1" <-- "*" server.domain.entities.Binary
+server.domain.entities.User "1" <-- "*" server.domain.entities.BankCard
+@enduml

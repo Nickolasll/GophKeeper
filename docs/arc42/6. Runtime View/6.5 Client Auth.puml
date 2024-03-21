@@ -1,0 +1,57 @@
+@startuml
+!theme vibrant
+title: 6.5. Авторизация пользователя на стороне клиента
+skinparam maxMessageSize 300
+autonumber
+
+participant "Пользователь" as user
+box "Компьютер пользователя" #DEDEDE
+    participant "CLI Клиент" as client
+    database "Файловая система" as file
+end box
+box "GophKeeper" #d3f3fa
+    participant "GophKeeperAPI" as api
+end box
+
+user -> client ++ : Вводит команду, доступную только аутентифицированным пользователям
+note over user, client
+    GophKeeper create text ...
+end note
+
+client -> client: Валидирует JWT
+
+opt JWT не установлен
+    client --> user: Выводит сообщение об ошибке
+end
+
+client -> client: Проверяет наличие публичного ключа
+
+opt Публичный ключ не установлен
+    client -> file ++ : Читает публичный ключ из файла
+    return публичный ключ
+    
+    opt Публичный ключ не найден в файле
+        |||
+        ref over client, api
+            6.1 Получение публичного ключа для верификации JWT
+        end
+        |||
+    end
+    |||
+end
+
+client -> client: Верифицирует JWT
+
+alt Не удалось верифицировать JWT
+    |||
+    ref over client, api
+        6.1 Получение публичного ключа для верификации JWT
+    end
+    client -> client: Верифицирует JWT
+    opt Не удалось верифицировать JWT
+        client -> user: Выводит сообщение об ошибке
+    end
+    |||
+end
+client -> api ++ : Исполняет команду
+@enduml

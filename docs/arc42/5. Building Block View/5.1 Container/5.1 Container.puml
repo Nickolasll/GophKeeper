@@ -1,0 +1,51 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 400
+LAYOUT_WITH_LEGEND()
+
+title
+    <b>[Container Diagram] Менеджер паролей «GophKeeper»</b>
+end title
+
+Person(user, "Пользователь", "Пользователь менеджера паролей «GophKeeper»")
+
+Boundary(pc, "Компьютер пользователя") {
+
+    System_Boundary(client, "Клиент менеджера паролей «GophKeeper»", "Клиентская часть системы безопасного хранения паролей") {
+        Container(client_cli, "CLI менеджера паролей «GophKeeper»", "Go 1.21.0, CLI", "CLI интерфейс, валидация введенных команд")
+        Container(client_crypto, "Служба шифрования и дешифрования", "Component: Go 1.21.0, crypto", "Шифрование и дешифрование пользовательских данных")
+        Container(http_client, "REST HTTP Client", "Component: Go 1.21.0", "Клиент для выполнения HTTP запросов к серверу")
+        Container(client_use_cases, "Сценарии использования", "Component: Go 1.21.0", "Бизнес логика")
+        Container(client_repository, "Репозиторий", "Component: Go 1.21.0, bbolt", "Инкапсуляция логики работы с хранилищем")
+    }
+    ContainerDb(client_db, "Файл", "file", "Хранит локальные данные пользователя")
+    
+    Rel(client_cli, client_use_cases, "Вызов исполнения бизнес логики")
+    Rel_Left(client_repository, client_db, "Чтение и запись данных", "io/stdout")
+    Rel_Left(client_use_cases, client_repository, "Вызов чтения и записи данных")
+    Rel_Up(client_repository, client_crypto, "Вызов шифрования и дешифрования данных")
+    Rel_Down(client_use_cases, http_client, "Вызов запросов к API")
+}
+
+System_Boundary(server, "Менеджер паролей «GophKeeper»", "Серверная часть системы безопасного хранения паролей") {
+    Container(server_api, "API менеджера паролей «GophKeeper»", "Go 1.21.0, chi", "API системы хранения паролей и логика по регистрации, авторизации, сохранению локальных данных")
+    ContainerDb(server_db, "База данных", "postgres", "Хранит пользовательские данные")
+    Container(middleware, "Middleware", "Go 1.21.0, chi", "Middleware")
+    Container(crypto, "Служба шифрования и дешифрования", "Component: Go 1.21.0, crypto", "Шифрование и дешифрование пользовательских данных")
+    Container(use_cases, "Сценарии использования", "Component: Go 1.21.0", "Бизнес логика")
+    Container(repository, "Репозиторий", "Component: Go 1.21.0, pgx", "Инкапсуляция логики работы с хранилищем")
+    Container(auth, "Сервис авторизации", "Component: Go 1.21.0, jwx", "Аутентификация и Авторизация")
+
+    Rel_Right(repository, server_db, "Чтение и запись данных", "SQL/TCP")
+    Rel_Down(server_api, middleware, "Вызов промежуточного программного обеспечения")
+    Rel_Down(middleware, use_cases, "Вызов бизнес логики")
+    Rel_Down(use_cases, repository, "Вызов логики чтения и записи данных")
+    Rel(middleware, auth, "Вызов проверки авторизации пользователя")
+    Rel_Right(use_cases, auth, "Вызов логики выдачи JWT")
+    Rel_Left(use_cases, crypto, "Вызов логики шифрования и дешифрования")
+}
+
+Rel(user, client_cli, "Вводит команды для взаимодействия с системой хранения паролей «GophKeeper»", "Клавиатура/io")
+Rel_Down(http_client, server_api, "Отправляет запросы на регистрацию, авторизацию, аутентификацию и взаимодействие с данными", "HTTP")
+@enduml

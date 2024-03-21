@@ -1,0 +1,87 @@
+@startuml
+!theme vibrant
+title: 6.7. Создание новых данных
+skinparam maxMessageSize 300
+autonumber
+
+participant "Пользователь" as user
+box "Компьютер пользователя" #DEDEDE
+    participant "CLI Клиент" as client
+    participant "Служба шифрования" as cli_crypto 
+    database "Файловая система" as file
+end box
+
+box "GophKeeper" #d3f3fa
+    participant "Обработчик запроса" as handler
+    participant "Юзкейз добавления данных" as usecase
+    participant "Служба шифрования" as crypto
+    database "postgres" as db
+end box
+
+user -> client ++ : Вводит команду на создание новых данных
+note over user, client
+    GophKeeper create credentials site.com mylogin mypassword
+end note
+
+client -> client: Валидация введенных данных
+
+opt Данные невалидны
+    client -> user: Сообщение об ошибке
+end
+
+|||
+ref over user, file
+    6.5. Авторизация пользователя на стороне клиента
+end
+|||
+
+client -> handler ++ : Отправляет запрос на создание новых данных
+note over client, handler
+    POST /api/v1/credentials/new HTTP/2.0
+    Content-Type: application/json
+    Authorization: Bearer ...
+    
+    {
+        "name": "site.com",
+        "login": "mylogin",
+        "password": "mypassword",
+    }
+end note
+
+|||
+ref over user, handler
+    6.4. Авторизация пользователя на стороне сервера
+end
+|||
+
+handler -> handler: Парсит JSON и валидирует формат входных данных из тела запроса
+opt Формат некорректен
+    handler -> client: HTTP 400 Bad Request
+    note over client, handler
+        400 Bad Request HTTP/2.0
+    end note
+    client --> user: Выводит сообщение об ошибке
+end
+
+handler -> usecase ++ : Вызывает поведение по созданию новых данных
+usecase -> crypto ++ : Шифрует данные
+return Зашифрованные данные
+
+usecase -> db : Сохраняет данные
+activate db
+deactivate db
+
+return Успешно сохранено
+return HTTP 201 Created
+note over client, handler
+    201 Created HTTP/2.0
+    Location: "be08ad01-247a-40e5-809e-3628d924fc58"
+end note
+
+client -> cli_crypto ++ : Зашифровывает полученные данные
+return Зашифрованные данные
+client -> file: Сохраняет зашифрованные данные в файл
+activate file
+deactivate file 
+return Вывод сообщения об успехе исполнения команды
+@enduml

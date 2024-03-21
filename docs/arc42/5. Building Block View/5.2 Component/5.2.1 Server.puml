@@ -1,0 +1,45 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 400
+LAYOUT_WITH_LEGEND()
+
+title
+    <b>[Component Diagram] Сценарии использования сервера менеджера паролей «GophKeeper»</b>
+end title
+
+
+System_Boundary(server, "Менеджер паролей «GophKeeper»", "Серверная часть системы безопасного хранения паролей") {
+    Boundary(use_cases, "Сценарии использования", "Бизнес логика") {
+        Container(register, "Регистрация пользователя", "Component: Go 1.21.0", "Регистрация и авторизация нового пользователя")
+        Container(login, "Авторизация пользователя", "Component: Go 1.21.0", "Авторизация по логину и паролю")
+        Container(certs, "Получение публичного ключа для JWT", "Component: Go 1.21.0", "Получение публичного ключа для JWT, чтобы верифицировать его на стороне клиента")
+        Container(sync, "Синхронизация данных", "Component: Go 1.21.0", "Получение списка всех пользовательских данных от сервера")
+        Container(create, "Добавить новые данные для хранения", "Component: Go 1.21.0", "Создать новые данные для хранения")
+        Container(change, "Изменить сохраненные данные", "Component: Go 1.21.0", "Изменить пользовательские данные")
+    }
+    Container(server_api, "API менеджера паролей «GophKeeper»", "Go 1.21.0, chi", "API системы хранения паролей и логика по регистрации, авторизации, сохранению локальных данных")
+    ContainerDb(server_db, "База данных", "postgres", "Хранит пользовательские данные")
+    Container(middleware, "Middleware", "Go 1.21.0, chi", "Middleware")
+    Container(crypto, "Служба шифрования и дешифрования", "Component: Go 1.21.0, crypto", "Шифрование и дешифрование пользовательских данных")
+    Container(repository, "Репозиторий", "Component: Go 1.21.0, pgx", "Инкапсуляция логики работы с хранилищем")
+    Container(auth, "Сервис авторизации", "Component: Go 1.21.0, jwx", "Аутентификация и Авторизация")
+    
+    Rel_Down(server_api, middleware, "Вызов промежуточного программного обеспечения")
+    Rel_Down(repository, server_db, "Чтение и запись данных", "SQL/TCP")
+    Rel_Down(middleware, use_cases, "Вызов бизнес логики")
+    Rel_Right(middleware, auth, "Вызов проверки авторизации пользователя")
+    Rel_Up(sync, crypto, "Вызов логики шифрования и дешифрования")
+    Rel_Up(create, crypto, "Вызов логики шифрования и дешифрования")
+    Rel_Up(change, crypto, "Вызов логики шифрования и дешифрования")
+    Rel_Up(login, auth, "Вызов логики выдачи JWT")
+    Rel_Up(register, auth, "Вызов логики выдачи JWT")
+    Rel_Up(certs, auth, "Получение публичного ключа")
+
+    Rel(register, repository, "Чтение и запись данных", "SQL/TCP")
+    Rel(login, repository, "Чтение и запись данных", "SQL/TCP")
+    Rel(sync, repository, "Чтение и запись данных", "SQL/TCP")
+    Rel(create, repository, "Чтение и запись данных", "SQL/TCP")
+    Rel(change, repository, "Чтение и запись данных", "SQL/TCP")
+}
+@enduml

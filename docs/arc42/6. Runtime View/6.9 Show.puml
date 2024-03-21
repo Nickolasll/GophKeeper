@@ -1,0 +1,33 @@
+@startuml
+!theme vibrant
+title: 6.9. Показать все локальные текстовые данные
+skinparam maxMessageSize 300
+autonumber
+
+participant "Пользователь" as user
+box "Компьютер пользователя" #DEDEDE
+    participant "CLI Клиент" as client
+    database "Файловая система" as file
+end box
+
+box "GophKeeper" #d3f3fa
+    participant "API GophKeeper" as api
+end box
+
+user -> client ++ : Вводит команду на обновление данных
+note over user, client
+    gophkeeper show texts
+end note
+
+|||
+ref over user, api
+    6.5. Авторизация пользователя на стороне клиента
+end
+|||
+
+client -> file ++ : Расшифровка файла и чтение пользовательских данных
+return Пользовательские данные
+
+return: Вывод локальных данных пользователю
+
+@enduml

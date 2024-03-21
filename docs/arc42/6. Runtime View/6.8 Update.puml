@@ -1,0 +1,93 @@
+@startuml
+!theme vibrant
+title: 6.8. Обновление данных
+skinparam maxMessageSize 300
+autonumber
+
+participant "Пользователь" as user
+box "Компьютер пользователя" #DEDEDE
+    participant "CLI Клиент" as client
+    participant "Служба шифрования" as cli_crypto 
+    database "Файловая система" as file
+end box
+
+box "GophKeeper" #d3f3fa
+    participant "Обработчик запроса" as handler
+    participant "Юзкейз обновления данных" as usecase
+    participant "Служба шифрования" as crypto
+    database "postgres" as db
+end box
+user -> client ++ : Вводит команду на обновление данных
+note over user, client
+    GophKeeper change-credentials site.com newsite.com newmylogin newmypassword
+end note
+client -> client: Валидация введенных данных
+
+opt Данные невалидны
+    client -> user: Сообщение об ошибке
+end
+
+|||
+ref over user, file
+    6.5. Авторизация пользователя на стороне клиента
+end
+|||
+
+client -> handler ++ : Отправляет запрос на создание новых данных
+note over client, handler
+    POST /api/credentials/site.com HTTP/2.0
+    Content-Type: application/json
+    Authorization: Bearer ...
+    
+    {
+        "name": "newsite.com",
+        "login": "newmylogin",
+        "password": "newmypassword",
+    }
+end note
+|||
+ref over user, handler
+    6.4. Авторизация пользователя на стороне сервера
+end
+|||
+handler -> handler: Парсит JSON и валидирует формат входных данных из тела запроса
+opt Формат некорректен
+    handler -> client: HTTP 400 Bad Request
+    note over client, handler
+        400 Bad Request HTTP/2.0
+    end note
+    client --> user: Выводит сообщение об ошибке
+end
+
+handler -> usecase ++ : Вызывает поведение по обновлению данных
+usecase -> db ++ : Поиск существующих данных
+return Пользовательские данные
+opt Данные не найдены
+    usecase --> handler: Данные не найдены
+    handler --> client: HTTP 404 Not Found
+    note over client, handler
+        404 Not Found HTTP/2.0
+    end note
+    client --> user: Выводит сообщение об ошибке
+end
+
+usecase -> crypto ++ : Шифрует данные
+return Зашифрованные данные
+
+usecase -> db : Сохраняет данные
+activate db
+deactivate db
+
+return Успешно сохранено
+return HTTP 200 Ok
+note over client, handler
+    200 Ok HTTP/2.0
+end note
+
+client -> cli_crypto ++ : Зашифровывает полученные данные
+return Зашифрованные данные
+client -> file: Сохраняет зашифрованные данные в файл
+activate file
+deactivate file 
+return Вывод сообщения об успехе исполнения команды
+@enduml

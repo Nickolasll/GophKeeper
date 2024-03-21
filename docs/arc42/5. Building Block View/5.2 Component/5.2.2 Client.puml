@@ -1,0 +1,41 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+skinparam wrapWidth 400
+LAYOUT_WITH_LEGEND()
+
+title
+    <b>[Component Diagram] Сценарии использования клиента менеджера паролей «GophKeeper»</b>
+end title
+
+Boundary(pc, "Компьютер пользователя") {
+    System_Boundary(client, "Клиент менеджера паролей «GophKeeper»", "Клиентская часть системы безопасного хранения паролей") {
+        Container(client_cli, "CLI менеджера паролей «GophKeeper»", "Go 1.21.0, CLI", "CLI интерфейс, валидация введенных команд")
+        Boundary(client_use_cases, "Сценарии использования", "Component: Go 1.21.0", "Бизнес логика") {
+            Container(checkToken, "Валидация токена", "Component: Go 1.21.0", "Валидация токена и получение идентфикатора пользователя")
+            Container(register, "Регистрация пользователя", "Component: Go 1.21.0", "Регистрация и авторизация нового пользователя")
+            Container(login, "Авторизация пользователя", "Component: Go 1.21.0", "Авторизация по логину и паролю")
+            Container(sync, "Синхронизация данных", "Component: Go 1.21.0", "Получение списка всех пользовательских данных от сервера")
+            Container(create, "Добавить новые данные для хранения", "Component: Go 1.21.0", "Создать новые данные для хранения")
+            Container(change, "Изменить сохраненные данные", "Component: Go 1.21.0", "Изменить пользовательские данные")
+            Container(certs, "Получение публичного ключа для JWT", "Component: Go 1.21.0", "Получение публичного ключа для JWT, чтобы верифицировать его на стороне клиента")
+            Container(show, "Вывод всех пользовательских данных", "Component: Go 1.21.0", "Вывод сохраненных локальных пользовательских данных")
+
+            Rel(register, checkToken, "Получение идентификатора пользователя")
+            Rel(login, checkToken, "Получение идентификатора пользователя")
+            Rel(show, checkToken, "Валидация токена")
+            Rel(checkToken, certs, "Получение публичного ключа")
+        }
+        Container(client_crypto, "Служба шифрования и дешифрования", "Component: Go 1.21.0, crypto", "Шифрование и дешифрование пользовательских данных")
+        Container(http_client, "REST HTTP Client", "Component: Go 1.21.0", "Клиент для выполнения HTTP запросов к серверу")
+        Container(client_repository, "Репозиторий", "Component: Go 1.21.0, bbolt", "Инкапсуляция логики работы с хранилищем")
+    }
+    ContainerDb(client_db, "Файл", "file", "Хранит локальные данные пользователя")
+    
+    Rel(client_cli, client_use_cases, "Вызов исполнения бизнес логики")
+    Rel_Down(client_repository, client_db, "Чтение и запись данных", "io/stdout")
+    Rel_Right(client_use_cases, client_repository, "Вызов чтения и записи данных")
+    Rel_Left(client_repository, client_crypto, "Вызов шифрования и дешифрования данных")
+    Rel_Down(client_use_cases, http_client, "Вызов запросов к API")
+}
+@enduml

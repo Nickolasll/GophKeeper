@@ -1,0 +1,604 @@
+basePath: /api/v1
+definitions:
+  presentation.GetAllBankCardsResponse:
+    properties:
+      data:
+        properties:
+          bank_cards:
+            items:
+              $ref: '#/definitions/presentation.bankCardResponse'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  presentation.GetAllBinariesResponse:
+    properties:
+      data:
+        properties:
+          binaries:
+            items:
+              $ref: '#/definitions/presentation.binaryResponse'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  presentation.GetAllCredentialsResponse:
+    properties:
+      data:
+        properties:
+          credentials:
+            items:
+              $ref: '#/definitions/presentation.credentialsResponse'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  presentation.GetAllResponse:
+    properties:
+      data:
+        properties:
+          bank_cards:
+            items:
+              $ref: '#/definitions/presentation.bankCardResponse'
+            type: array
+          binaries:
+            items:
+              $ref: '#/definitions/presentation.binaryResponse'
+            type: array
+          credentials:
+            items:
+              $ref: '#/definitions/presentation.credentialsResponse'
+            type: array
+          texts:
+            items:
+              $ref: '#/definitions/presentation.textResponse'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  presentation.GetAllTextsResponse:
+    properties:
+      data:
+        properties:
+          texts:
+            items:
+              $ref: '#/definitions/presentation.textResponse'
+            type: array
+        type: object
+      message:
+        type: string
+      status:
+        type: boolean
+    type: object
+  presentation.bankCardPayload:
+    properties:
+      card_holder:
+        type: string
+      cvv:
+        type: string
+      meta:
+        type: string
+      number:
+        type: string
+      valid_thru:
+        type: string
+    required:
+    - cvv
+    - number
+    - valid_thru
+    type: object
+  presentation.bankCardResponse:
+    properties:
+      card_holder:
+        type: string
+      cvv:
+        type: string
+      id:
+        type: string
+      meta:
+        type: string
+      number:
+        type: string
+      valid_thru:
+        type: string
+    type: object
+  presentation.binaryResponse:
+    properties:
+      content:
+        items:
+          type: integer
+        type: array
+      id:
+        type: string
+    type: object
+  presentation.credentialsPayload:
+    properties:
+      login:
+        minLength: 1
+        type: string
+      meta:
+        type: string
+      name:
+        minLength: 1
+        type: string
+      password:
+        minLength: 1
+        type: string
+    required:
+    - login
+    - name
+    - password
+    type: object
+  presentation.credentialsResponse:
+    properties:
+      id:
+        type: string
+      login:
+        type: string
+      meta:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  presentation.registrationPayload:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  presentation.textResponse:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+    type: object
+host: 0.0.0.0:8080
+info:
+  contact: {}
+  description: Сервис хранения логинов, паролей, бинарных данных и прочей приватной
+    информации.
+  title: GophKeeper API
+  version: 0.0.1
+paths:
+  /all:
+    get:
+      operationId: all
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentation.GetAllResponse'
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Получить все расшифрованные данные пользователя
+      tags:
+      - All
+  /auth/certs:
+    get:
+      operationId: auth-certs
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              alg:
+                type: string
+              kid:
+                type: string
+              kty:
+                type: string
+              use:
+                type: string
+              x:
+                type: string
+              "y":
+                type: string
+            type: object
+      summary: Получение публичного ключа для валидации JWT на клиенте
+      tags:
+      - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      operationId: auth-login
+      parameters:
+      - description: Логин и Пароль
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.registrationPayload'
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization eyJhbGciOiJI...qIScZUU8P0Zhck:
+              description: JWT
+              type: string
+        "400":
+          description: Некорректный формат данных
+        "401":
+          description: Неправильный логин или пароль
+      summary: Авторизация пользователя по логину и паролю
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      operationId: auth-register
+      parameters:
+      - description: Логин и Пароль
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.registrationPayload'
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization eyJhbGciOiJI...qIScZUU8P0Zhck:
+              description: JWT
+              type: string
+        "400":
+          description: Некорректный формат данных
+        "409":
+          description: Логин уже занят
+      summary: Регистрация нового пользователя по логину и паролю
+      tags:
+      - Auth
+  /bank_card/{bank_card_id}:
+    post:
+      consumes:
+      - application/json
+      operationId: bank-card-update
+      parameters:
+      - description: Bank Card ID
+        in: path
+        name: bank_card_id
+        required: true
+        type: string
+      - description: Номер, срок действия, cvv код, ФИО держателя карты
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.bankCardPayload'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Некорректный формат данных или идентификатора
+        "401":
+          description: Нет токена авторизации или токен невалиден
+        "404":
+          description: Не найдено
+      security:
+      - ApiKeyAuth: []
+      summary: Обновить и зашифровать существующую банковскую карту
+      tags:
+      - BankCard
+  /bank_card/all:
+    get:
+      operationId: bank-card-all
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentation.GetAllBankCardsResponse'
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Получить все расшифрованные банковские карты
+      tags:
+      - BankCard
+  /bank_card/create:
+    post:
+      consumes:
+      - application/json
+      operationId: bank-card-create
+      parameters:
+      - description: Номер, срок действия, cvv код, ФИО держателя карты
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.bankCardPayload'
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location 020cb30c-c495-4a18-ac09-fd68c6f7c941:
+              description: UUID ресурса
+              type: string
+        "400":
+          description: Некорректный формат данных
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Создать и зашифровать банковскую карту
+      tags:
+      - BankCard
+  /binary/{binary_id}:
+    post:
+      consumes:
+      - multipart/form-data
+      operationId: binary-update
+      parameters:
+      - description: Binary ID
+        in: path
+        name: binary_id
+        required: true
+        type: string
+      - description: Содержимое файла
+        in: body
+        name: data
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Некорректный формат данных или идентификатора
+        "401":
+          description: Нет токена авторизации или токен невалиден
+        "404":
+          description: Не найдено
+      security:
+      - ApiKeyAuth: []
+      summary: Обновить и зашифровать существующие бинарные данные
+      tags:
+      - Binary
+  /binary/all:
+    get:
+      operationId: binary-all
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentation.GetAllBinariesResponse'
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Получить все расшифрованные бинарные данные
+      tags:
+      - Binary
+  /binary/create:
+    post:
+      consumes:
+      - multipart/form-data
+      operationId: binary-create
+      parameters:
+      - description: Содержимое файла
+        in: body
+        name: data
+        required: true
+        schema:
+          items:
+            type: integer
+          type: array
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location 020cb30c-c495-4a18-ac09-fd68c6f7c941:
+              description: UUID ресурса
+              type: string
+        "400":
+          description: Некорректный формат данных
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Создать и зашифровать бинарные данные
+      tags:
+      - Binary
+  /credentials/{credentials_id}:
+    post:
+      consumes:
+      - application/json
+      operationId: credentials-update
+      parameters:
+      - description: Credentials ID
+        in: path
+        name: credentials_id
+        required: true
+        type: string
+      - description: Наименование, логин и пароль
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.credentialsPayload'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Некорректный формат данных или идентификатора
+        "401":
+          description: Нет токена авторизации или токен невалиден
+        "404":
+          description: Не найдено
+      security:
+      - ApiKeyAuth: []
+      summary: Обновить и зашифровать существующий логин и пароль
+      tags:
+      - Credentials
+  /credentials/all:
+    get:
+      operationId: credentials-all
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentation.GetAllCredentialsResponse'
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Получить все расшифрованные логины и пароли
+      tags:
+      - Credentials
+  /credentials/create:
+    post:
+      consumes:
+      - application/json
+      operationId: credentials-create
+      parameters:
+      - description: Наименование, логин и пароль
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/presentation.credentialsPayload'
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location 020cb30c-c495-4a18-ac09-fd68c6f7c941:
+              description: UUID ресурса
+              type: string
+        "400":
+          description: Некорректный формат данных
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Создать и зашифровать логин и пароль
+      tags:
+      - Credentials
+  /health:
+    get:
+      operationId: health
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Запрос состояния сервиса
+      tags:
+      - Status
+  /text/{text_id}:
+    post:
+      consumes:
+      - text/plain
+      operationId: text-update
+      parameters:
+      - description: Text ID
+        in: path
+        name: text_id
+        required: true
+        type: string
+      - description: Текст для сохранения
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Некорректный формат данных или идентификатора
+        "401":
+          description: Нет токена авторизации или токен невалиден
+        "404":
+          description: Не найдено
+      security:
+      - ApiKeyAuth: []
+      summary: Обновить и зашифровать существующие текстовые данные
+      tags:
+      - Text
+  /text/all:
+    get:
+      operationId: text-all
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presentation.GetAllTextsResponse'
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Получить все расшифрованные текстовые данные
+      tags:
+      - Text
+  /text/create:
+    post:
+      consumes:
+      - text/plain
+      operationId: text-create
+      parameters:
+      - description: Текст для сохранения
+        in: body
+        name: data
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location 020cb30c-c495-4a18-ac09-fd68c6f7c941:
+              description: UUID ресурса
+              type: string
+        "400":
+          description: Некорректный формат данных
+        "401":
+          description: Нет токена авторизации или токен невалиден
+      security:
+      - ApiKeyAuth: []
+      summary: Создать и зашифровать текстовые данные
+      tags:
+      - Text
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
+tags:
+- description: Группа запросов статуса сервера
+  name: Status
+- description: Группа запросов авторизации
+  name: Auth
+- description: Группа запросов для работы с текстовыми данными
+  name: Text
+- description: Группа запросов для работы с бинарными данными
+  name: Binary
+- description: Группа запросов для работы с логинами и паролями
+  name: Credentials
+- description: Группа запросов для работы с банковскими картами
+  name: BankCard
+- description: Группа запросов для работы со всеми данными пользователя
+  name: All
